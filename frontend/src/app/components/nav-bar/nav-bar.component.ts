@@ -1,5 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {Router} from "@angular/router";
+import {AuthenticationService} from "../../services/authentication.service";
+import {Role} from "../../models/user";
 
 @Component({
     selector: 'app-nav-bar',
@@ -8,9 +10,22 @@ import {Router} from "@angular/router";
 })
 export class NavBarComponent {
     @Input() title: string = '<undefined>';
-    
-    constructor(private router: Router) {
+
+    constructor(
+        private router: Router,
+        private authenticationService: AuthenticationService
+    ) { }
+
+    get currentUser() {
+        return this.authenticationService.currentUser;
     }
-    
-    
+
+    get isAdmin() {
+        return this.currentUser && this.currentUser.role === Role.Admin;
+    }
+
+    logout() {
+        this.authenticationService.logout();
+        this.router.navigate(['/login']);
+    }
 }

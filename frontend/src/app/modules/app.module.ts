@@ -15,6 +15,7 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {JwtInterceptor} from "../interceptors/jwt.interceptor";
 import {UnknownComponent} from "../components/unknown/unknown.component";
 import {TemplateComponent} from "../components/template/template.component";
+import { LoginComponent } from '../components/login/login.component';
 
 @NgModule({
     declarations: [
@@ -23,6 +24,7 @@ import {TemplateComponent} from "../components/template/template.component";
         AppComponent, 
         SetFocusDirective,
         NavBarComponent,
+        LoginComponent,
     ],
     imports: [
         BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
