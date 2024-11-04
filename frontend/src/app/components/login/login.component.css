@@ -1,0 +1,37 @@
+body {
+    margin-top: 56px;
+    align-content: center;
+}
+
+mat-toolbar * {
+    color: white;
+}
+
+mat-toolbar {
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    /*width: 100%;*/
+    height: 56px;
+    padding: 0;
+    margin: 0 0 10px 0;
+    background-color: #3f51b5;
+    overflow-x: hidden;
+}
+
+mat-card {
+    max-width: 500px;
+}
+
+mat-toolbar mat-icon {
+    margin: 0 10px 0 10px;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
