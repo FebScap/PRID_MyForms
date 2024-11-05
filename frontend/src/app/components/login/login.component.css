@@ -1,6 +1,5 @@
-body {
+.login {
     margin-top: 56px;
-    align-content: center;
 }
 
 mat-toolbar * {

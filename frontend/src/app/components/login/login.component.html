@@ -6,8 +6,8 @@
     <ng-content/>
 </mat-toolbar>
 
-<body>
-<mat-card appearance="raised" class="mx-auto p-4">
+<div class="login position-relative h-100">
+<mat-card appearance="raised" class="p-4 position-absolute top-50 start-50 translate-middle">
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="d-flex flex-column">
         <span class="text-center fs-4">Sign in</span>
         <hr>
@@ -54,4 +54,4 @@
         <a href="" class="text-danger text-decoration-none text-center">Login as <span class="fw-bold">bruno&#64;epfc.eu</span></a>
     </form>
 </mat-card>
-</body>
+</div>
