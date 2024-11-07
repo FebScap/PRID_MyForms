@@ -10,18 +10,12 @@ namespace prid_2425_f02.Controllers;
 [Authorize]
 [Route("api/[controller]")]
 [ApiController]
-public class FormsController : ControllerBase {
-    private readonly FormContext _context;
-    private readonly IMapper _mapper;
-    
-    public FormsController(FormContext context, IMapper mapper) {
-        _context = context;
-        _mapper = mapper;
+public class FormsController(FormContext context, IMapper mapper) : ControllerBase
+{
+    [Authorized(Role.Admin)]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<FormDTO>>> GetAll() {
+        // Récupère une liste de tous les forms et utilise le mapper pour les transformer en leur DTO
+        return mapper.Map<List<FormDTO>>(await context.Users.ToListAsync());
     }
-    
-    /*
-     
-     Contrôleur pour les forms
-     
-     */
 }

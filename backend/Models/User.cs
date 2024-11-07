@@ -15,9 +15,20 @@ public class User {
     public string Password { get; set; } = null!;
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
-    public Role Role { get; set; }
+    public Role Role { get; set; } = Role.User;
     public DateTimeOffset? BirthDate { get; set; }
     
     [NotMapped]
     public string? Token { get; set; }
+
+    public int? Age {
+        get {
+            if (!BirthDate.HasValue)
+                return null;
+            DateTime today = DateTime.Today;
+            int age = today.Year - BirthDate.Value.Year;
+            if (BirthDate.Value.Date > today.AddYears(-age)) age--;
+            return age;
+        }
+    }
 }

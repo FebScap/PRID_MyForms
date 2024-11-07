@@ -11,6 +11,9 @@ public class MappingProfile : Profile
         
         CreateMap<User, UserDTO>();
         CreateMap<UserDTO, User>();
+
+        CreateMap<Form, FormDTO>();
+        CreateMap<FormDTO, Form>();
     }
     
     

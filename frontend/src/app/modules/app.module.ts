@@ -15,14 +15,18 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {JwtInterceptor} from "../interceptors/jwt.interceptor";
 import {UnknownComponent} from "../components/unknown/unknown.component";
 import {TemplateComponent} from "../components/template/template.component";
+import { LoginComponent } from '../components/login/login.component';
+import {HomeComponent} from "../components/home/home.component";
 
 @NgModule({
     declarations: [
         UnknownComponent,
         TemplateComponent,
+        HomeComponent,
         AppComponent, 
         SetFocusDirective,
         NavBarComponent,
+        LoginComponent,
     ],
     imports: [
         BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),

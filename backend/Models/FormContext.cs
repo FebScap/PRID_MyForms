@@ -21,4 +21,5 @@ public class FormContext : DbContext
     }
 
     public DbSet<User> Users => Set<User>();
+    public DbSet<Form> Forms => Set<Form>();
 }
