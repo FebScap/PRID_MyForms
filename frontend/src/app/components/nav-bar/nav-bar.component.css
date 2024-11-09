@@ -14,6 +14,11 @@ mat-toolbar {
     overflow-x: hidden;
 }
 
+.nav-icon {
+    width: 48px;
+    height: 48px;
+}
+
 .spacer {
     flex: 1 1 auto;
 }
