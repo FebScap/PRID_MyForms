@@ -3,51 +3,63 @@
 </app-nav-bar>
 
 <div class="login position-relative h-100">
-<mat-card appearance="raised" class="p-4 position-absolute top-50 start-50 translate-middle">
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="d-flex flex-column">
-        <span class="text-center fs-4">Sign in</span>
-        <hr>
-        <div class="p-2 d-flex flex-column">
-            <mat-form-field appearance="outline">
-                <mat-icon matPrefix>person</mat-icon>
-                <mat-label>Email</mat-label>
-                <input #pseudo matInput [formControl]="ctlEmail" required appSetFocus>
-                @if (ctlEmail.hasError('required')) {
-                    <mat-error class="field-error">Required</mat-error>
+    <mat-card appearance="raised" class="p-4 position-absolute top-50 start-50 translate-middle">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="d-flex flex-column">
+            <span class="text-center fs-4">Sign in</span>
+            <hr>
+            <div class="p-2 d-flex flex-column pb-0">
+                <mat-form-field appearance="outline">
+                    <mat-icon matPrefix>person</mat-icon>
+                    <mat-label>Email</mat-label>
+                    <input #pseudo matInput [formControl]="ctlEmail" required appSetFocus>
+                    @if (ctlEmail.hasError('required')) {
+                        <mat-error class="field-error">Required</mat-error>
+                    }
+                    @if (ctlEmail.hasError('custom')) {
+                        <mat-error class="field-error">{{ ctlEmail.errors?.custom }}</mat-error>
+                    }
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-icon matPrefix>key</mat-icon>
+                    <mat-label>Password</mat-label>
+                    <input matInput type="password" [formControl]="ctlPassword" required>
+                    @if (ctlPassword.hasError('required')) {
+                        <mat-error class="field-error">Required</mat-error>
+                    }
+                    @if (ctlPassword.hasError('custom')) {
+                        <mat-error class="field-error">{{ ctlPassword.errors?.custom }}</mat-error>
+                    }
+                </mat-form-field>
+                @if (isFormValid) {
+                    <span>
+                    <button [disabled]="loading" mat-stroked-button class="w-100">Login</button>
+                        @if (loading) {
+                            <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="/>
+                        }
+                    </span>
+                } @else {
+                    <button disabled mat-flat-button class="w-100">Login</button>
                 }
-                @if (ctlEmail.hasError('custom')) {
-                    <mat-error class="field-error">{{ ctlEmail.errors?.custom }}</mat-error>
-                }
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-icon matPrefix>key</mat-icon>
-                <mat-label>Password</mat-label>
-                <input matInput type="password" [formControl]="ctlPassword" required>
-                @if (ctlPassword.hasError('required')) {
-                    <mat-error class="field-error">Required</mat-error>
-                }
-                @if (ctlPassword.hasError('custom')) {
-                    <mat-error class="field-error">{{ ctlPassword.errors?.custom }}</mat-error>
-                }
-            </mat-form-field>
-            <div class="d-flex flex-column align-items-center">
-                <button [disabled]="loading" mat-stroked-button class="w-100">Login</button>
-                @if (loading) {
-                    <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="/>
-                }
-                <button mat-stroked-button class="w-100 mt-2">Login as a Guest</button>
 
-                <a href="" class="mt-3">New here? Click here to subscribe!</a>
             </div>
+        </form>
+        <div class="p-2 d-flex flex-column pt-0">
+            <button (click)="loginAs(Profiles.guest)" mat-stroked-button class="w-100 mt-2">Login as a Guest</button>
+            <a href="" class="mt-3">New here? Click here to subscribe!</a>
         </div>
 
         <hr>
 
         <span class="text-danger text-center mb-3">For Debug Purpose</span>
-        <a href="" class="text-danger text-decoration-none text-center">Login as <span class="fw-bold">admin&#64;epfc.eu</span></a>
-        <a href="" class="text-danger text-decoration-none text-center">Login as <span class="fw-bold">ben&#64;epfc.eu</span></a>
-        <a href="" class="text-danger text-decoration-none text-center">Login as <span class="fw-bold">boris&#64;epfc.eu</span></a>
-        <a href="" class="text-danger text-decoration-none text-center">Login as <span class="fw-bold">bruno&#64;epfc.eu</span></a>
-    </form>
-</mat-card>
+        <button (click)="loginAs(Profiles.admin)" class="text-danger bg-transparent text-decoration-none text-center border-0">Login as <span
+                class="fw-bold">admin&#64;epfc.eu</span></button>
+        <button (click)="loginAs(Profiles.ben)" class="text-danger bg-transparent text-decoration-none text-center border-0">Login as <span
+                class="fw-bold">ben&#64;epfc.eu</span></button>
+        <button (click)="loginAs(Profiles.boris)" class="text-danger bg-transparent text-decoration-none text-center border-0">Login as <span
+                class="fw-bold">boris&#64;epfc.eu</span></button>
+        <button (click)="loginAs(Profiles.bruno)" class="text-danger bg-transparent text-decoration-none text-center border-0">Login as <span
+                class="fw-bold">bruno&#64;epfc.eu</span></button>
+        
+
+    </mat-card>
 </div>
