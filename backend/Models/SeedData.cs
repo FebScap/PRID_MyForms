@@ -11,6 +11,7 @@ namespace prid_2425_f02.Models
             context.Users.AddRange(ImportCsvData<User, UserMap>(@"Models\Data\users.csv"));
             context.Forms.AddRange(ImportCsvData<Form, FormMap>(@"Models\Data\forms.csv"));
             context.Questions.AddRange(ImportCsvData<Question, QuestionMap>(@"Models\Data\questions.csv"));
+            context.Answers.AddRange(ImportCsvData<Answer, AnswerMap>(@"Models\Data\answers.csv"));
             context.SaveChanges();
         }
 
@@ -68,6 +69,16 @@ namespace prid_2425_f02.Models
                 .Convert(data => Enum.Parse<Type>(data.Row.GetField("type") ?? "", true));
             Map(u => u.Required).Name("required");
             Map(u => u.OptionList).Name("option_list");
+        }
+    }
+    
+    internal sealed class AnswerMap : ClassMap<Answer>
+    {
+        public AnswerMap() {
+            Map(u => u.Instance).Name("instance");
+            Map(u => u.Question).Name("question");
+            Map(u => u.Idx).Name("idx");
+            Map(u => u.Value).Name("value");
         }
     }
 

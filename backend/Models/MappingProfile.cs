@@ -17,6 +17,9 @@ public class MappingProfile : Profile
         
         CreateMap<Question, QuestionDTO>();
         CreateMap<QuestionDTO, Question>();
+        
+        CreateMap<Answer, AnswerDTO>();
+        CreateMap<AnswerDTO, Answer>();
     }
     
     

@@ -9,8 +9,16 @@ public class FormContext(DbContextOptions<FormContext> options) : DbContext(opti
             //.LogTo(Console.WriteLine, LogLevel.Information)
             .EnableSensitiveDataLogging();
     }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Answer>()
+            .HasKey(a => new { a.Instance, a.Question, a.Idx });
+    }
 
     public DbSet<User> Users => Set<User>();
     public DbSet<Form> Forms => Set<Form>();
     public DbSet<Question> Questions => Set<Question>();
+    public DbSet<Answer> Answers => Set<Answer>();
 }
