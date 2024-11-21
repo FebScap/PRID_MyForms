@@ -102,7 +102,7 @@ public class UsersController(FormContext context, IMapper mapper) : ControllerBa
 
         return Ok(mapper.Map<UserDTO>(user));
     }
-
+    
     private async Task<User?> Authenticate(string email, string password) {
         var user = await context.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
 
@@ -110,7 +110,8 @@ public class UsersController(FormContext context, IMapper mapper) : ControllerBa
         if (user == null)
             return null;
 
-        if (user.Password == password) {
+        var hash = TokenHelper.GetPasswordHash(password);
+        if (user.Password == hash) {
             // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes("my-super-secret-key my-super-secret-key");

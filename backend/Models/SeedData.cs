@@ -1,0 +1,58 @@
+using CsvHelper;
+using CsvHelper.Configuration;
+using prid_2425_f02.Helpers;
+using System.Globalization;
+
+namespace prid_2425_f02.Models
+{
+    public class SeedData(FormContext context)
+    {
+        public void Seed() {
+            context.Users.AddRange(ImportCsvData<User, UserMap>(@"Models\Data\users.csv"));
+            context.Forms.AddRange(ImportCsvData<Form, FormMap>(@"Models\Data\forms.csv"));
+            context.SaveChanges();
+        }
+
+        private static List<T> ImportCsvData<T, TM>(string filePath) where TM : ClassMap {
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                Delimiter = ";",
+                HasHeaderRecord = true,
+                MissingFieldFound = null,
+            };
+
+            using var reader = new StreamReader(filePath);
+            using var csv = new CsvReader(reader, config);
+            csv.Context.RegisterClassMap<TM>();
+
+            return csv.GetRecords<T>().ToList();
+        }
+    }
+
+    internal sealed class UserMap : ClassMap<User>
+    {
+        public UserMap() {
+            Map(u => u.Id).Name("id");
+            Map(u => u.LastName).Name("last_name");
+            Map(u => u.FirstName).Name("first_name");
+            Map(u => u.Email).Name("email");
+            Map(u => u.Password)
+                .Convert(data => TokenHelper.GetPasswordHash(data.Row.GetField("password") ?? ""));
+            Map(u => u.BirthDate).Name("birth_date");
+            Map(u => u.Role)
+                .Convert(data => Enum.Parse<Role>(data.Row.GetField("role") ?? "", true));
+        }
+    }
+
+    internal sealed class FormMap : ClassMap<Form>
+    {
+        public FormMap() {
+            Map(u => u.Id).Name("id");
+            Map(u => u.Title).Name("title");
+            Map(u => u.Description).Name("description");
+            Map(u => u.Owner).Name("owner");
+            Map(u => u.IsPublic).Name("is_public");
+        }
+    }
+
+}
