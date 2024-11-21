@@ -12,4 +12,5 @@ public class FormContext(DbContextOptions<FormContext> options) : DbContext(opti
 
     public DbSet<User> Users => Set<User>();
     public DbSet<Form> Forms => Set<Form>();
+    public DbSet<Question> Questions => Set<Question>();
 }
