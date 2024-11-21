@@ -1,12 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 namespace prid_2425_f02.Models;
-public class FormContext : DbContext
+public class FormContext(DbContextOptions<FormContext> options) : DbContext(options)
 {
-    public FormContext(DbContextOptions<FormContext> options)
-        : base(options) {
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+        base.OnConfiguring(optionsBuilder);
+        optionsBuilder
+            //.LogTo(Console.WriteLine, LogLevel.Information)
+            .EnableSensitiveDataLogging();
     }
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
         
