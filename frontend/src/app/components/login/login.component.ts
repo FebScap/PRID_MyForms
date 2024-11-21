@@ -4,16 +4,20 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 
 import { AuthenticationService } from '../../services/authentication.service';
 
+enum Profiles {
+    admin = "admin@epfc.eu", guest = "guest@epfc.eu", ben = "ben@epfc.eu", boris = "boris@epfc.eu", bruno = "bruno@epfc.eu"
+}
+
 @Component({
     templateUrl: 'login.component.html',
     styleUrls: ['login.component.css']
 })
+
 export class LoginComponent implements OnInit {
     loginForm!: FormGroup;
     loading = false;    // utilisé en HTML pour désactiver le bouton pendant la requête de login
     submitted = false;  // retient si le formulaire a été soumis ; utilisé pour n'afficher les
     // erreurs que dans ce cas-là (voir template)
-
 
     returnUrl!: string;
     ctlEmail!: FormControl;
@@ -83,4 +87,32 @@ export class LoginComponent implements OnInit {
                 }
             });
     }
+    
+    loginAs(user:Profiles) {
+        switch (user) {
+            case Profiles.guest:
+                this.authenticationService.login(user, 'N/A')
+                    .subscribe({
+                        next: data => {
+                            this.router.navigate([this.returnUrl]);
+                        }
+                    });
+                break;
+            default :
+                this.authenticationService.login(user, 'Password1,')
+                    .subscribe({
+                        next: data => {
+                            this.router.navigate([this.returnUrl]);
+                        }
+                    });
+                break;
+        }
+        
+    }
+    
+    get isFormValid() {
+        return this.loginForm.valid;
+    }
+
+    protected readonly Profiles = Profiles;
 }

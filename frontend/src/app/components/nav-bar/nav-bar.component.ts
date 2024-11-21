@@ -19,9 +19,17 @@ export class NavBarComponent {
     get currentUser() {
         return this.authenticationService.currentUser;
     }
+    
+    get currentPath() {
+        return this.router.url;
+    }
 
     get isAdmin() {
         return this.currentUser && this.currentUser.role === Role.Admin;
+    }
+
+    get isGuest() {
+        return this.currentUser && this.currentUser.role === Role.Guest;
     }
 
     logout() {

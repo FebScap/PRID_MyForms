@@ -14,7 +14,7 @@ const appRoutes: Routes = [
         component: HomeComponent,
         pathMatch: 'full',
         canActivate: [AuthGuard],
-        data: {roles: [Role.User, Role.Admin]}
+        data: {roles: [Role.User, Role.Admin, Role.Guest]}
     },
     {
         path: 'login',
