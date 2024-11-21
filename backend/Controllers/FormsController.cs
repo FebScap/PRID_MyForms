@@ -16,6 +16,6 @@ public class FormsController(FormContext context, IMapper mapper) : ControllerBa
     [HttpGet]
     public async Task<ActionResult<IEnumerable<FormDTO>>> GetAll() {
         // Récupère une liste de tous les forms et utilise le mapper pour les transformer en leur DTO
-        return mapper.Map<List<FormDTO>>(await context.Users.ToListAsync());
+        return mapper.Map<List<FormDTO>>(await context.Forms.ToListAsync());
     }
 }

@@ -8,5 +8,5 @@ public class Form {
     public string Title { get; set; } = null!;
     public string? Description { get; set; }
     public int Owner { get; set; }
-    public bool IsPublic { get; set; }
+    public int IsPublic { get; set; }
 }
