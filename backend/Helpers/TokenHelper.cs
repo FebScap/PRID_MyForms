@@ -10,8 +10,8 @@ namespace prid_2425_f02.Helpers;
 
 public class TokenHelper
 {
-    private FormContext _context;
-    public TokenHelper(FormContext context) {
+    private Context _context;
+    public TokenHelper(Context context) {
         this._context = context;
     }
 

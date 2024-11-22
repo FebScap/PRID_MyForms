@@ -5,13 +5,14 @@ using System.Globalization;
 
 namespace prid_2425_f02.Models
 {
-    public class SeedData(FormContext context)
+    public class SeedData(Context context)
     {
         public void Seed() {
             context.Users.AddRange(ImportCsvData<User, UserMap>(@"Models\Data\users.csv"));
             context.Forms.AddRange(ImportCsvData<Form, FormMap>(@"Models\Data\forms.csv"));
             context.Questions.AddRange(ImportCsvData<Question, QuestionMap>(@"Models\Data\questions.csv"));
             context.Answers.AddRange(ImportCsvData<Answer, AnswerMap>(@"Models\Data\answers.csv"));
+            context.Accesses.AddRange(ImportCsvData<Access, AccessMap>(@"Models\Data\user_form_accesses.csv"));
             context.SaveChanges();
         }
 
@@ -49,36 +50,46 @@ namespace prid_2425_f02.Models
     internal sealed class FormMap : ClassMap<Form>
     {
         public FormMap() {
-            Map(u => u.Id).Name("id");
-            Map(u => u.Title).Name("title");
-            Map(u => u.Description).Name("description");
-            Map(u => u.Owner).Name("owner");
-            Map(u => u.IsPublic).Name("is_public");
+            Map(f => f.Id).Name("id");
+            Map(f => f.Title).Name("title");
+            Map(f => f.Description).Name("description");
+            Map(f => f.Owner).Name("owner");
+            Map(f => f.IsPublic).Name("is_public");
         }
     }
     
     internal sealed class QuestionMap : ClassMap<Question>
     {
         public QuestionMap() {
-            Map(u => u.Id).Name("id");
-            Map(u => u.Form).Name("form");
-            Map(u => u.IdX).Name("idx");
-            Map(u => u.Title).Name("title");
-            Map(u => u.Description).Name("description");
-            Map(u => u.Type)
+            Map(q => q.Id).Name("id");
+            Map(q => q.Form).Name("form");
+            Map(q => q.IdX).Name("idx");
+            Map(q => q.Title).Name("title");
+            Map(q => q.Description).Name("description");
+            Map(q => q.Type)
                 .Convert(data => Enum.Parse<Type>(data.Row.GetField("type") ?? "", true));
-            Map(u => u.Required).Name("required");
-            Map(u => u.OptionList).Name("option_list");
+            Map(q => q.Required).Name("required");
+            Map(q => q.OptionList).Name("option_list");
         }
     }
     
     internal sealed class AnswerMap : ClassMap<Answer>
     {
         public AnswerMap() {
-            Map(u => u.Instance).Name("instance");
-            Map(u => u.Question).Name("question");
-            Map(u => u.Idx).Name("idx");
-            Map(u => u.Value).Name("value");
+            Map(a => a.Instance).Name("instance");
+            Map(a => a.Question).Name("question");
+            Map(a => a.Idx).Name("idx");
+            Map(a => a.Value).Name("value");
+        }
+    }
+
+    internal sealed class AccessMap : ClassMap<Access>
+    {
+        public AccessMap() {
+            Map(a => a.User).Name("user");
+            Map(a => a.Form).Name("form");
+            Map(a => a.AccessType)
+                .Convert(data => Enum.Parse<AccessType>(data.Row.GetField("access_type") ?? "", true));
         }
     }
 

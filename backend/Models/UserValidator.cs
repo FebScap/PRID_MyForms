@@ -6,9 +6,9 @@ namespace prid_2425_f02.Models;
 
 public class UserValidator : AbstractValidator<User>
 {
-    private readonly FormContext _context;
+    private readonly Context _context;
 
-    public UserValidator(FormContext context) {
+    public UserValidator(Context context) {
         _context = context;
 
         RuleFor(u => u.Email)

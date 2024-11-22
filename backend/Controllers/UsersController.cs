@@ -16,7 +16,7 @@ namespace prid_2425_f02.Controllers;
 [Authorize]
 [Route("api/[controller]")]
 [ApiController]
-public class UsersController(FormContext context, IMapper mapper) : ControllerBase
+public class UsersController(Context context, IMapper mapper) : ControllerBase
 {
     [Authorized(Role.Admin)]
     [HttpGet]
