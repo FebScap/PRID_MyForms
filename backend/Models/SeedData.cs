@@ -89,8 +89,8 @@ namespace prid_2425_f02.Models
     internal sealed class AccessMap : ClassMap<Access>
     {
         public AccessMap() {
-            Map(a => a.User).Name("user");
-            Map(a => a.Form).Name("form");
+            Map(a => a.UserId).Name("user");
+            Map(a => a.FormId).Name("form");
             Map(a => a.AccessType)
                 .Convert(data => Enum.Parse<AccessType>(data.Row.GetField("access_type") ?? "", true));
         }

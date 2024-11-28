@@ -9,7 +9,6 @@ public enum Role
 }
 
 public class User {
-    [Key]
     public int Id { get; set; }
     public string Email { get; set; } = null!;
     public string Password { get; set; } = null!;
@@ -17,13 +16,14 @@ public class User {
     public string? LastName { get; set; }
     public Role Role { get; set; } = Role.User;
     public DateTimeOffset? BirthDate { get; set; }
-    public virtual ICollection<Form> Forms { get; set; } = new HashSet<Form>();
+    
+    public ICollection<Access> Accesses { get; set; } = new HashSet<Access>();
     
     [NotMapped]
     public string? Token { get; set; }
     
     public string? RefreshToken { get; set; }
-
+    
     public int? Age {
         get {
             if (!BirthDate.HasValue)
