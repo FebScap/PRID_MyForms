@@ -17,6 +17,7 @@ public class User {
     public string? LastName { get; set; }
     public Role Role { get; set; } = Role.User;
     public DateTimeOffset? BirthDate { get; set; }
+    public virtual ICollection<Form> Forms { get; set; } = new HashSet<Form>();
     
     [NotMapped]
     public string? Token { get; set; }

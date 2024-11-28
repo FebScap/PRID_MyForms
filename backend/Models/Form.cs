@@ -9,4 +9,5 @@ public class Form {
     public string? Description { get; set; }
     public int Owner { get; set; }
     public bool IsPublic { get; set; }
+    public virtual ICollection<User> Users { get; set;} = new HashSet<User>();
 }
