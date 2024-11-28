@@ -18,6 +18,9 @@ public class User {
     public DateTimeOffset? BirthDate { get; set; }
     
     public ICollection<Access> Accesses { get; set; } = new HashSet<Access>();
+    public ICollection<Form> Forms { get; set; } = new HashSet<Form>();
+    public ICollection<Instance> Instances { get; set; } = new HashSet<Instance>();
+    public ICollection<OptionList> OptionLists { get; set; } = new HashSet<OptionList>();
     
     [NotMapped]
     public string? Token { get; set; }

@@ -17,10 +17,10 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
             .HasKey(a => new { a.FormId, a.UserId });
         
         modelBuilder.Entity<Answer>()
-            .HasKey(a => new { a.Instance, a.Question, a.Idx });
+            .HasKey(a => new { a.InstanceId, a.QuestionId, a.Idx });
         
         modelBuilder.Entity<OptionValue>()
-            .HasKey(o => new { o.OptionList, o.Idx });
+            .HasKey(o => new { o.OptionListId, o.Idx });
     }
 
     public DbSet<User> Users => Set<User>();

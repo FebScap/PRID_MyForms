@@ -56,7 +56,7 @@ namespace prid_2425_f02.Models
             Map(f => f.Id).Name("id");
             Map(f => f.Title).Name("title");
             Map(f => f.Description).Name("description");
-            Map(f => f.Owner).Name("owner");
+            Map(f => f.OwnerId).Name("owner");
             Map(f => f.IsPublic).Name("is_public");
         }
     }
@@ -65,7 +65,7 @@ namespace prid_2425_f02.Models
     {
         public QuestionMap() {
             Map(q => q.Id).Name("id");
-            Map(q => q.Form).Name("form");
+            Map(q => q.FormId).Name("form");
             Map(q => q.IdX).Name("idx");
             Map(q => q.Title).Name("title");
             Map(q => q.Description).Name("description");
@@ -79,8 +79,8 @@ namespace prid_2425_f02.Models
     internal sealed class AnswerMap : ClassMap<Answer>
     {
         public AnswerMap() {
-            Map(a => a.Instance).Name("instance");
-            Map(a => a.Question).Name("question");
+            Map(a => a.InstanceId).Name("instance");
+            Map(a => a.QuestionId).Name("question");
             Map(a => a.Idx).Name("idx");
             Map(a => a.Value).Name("value");
         }
@@ -100,8 +100,8 @@ namespace prid_2425_f02.Models
     {
         public InstanceMap() {
             Map(i => i.Id).Name("id");
-            Map(i => i.Form).Name("form");
-            Map(i => i.User).Name("user");
+            Map(i => i.FormId).Name("form");
+            Map(i => i.UserId).Name("user");
             Map(i => i.Started).Name("started");
             Map(i => i.Completed).Name("completed");
         }
@@ -112,14 +112,14 @@ namespace prid_2425_f02.Models
         public OptionListMap() {
             Map(o => o.Id).Name("id");
             Map(o => o.Name).Name("name");
-            Map(o => o.Owner).Name("owner");
+            Map(o => o.OwnerId).Name("owner");
         }
     }
     
     internal sealed class OptionValueMap : ClassMap<OptionValue>
     {
         public OptionValueMap() {
-            Map(o => o.OptionList).Name("option_list");
+            Map(o => o.OptionListId).Name("option_list");
             Map(o => o.Idx).Name("idx");
             Map(o => o.Label).Name("label");
         }
