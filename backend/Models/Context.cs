@@ -25,4 +25,5 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
     public DbSet<Question> Questions => Set<Question>();
     public DbSet<Answer> Answers => Set<Answer>();
     public DbSet<Access> Accesses => Set<Access>();
+    public DbSet<Instance> Instances => Set<Instance>();
 }

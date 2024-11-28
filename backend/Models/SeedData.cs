@@ -13,6 +13,7 @@ namespace prid_2425_f02.Models
             context.Questions.AddRange(ImportCsvData<Question, QuestionMap>(@"Models\Data\questions.csv"));
             context.Answers.AddRange(ImportCsvData<Answer, AnswerMap>(@"Models\Data\answers.csv"));
             context.Accesses.AddRange(ImportCsvData<Access, AccessMap>(@"Models\Data\user_form_accesses.csv"));
+            context.Instances.AddRange(ImportCsvData<Instance, InstanceMap>(@"Models\Data\instances.csv"));
             context.SaveChanges();
         }
 
@@ -90,6 +91,17 @@ namespace prid_2425_f02.Models
             Map(a => a.Form).Name("form");
             Map(a => a.AccessType)
                 .Convert(data => Enum.Parse<AccessType>(data.Row.GetField("access_type") ?? "", true));
+        }
+    }
+
+    internal sealed class InstanceMap : ClassMap<Instance>
+    {
+        public InstanceMap() {
+            Map(i => i.Id).Name("id");
+            Map(i => i.Form).Name("form");
+            Map(i => i.User).Name("user");
+            Map(i => i.Started).Name("started");
+            Map(i => i.Completed).Name("completed");
         }
     }
 
