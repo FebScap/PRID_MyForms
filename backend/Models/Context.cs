@@ -18,6 +18,9 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
         
         modelBuilder.Entity<Access>()
             .HasKey(a => new { a.User, a.Form });
+        
+        modelBuilder.Entity<OptionValue>()
+            .HasKey(o => new { o.OptionList, o.Idx });
     }
 
     public DbSet<User> Users => Set<User>();
@@ -26,4 +29,6 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
     public DbSet<Answer> Answers => Set<Answer>();
     public DbSet<Access> Accesses => Set<Access>();
     public DbSet<Instance> Instances => Set<Instance>();
+    public DbSet<OptionList> OptionsLists => Set<OptionList>();
+    public DbSet<OptionValue> OptionValues => Set<OptionValue>();
 }

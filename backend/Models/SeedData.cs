@@ -14,6 +14,8 @@ namespace prid_2425_f02.Models
             context.Answers.AddRange(ImportCsvData<Answer, AnswerMap>(@"Models\Data\answers.csv"));
             context.Accesses.AddRange(ImportCsvData<Access, AccessMap>(@"Models\Data\user_form_accesses.csv"));
             context.Instances.AddRange(ImportCsvData<Instance, InstanceMap>(@"Models\Data\instances.csv"));
+            context.OptionValues.AddRange(ImportCsvData<OptionValue, OptionValueMap>(@"Models\Data\option_values.csv"));
+            context.OptionsLists.AddRange(ImportCsvData<OptionList, OptionListMap>(@"Models\Data\option_lists.csv"));
             context.SaveChanges();
         }
 
@@ -102,6 +104,24 @@ namespace prid_2425_f02.Models
             Map(i => i.User).Name("user");
             Map(i => i.Started).Name("started");
             Map(i => i.Completed).Name("completed");
+        }
+    }
+
+    internal sealed class OptionListMap : ClassMap<OptionList>
+    {
+        public OptionListMap() {
+            Map(o => o.Id).Name("id");
+            Map(o => o.Name).Name("name");
+            Map(o => o.Owner).Name("owner");
+        }
+    }
+    
+    internal sealed class OptionValueMap : ClassMap<OptionValue>
+    {
+        public OptionValueMap() {
+            Map(o => o.OptionList).Name("option_list");
+            Map(o => o.Idx).Name("idx");
+            Map(o => o.Label).Name("label");
         }
     }
 
