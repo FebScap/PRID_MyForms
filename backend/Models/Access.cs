@@ -10,10 +10,13 @@ public enum AccessType
 public class Access
 {
     [ForeignKey(nameof(User))]
-    public int User { get; set; }
+    public int UserId { get; set; }
+    public User User { get; set; }
 
+    
     [ForeignKey(nameof(Form))]
-    public int Form { get; set; }
+    public int FormId { get; set; }
+    public Form Form { get; set; }
 
     public AccessType AccessType { get; set; }
     
