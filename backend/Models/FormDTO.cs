@@ -6,6 +6,7 @@ public class FormDTO
     public string Title { get; set; } = null!;
     public string? Description { get; set; }
     public int OwnerId { get; set; }
-    public User Owner { get; set; }
+    public UserDTO Owner { get; set; }
     public bool IsPublic { get; set; }
+    public ICollection<InstanceDTO> Instances { get; set; } = new HashSet<InstanceDTO>();
 }

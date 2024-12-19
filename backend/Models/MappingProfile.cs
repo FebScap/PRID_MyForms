@@ -20,6 +20,9 @@ public class MappingProfile : Profile
         
         CreateMap<Answer, AnswerDTO>();
         CreateMap<AnswerDTO, Answer>();
+        
+        CreateMap<Instance, InstanceDTO>();
+        CreateMap<InstanceDTO, Instance>();
     }
     
     
