@@ -1,6 +1,9 @@
 ﻿import {Component} from '@angular/core';
+import {FormService} from "../../services/form.service";
+import {Form} from "../../models/form";
+import {User} from "oidc-client";
 import {UserService} from "../../services/user.service";
-import {User} from "../../models/user";
+
 
 @Component({
     selector: 'templateProject',
@@ -8,9 +11,10 @@ import {User} from "../../models/user";
     styleUrl: './home.component.css'
 })
 export class HomeComponent {
-    users?: User[];
+    forms?: Form[];
+    userNames?: string[];
 
-    constructor(private userService: UserService) {
-        this.userService.getAll().subscribe((res) => this.users = res)
+    constructor(private formService: FormService) {
+        this.formService.getAll().subscribe((res) => this.forms = res)
     }
 }

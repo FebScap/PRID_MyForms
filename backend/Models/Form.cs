@@ -1,3 +1,4 @@
+using prid_2425_f02.Controllers;
 using System.ComponentModel.DataAnnotations;
 
 namespace prid_2425_f02.Models;
