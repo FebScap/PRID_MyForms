@@ -4,7 +4,7 @@ namespace prid_2425_f02.Models;
 
 public enum AccessType
 {
-    User, Editor
+    User = 0, Editor = 1
 }
 
 public class Access

@@ -1,0 +1,40 @@
+﻿<app-nav-bar title="MyForm" class="toolbar-actions">
+
+</app-nav-bar>
+<div class="body">
+    <div id="list_forms">
+        @for (form of forms; track form.id) {
+            <mat-card class="example-card" appearance="outlined">
+                <mat-card-header class="d-flex justify-content-between mb-1">
+                    <mat-card-title class="fw-bold">{{ form.title }}</mat-card-title>
+                    @if (form.isPublic) {
+                        <mat-icon>public</mat-icon>
+                    } @else {
+                        <mat-icon>public_off</mat-icon>
+                    }
+                </mat-card-header>
+                <mat-card-content class="text-center">
+                    <p>{{ form.description }}</p>
+                    <p>by <b>{{ form.owner.firstName }} {{ form.owner.lastName }}</b></p>
+                    <div>
+                        @if (form.instances.length != 0) {
+                            started:
+                            <b>{{ form.instances[form.instances.length - 1].started.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</b>
+                            <br>
+                            @if (form.instances[form.instances.length - 1].completed) {
+                                completed:
+                                <b>{{ form.instances[form.instances.length - 1].completed.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</b>
+                            } @else {
+                                in progress
+                            }
+                        }
+                    </div>
+                </mat-card-content>
+                <mat-card-footer class="d-flex justify-content-center">
+                    <a mat-button href="#">Open</a>
+                    <a mat-button href="#">Manage</a>
+                </mat-card-footer>
+            </mat-card>
+        }
+    </div>
+</div>

@@ -20,6 +20,19 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
             await context.Forms
                 .Include(f => f.Owner)
                 .Include(f => f.Instances)
+                .Include(f => f.Accesses)
+                .ToListAsync()
+            );
+    }
+    
+    [HttpGet("{userId:int}")]
+    public async Task<ActionResult<IEnumerable<FormDTO>>> GetAllByUser(int userId) {
+        return mapper.Map<List<FormDTO>>(
+            await context.Forms
+                .Where(f => f.Accesses.Any(ac => ac.UserId == userId) || f.OwnerId == userId)
+                .Include(f => f.Owner)
+                .Include(f => f.Instances)
+                .Include(f => f.Accesses)
                 .ToListAsync()
             );
     }

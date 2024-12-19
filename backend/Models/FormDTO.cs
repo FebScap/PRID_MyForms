@@ -9,4 +9,5 @@ public class FormDTO
     public UserDTO Owner { get; set; }
     public bool IsPublic { get; set; }
     public ICollection<InstanceDTO> Instances { get; set; } = new HashSet<InstanceDTO>();
+    public ICollection<AccessDTO> Accesses { get; set;} = new HashSet<AccessDTO>();
 }

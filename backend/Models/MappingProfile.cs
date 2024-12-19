@@ -11,7 +11,7 @@ public class MappingProfile : Profile
         
         CreateMap<User, UserDTO>();
         CreateMap<UserDTO, User>();
-
+        
         CreateMap<Form, FormDTO>();
         CreateMap<FormDTO, Form>();
         
@@ -23,6 +23,9 @@ public class MappingProfile : Profile
         
         CreateMap<Instance, InstanceDTO>();
         CreateMap<InstanceDTO, Instance>();
+        
+        CreateMap<Access, AccessDTO>();
+        CreateMap<AccessDTO, Access>();
     }
     
     

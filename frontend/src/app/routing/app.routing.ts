@@ -5,13 +5,13 @@ import {UnknownComponent} from "../components/unknown/unknown.component";
 import {LoginComponent} from "../components/login/login.component";
 import {Role} from "../models/user";
 import {AuthGuard} from "../services/auth.guard";
-import {HomeComponent} from "../components/home/home.component";
+import {ViewFormsComponent} from "../components/view-forms/view-forms.component";
 
 const appRoutes: Routes = [
 
     {
         path: '',
-        component: HomeComponent,
+        component: ViewFormsComponent,
         pathMatch: 'full',
         canActivate: [AuthGuard],
         data: {roles: [Role.User, Role.Admin, Role.Guest]}
