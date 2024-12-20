@@ -93,7 +93,12 @@ public class UsersController(Context context, IMapper mapper) : ControllerBase
     [AllowAnonymous]
     [HttpPost("authenticate")]
     public async Task<ActionResult<UserDTO>> Authenticate(UserDTO dto) {
-        var user = await Authenticate(dto.Email, dto.Password);
+        User? user;
+        if (dto.Role == Role.Guest) {
+            user = await Authenticate(dto.Email);
+        } else {
+            user = await Authenticate(dto.Email, dto.Password);
+        }
 
         var result = await new UserValidator(context).ValidateForAuthenticate(user);
         if (!result.IsValid)
@@ -101,7 +106,7 @@ public class UsersController(Context context, IMapper mapper) : ControllerBase
 
         return Ok(mapper.Map<UserDTO>(user));
     }
-    
+
     private async Task<User?> Authenticate(string email, string password) {
         var user = await context.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
 
@@ -121,7 +126,8 @@ public class UsersController(Context context, IMapper mapper) : ControllerBase
                 }),
                 IssuedAt = DateTime.UtcNow,
                 Expires = DateTime.UtcNow.AddMinutes(10),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             user.Token = tokenHandler.WriteToken(token);
@@ -129,5 +135,30 @@ public class UsersController(Context context, IMapper mapper) : ControllerBase
 
         return user;
     }
-    
+
+    private async Task<User?> Authenticate(string email) {
+        var user = await context.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
+
+        // return null if member not found
+        if (user == null)
+            return null;
+
+        // authentication successful so generate jwt token
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes("my-super-secret-key my-super-secret-key");
+        var tokenDescriptor = new SecurityTokenDescriptor {
+            Subject = new ClaimsIdentity(new Claim[] {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
+            }),
+            IssuedAt = DateTime.UtcNow,
+            Expires = DateTime.UtcNow.AddMinutes(10),
+            SigningCredentials =
+                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        user.Token = tokenHandler.WriteToken(token);
+
+        return user;
+    }
 }
