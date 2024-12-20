@@ -95,7 +95,7 @@ public class UsersController(Context context, IMapper mapper) : ControllerBase
     public async Task<ActionResult<UserDTO>> Authenticate(UserDTO dto) {
         User? user;
         if (dto.Role == Role.Guest) {
-            user = await Authenticate(dto.Email);
+            user = await Authenticate(dto.Email, dto.Password, true);
         } else {
             user = await Authenticate(dto.Email, dto.Password);
         }
@@ -107,7 +107,7 @@ public class UsersController(Context context, IMapper mapper) : ControllerBase
         return Ok(mapper.Map<UserDTO>(user));
     }
 
-    private async Task<User?> Authenticate(string email, string password) {
+    private async Task<User?> Authenticate(string email, string password, bool isGuest = false) {
         var user = await context.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
 
         // return null if member not found
@@ -115,7 +115,7 @@ public class UsersController(Context context, IMapper mapper) : ControllerBase
             return null;
 
         var hash = TokenHelper.GetPasswordHash(password);
-        if (user.Password == hash) {
+        if (user.Password == hash || isGuest) {
             // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes("my-super-secret-key my-super-secret-key");
@@ -132,32 +132,6 @@ public class UsersController(Context context, IMapper mapper) : ControllerBase
             var token = tokenHandler.CreateToken(tokenDescriptor);
             user.Token = tokenHandler.WriteToken(token);
         }
-
-        return user;
-    }
-
-    private async Task<User?> Authenticate(string email) {
-        var user = await context.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
-
-        // return null if member not found
-        if (user == null)
-            return null;
-
-        // authentication successful so generate jwt token
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes("my-super-secret-key my-super-secret-key");
-        var tokenDescriptor = new SecurityTokenDescriptor {
-            Subject = new ClaimsIdentity(new Claim[] {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
-            }),
-            IssuedAt = DateTime.UtcNow,
-            Expires = DateTime.UtcNow.AddMinutes(10),
-            SigningCredentials =
-                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        };
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        user.Token = tokenHandler.WriteToken(token);
 
         return user;
     }
