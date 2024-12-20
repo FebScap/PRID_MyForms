@@ -29,6 +29,6 @@
     </button>
     <button mat-menu-item [routerLink]='[]' (click)='logout()'>
         <mat-icon>logout</mat-icon>
-        <span>Logout</span>
+        <span>Logout ({{ currentUser?.firstName + " " + currentUser?.lastName }})</span>
     </button>
 </mat-menu>
