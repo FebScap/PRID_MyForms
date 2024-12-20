@@ -18,6 +18,12 @@ export class FormService {
         );
     }
     
+    getAllPublic(): Observable<Form[]> {
+        return this.http.get<any[]>(`${this.baseUrl}api/forms/public`).pipe(
+            map(res => plainToInstance(Form, res))
+        );
+    }
+    
     getAllForCurrentUser(): Observable<Form[]> {
         return this.http.get<any[]>(`${this.baseUrl}api/forms/${this.authenticationService.currentUser?.id}`).pipe(
             map(res => plainToInstance(Form, res))

@@ -36,4 +36,14 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
                 .ToListAsync()
             );
     }
+    
+    [HttpGet("public")]
+    public async Task<ActionResult<IEnumerable<FormDTO>>> GetAllPublic() {
+        return mapper.Map<List<FormDTO>>(
+            await context.Forms
+                .Where(f => f.IsPublic == true)
+                .Include(f => f.Owner)
+                .ToListAsync()
+            );
+    }
 }
