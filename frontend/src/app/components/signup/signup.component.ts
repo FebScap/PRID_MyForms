@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, FormControl, ValidationErrors, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, AsyncValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
@@ -38,8 +38,19 @@ export class SignupComponent {
         }, { validator: this.passwordMatchValidator });
     }
 
-    emailUsed() {
-        //à implémenter
+    emailUsed(): AsyncValidatorFn {
+        let timeout: NodeJS.Timeout;
+        return (ctl: AbstractControl) => {
+            clearTimeout(timeout);
+            const email = ctl.value;
+            return new Promise(resolve => {
+                timeout = setTimeout(() => {
+                    this.authenticationService.isEmailAvailable(email).subscribe(res => {
+                        resolve(res ? null : { emailUsed: true });
+                    });        
+                }, 300);
+            });
+        };
     }
 
     passwordMatchValidator(group: FormGroup): ValidationErrors | null {

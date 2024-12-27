@@ -39,5 +39,14 @@ export class AuthenticationService {
         sessionStorage.removeItem('currentUser');
         this.currentUser = undefined;
     }
-    
+
+    public isEmailAvailable(email: string): Observable<boolean> {
+        return this.http.get<boolean>(`${this.baseUrl}api/users/available/${email}`);
+    }
+
+    public signup(email: string, password: string): Observable<User> {
+        return this.http.post<User>(`${this.baseUrl}api/users/signup`, { email: email, password: password }).pipe(
+            mergeMap(res => this.login(email, password)),
+        );
+    }
 }
