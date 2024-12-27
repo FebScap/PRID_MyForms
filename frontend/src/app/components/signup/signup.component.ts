@@ -1,93 +1,57 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-
-import { AuthenticationService } from '../../services/authentication.service';
+import { FormBuilder, FormGroup, Validators, FormControl, ValidationErrors, AbstractControl } from '@angular/forms';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
-    templateUrl: 'signup.component.html',
-    styleUrls: ['signup.component.css']
+    templateUrl: './signup.component.html',
+    styleUrls: ['./signup.component.css']
 })
 
-export class SignupComponent implements OnInit {
-    signupForm!: FormGroup;
-    loading = false;
-    submitted = false;
-
-    // Form controls
-    ctlFirstName!: FormControl;
-    ctlLastName!: FormControl;
-    ctlDateOfBirth!: FormControl;
-    ctlEmail!: FormControl;
-    ctlPassword!: FormControl;
-    ctlConfirmPassword!: FormControl;
-
+export class SignupComponent {
+    public frm!: FormGroup;
+    public ctlFirstName!: FormControl;
+    public ctlLastName!: FormControl;
+    public ctlDateOfBirth!: FormControl;
+    public ctlEmail!: FormControl;
+    public ctlPassword!: FormControl;
+    public ctlConfirmPassword!: FormControl;
+    
     constructor(
         private formBuilder: FormBuilder,
         private router: Router,
         private authenticationService: AuthenticationService
     ) {
-        // Rediriger vers la page d'accueil si déjà connecté
-        if (this.authenticationService.currentUser) {
-            this.router.navigate(['/']);
-        }
-    }
-
-    ngOnInit() {
-        // Initialize form controls
-        this.ctlFirstName = this.formBuilder.control('', Validators.required);
-        this.ctlLastName = this.formBuilder.control('', Validators.required);
+        this.ctlEmail = this.formBuilder.control('', [Validators.required, Validators.email], [this.emailUsed()]);
+        this.ctlFirstName = this.formBuilder.control('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]);
+        this.ctlLastName = this.formBuilder.control('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]);
         this.ctlDateOfBirth = this.formBuilder.control('', Validators.required);
-        this.ctlEmail = this.formBuilder.control('', [Validators.required, Validators.email]);
-        this.ctlPassword = this.formBuilder.control('', [Validators.required, Validators.minLength(6)]);
-        this.ctlConfirmPassword = this.formBuilder.control('', Validators.required);
-
-        // Create form group
-        this.signupForm = this.formBuilder.group({
+        this.ctlPassword = this.formBuilder.control('', [Validators.required, Validators.minLength(3), Validators.maxLength(10)]);
+        this.ctlConfirmPassword = this.formBuilder.control('', [Validators.required, Validators.minLength(3), Validators.maxLength(10)]);
+        this.frm = this.formBuilder.group({
             firstName: this.ctlFirstName,
             lastName: this.ctlLastName,
             dateOfBirth: this.ctlDateOfBirth,
             email: this.ctlEmail,
             password: this.ctlPassword,
             confirmPassword: this.ctlConfirmPassword
-        }, { validators: this.passwordMatchValidator });
+        }, { validator: this.passwordMatchValidator });
     }
 
-    passwordMatchValidator(group: FormGroup) {
-        const password = group.get('password')?.value;
-        const confirmPassword = group.get('confirmPassword')?.value;
-        return password === confirmPassword ? null : { mismatch: true };
+    emailUsed() {
+        //Ã  implÃ©menter
     }
 
-    // Simplify form field access
-    get f() { return this.signupForm.controls; }
+    passwordMatchValidator(group: FormGroup): ValidationErrors | null {
+        if (!group.value) {return null;}
+        return group.value.password === group.value.confirmPassword ? null : { passwordNotConfirmed: true };
+    }
 
-    // On form submit
-    onSubmit() {
-        this.submitted = true;
-
-        // Stop if form is invalid
-        if (this.signupForm.invalid) return;
-
-        this.loading = true;
-        // Perform signup
-        this.authenticationService.signup({
-            firstName: this.f.firstName.value,
-            lastName: this.f.lastName.value,
-            dateOfBirth: this.f.dateOfBirth.value,
-            email: this.f.email.value,
-            password: this.f.password.value
-        }).subscribe({
-            next: () => {
-                // Navigate to the login page after signup
-                this.router.navigate(['/login']);
-            },
-            error: error => {
-                const errors = error.error.errors;
-                for (let err of errors) {
-                    this.signupForm.get(err.propertyName.toLowerCase())?.setErrors({ custom: err.errorMessage });
-                }
-                this.loading = false;
+    signup() {
+        this.authenticationService.signup(this.ctlEmail, this.ctlPassword).subscribe(() => {
+            if (this.authenticationService.currentUser) {
+                // Connect the user
+                this.router.navigate(['/']);
             }
         });
     }
