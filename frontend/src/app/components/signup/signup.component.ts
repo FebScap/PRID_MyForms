@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angula
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, AsyncValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import {Node} from "@angular/compiler";
 
 @Component({
     templateUrl: './signup.component.html',
