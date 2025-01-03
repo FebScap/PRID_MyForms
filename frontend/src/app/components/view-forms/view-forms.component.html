@@ -14,7 +14,13 @@
                     }
                 </mat-card-header>
                 <mat-card-content class="text-center">
-                    <p>{{ form.description }}</p>
+                    <p class="fst-italic">
+                        @if (form.description) {
+                            {{ form.description }}
+                        } @else {
+                            No description
+                        }
+                    </p>
                     <p>by <b>{{ form.owner.firstName }} {{ form.owner.lastName }}</b></p>
                     <div>
                         @if (form.instances.length != 0) {
