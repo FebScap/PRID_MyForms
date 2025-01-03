@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angula
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, AsyncValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import {Node} from "@angular/compiler";
 
 @Component({
     templateUrl: './signup.component.html',
@@ -16,6 +17,7 @@ export class SignupComponent {
     public ctlEmail!: FormControl;
     public ctlPassword!: FormControl;
     public ctlConfirmPassword!: FormControl;
+    loading = false;    // utilisé en HTML pour désactiver le bouton pendant la requête de login
     
     constructor(
         private formBuilder: FormBuilder,
@@ -59,7 +61,7 @@ export class SignupComponent {
     }
 
     signup() {
-        this.authenticationService.signup(this.ctlEmail, this.ctlPassword).subscribe(() => {
+        this.authenticationService.signup(this.ctlEmail.value, this.ctlPassword.value).subscribe(() => {
             if (this.authenticationService.currentUser) {
                 // Connect the user
                 this.router.navigate(['/']);

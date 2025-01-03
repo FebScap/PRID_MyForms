@@ -17,6 +17,7 @@ import {UnknownComponent} from "../components/unknown/unknown.component";
 import {TemplateComponent} from "../components/template/template.component";
 import { LoginComponent } from '../components/login/login.component';
 import {ViewFormsComponent} from "../components/view-forms/view-forms.component";
+import {SignupComponent} from "../components/signup/signup.component";
 
 @NgModule({
     declarations: [
@@ -27,6 +28,7 @@ import {ViewFormsComponent} from "../components/view-forms/view-forms.component"
         SetFocusDirective,
         NavBarComponent,
         LoginComponent,
+        SignupComponent,
     ],
     imports: [
         BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),

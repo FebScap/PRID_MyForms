@@ -2,7 +2,7 @@
 
 <div class="signup position-relative h-100">
     <mat-card appearance="raised" class="p-4 position-absolute top-50 start-50 translate-middle">
-        <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="d-flex flex-column">
+        <form [formGroup]="frm" (ngSubmit)="signup()" class="d-flex flex-column">
             <span class="text-center fs-4">Sign Up</span>
             <hr>
             <div class="p-2 d-flex flex-column pb-0">
@@ -52,7 +52,7 @@
                     <mat-error *ngIf="ctlConfirmPassword.hasError('mismatch')">Passwords do not match</mat-error>
                 </mat-form-field>
 
-                <button [disabled]="loading || !signupForm.valid" mat-stroked-button class="w-100">Sign Up</button>
+                <button [disabled]="loading || !frm.valid" mat-stroked-button class="w-100">Sign Up</button>
             </div>
         </form>
     </mat-card>
