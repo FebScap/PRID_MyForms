@@ -5,6 +5,7 @@ import {Role} from "../models/user";
 import {AuthGuard} from "../services/auth.guard";
 import {ViewFormsComponent} from "../components/view-forms/view-forms.component";
 import {SignupComponent} from "../components/signup/signup.component";
+import {ViewFormComponent} from "../components/view-form/view-form.component";
 
 const appRoutes: Routes = [
 
@@ -12,22 +13,16 @@ const appRoutes: Routes = [
         path: '',
         component: ViewFormsComponent,
         pathMatch: 'full',
-        canActivate: [AuthGuard],
-        data: {roles: [Role.User, Role.Admin, Role.Guest]}
+        canActivate: [AuthGuard]
     },
     {
-        path: 'login',
-        component: LoginComponent
+        path: 'view_form/:id',
+        component: ViewFormComponent,
+        canActivate: [AuthGuard]
     },
-    {
-        path: 'signup',  // Ajout de la route pour le composant Signup
-        component: SignupComponent
-    },
-    {
-        path: '**',
-        component: UnknownComponent
-    },
-    {path: '**', component: UnknownComponent}
+    {   path: 'login', component: LoginComponent },
+    {   path: 'signup', component: SignupComponent},
+    {   path: '**', component: UnknownComponent }
 
 ];
 

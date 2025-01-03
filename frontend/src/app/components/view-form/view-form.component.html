@@ -1,0 +1,35 @@
+﻿<app-nav-bar title="{{ form?.title }}" class="toolbar-actions"></app-nav-bar>
+
+<div class="body mx-1">
+    <table class="w-100 mb-2">
+        <tr class="">
+            <th class="fw-light w-25">Title:</th>
+            <th class="h5">{{ form?.title }}</th>
+        </tr>
+        <tr>
+            <th class="fw-light">Description:</th>
+            <th class="h5">{{ form?.description }}</th>
+        </tr>
+        <tr>
+            <th class="fw-light">Owner:</th>
+            <th class="h5">{{ form?.owner?.firstName }} {{ form?.owner?.lastName }}</th>
+        </tr>
+        <tr>
+            <th class="fw-light">Public:</th>
+            <th class="h5"><mat-slide-toggle [(ngModel)]="isPublic"/></th>
+        </tr>
+    </table>
+    
+    <h2>Questions</h2>
+    <mat-card class="example-card" appearance="outlined">
+        <mat-card-header class="d-flex justify-content-between mb-1">
+            title
+        </mat-card-header>
+        <mat-card-content class="text-center">
+            <p>description</p>
+        </mat-card-content>
+        <mat-card-footer class="d-flex justify-content-center">
+           
+        </mat-card-footer>
+    </mat-card>
+</div>
