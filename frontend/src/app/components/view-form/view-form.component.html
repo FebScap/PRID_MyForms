@@ -1,35 +1,52 @@
 ﻿<app-nav-bar title="{{ form?.title }}" class="toolbar-actions"></app-nav-bar>
 
 <div class="body mx-1">
-    <table class="w-100 mb-2">
-        <tr class="">
-            <th class="fw-light w-25">Title:</th>
-            <th class="h5">{{ form?.title }}</th>
-        </tr>
-        <tr>
-            <th class="fw-light">Description:</th>
-            <th class="h5">{{ form?.description }}</th>
-        </tr>
-        <tr>
-            <th class="fw-light">Owner:</th>
-            <th class="h5">{{ form?.owner?.firstName }} {{ form?.owner?.lastName }}</th>
-        </tr>
-        <tr>
-            <th class="fw-light">Public:</th>
-            <th class="h5"><mat-slide-toggle [(ngModel)]="isPublic"/></th>
-        </tr>
-    </table>
-    
+    <div class="row">
+        <div class="col-3">Title:</div>
+        <div class="col-9 fw-bold">{{ form?.title }}</div>
+        <div class="col-3">Description:</div>
+        <div class="col-9 fw-bold">{{ form?.description }}</div>
+        <div class="col-3">Owner:</div>
+        <div class="col-9 fw-bold">{{ form?.owner?.firstName }} {{ form?.owner?.lastName }}</div>
+        <div class="col-3">Public:</div>
+        <div class="col-9 fw-bold">
+            <mat-slide-toggle [(ngModel)]="isPublic"/>
+        </div>
+    </div>
+
     <h2>Questions</h2>
-    <mat-card class="example-card" appearance="outlined">
-        <mat-card-header class="d-flex justify-content-between mb-1">
-            title
-        </mat-card-header>
-        <mat-card-content class="text-center">
-            <p>description</p>
-        </mat-card-content>
-        <mat-card-footer class="d-flex justify-content-center">
-           
-        </mat-card-footer>
-    </mat-card>
+
+    @for (question of form?.questions; track form?.questions) {
+        <mat-card class="mb-2 p-4" appearance="outlined">
+            <div class="row ">
+                <mat-card-title class="col-10">{{ question.title }}</mat-card-title>
+                <div class="col-2">
+                    <mat-icon class="me-2">arrow_upward</mat-icon>
+                    <mat-icon>arrow_downward</mat-icon>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-10">
+                    <p>{{ question.description }}</p>
+                    <div class="row">
+                        <div class="col-3">Type:</div>
+                        <div class="col-9 fw-bold">{{ Type[question.type] }}</div>
+                        <div class="col-3">Required:</div>
+                        <div class="col-9 fw-bold">{{ question.required }}</div>
+                        @if (question.optionList) {
+                            <div class="col-3">Option List:</div>
+                            <div class="col-9 fw-bold">{{ question.optionList }}</div>
+                        }
+                    </div>
+                </div>
+                <div class="col-2 mt-auto">
+                    <mat-icon class="me-2">edit</mat-icon>
+                    <mat-icon>delete</mat-icon>
+                </div>
+            </div>
+        </mat-card>
+    }
+    <div class="w-100 text-center">
+        <button mat-raised-button>Add Question</button>
+    </div>
 </div>

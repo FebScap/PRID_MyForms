@@ -2,6 +2,7 @@
 import {ActivatedRoute} from "@angular/router";
 import {Form} from "../../models/form";
 import {FormService} from "../../services/form.service";
+import {Type} from "../../models/question";
 
 
 @Component({
@@ -28,4 +29,6 @@ export class ViewFormComponent {
             });
         }
     }
+
+    protected readonly Type = Type;
 }
