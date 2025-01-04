@@ -16,7 +16,7 @@
 
     <h2>Questions</h2>
 
-    @for (question of form?.questions; track form?.questions) {
+    @for (question of form?.questions; track question.id) {
         <mat-card class="mb-2 p-4" appearance="outlined">
             <div class="row ">
                 <mat-card-title class="col-10">{{ question.title }}</mat-card-title>
@@ -41,7 +41,7 @@
                 </div>
                 <div class="col-2 mt-auto">
                     <mat-icon class="me-2">edit</mat-icon>
-                    <mat-icon>delete</mat-icon>
+                    <button mat-icon-button (click)="openDialog(question)"><mat-icon>delete</mat-icon></button>
                 </div>
             </div>
         </mat-card>

@@ -18,7 +18,7 @@ import {TemplateComponent} from "../components/template/template.component";
 import { LoginComponent } from '../components/login/login.component';
 import {ViewFormsComponent} from "../components/view-forms/view-forms.component";
 import {SignupComponent} from "../components/signup/signup.component";
-import {ViewFormComponent} from "../components/view-form/view-form.component";
+import {DeleteQuestionDialogComponent, ViewFormComponent} from "../components/view-form/view-form.component";
 
 @NgModule({
     declarations: [
@@ -30,7 +30,8 @@ import {ViewFormComponent} from "../components/view-form/view-form.component";
         NavBarComponent,
         LoginComponent,
         SignupComponent,
-        ViewFormComponent
+        ViewFormComponent,
+        DeleteQuestionDialogComponent
     ],
     imports: [
         BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
