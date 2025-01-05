@@ -25,7 +25,7 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
             );
     }
     
-    [HttpGet("{userId:int}")]
+    [HttpGet("user/{userId:int}")]
     public async Task<ActionResult<IEnumerable<FormDTO>>> GetAllByUser(int userId) {
         return mapper.Map<List<FormDTO>>(
             await context.Forms
@@ -45,5 +45,17 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
                 .Include(f => f.Owner)
                 .ToListAsync()
             );
+    }
+    
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<FormDTO>> GetById(int id) {
+        var form = await context.Forms
+            .Include(f => f.Owner)
+            .Include(f => f.Instances)
+            .Include(f => f.Accesses)
+            .Include(f => f.Questions)
+            .FirstOrDefaultAsync(f => f.Id == id);
+        if (form == null) return NotFound();
+        return mapper.Map<FormDTO>(form);
     }
 }
