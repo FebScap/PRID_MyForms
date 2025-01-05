@@ -17,7 +17,7 @@ public class Question
     public string Title { get; set; } = null!;
     public string? Description { get; set; }
     public Type Type { get; set; }
-    public int Required { get; set; }
+    public bool Required { get; set; }
     public int? OptionList { get; set; }
     public ICollection<Answer> Answers { get; set; } = new HashSet<Answer>();
 

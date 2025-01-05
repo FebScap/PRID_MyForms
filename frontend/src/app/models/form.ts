@@ -1,6 +1,7 @@
 import { User } from "./user";
 import {Instance} from "./instance";
 import { Access } from "./access";
+import {Question} from "./question";
 
 export class Form {
     id: number = 0;
@@ -11,5 +12,6 @@ export class Form {
     isPublic: boolean = false;
     instances: Instance[] = [];
     accesses: Access[] = [];
+    questions: Question[] = [];
 }
 

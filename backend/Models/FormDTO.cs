@@ -10,4 +10,5 @@ public class FormDTO
     public bool IsPublic { get; set; }
     public ICollection<InstanceDTO> Instances { get; set; } = new HashSet<InstanceDTO>();
     public ICollection<AccessDTO> Accesses { get; set;} = new HashSet<AccessDTO>();
+    public ICollection<QuestionDTO> Questions { get; set; } = new HashSet<QuestionDTO>();
 }
