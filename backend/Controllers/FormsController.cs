@@ -53,7 +53,7 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
             .Include(f => f.Owner)
             .Include(f => f.Instances)
             .Include(f => f.Accesses)
-            .Include(f => f.Questions)
+            .Include(f => f.Questions.OrderBy(q=> q.IdX))
             .FirstOrDefaultAsync(f => f.Id == id);
         if (form == null) return NotFound();
         return mapper.Map<FormDTO>(form);

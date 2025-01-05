@@ -1,12 +1,12 @@
-﻿import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+﻿import {Component, inject} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {Form} from "../../models/form";
 import {FormService} from "../../services/form.service";
 import {Question, Type} from "../../models/question";
-import {MAT_DIALOG_DATA, MatDialog, MatDialogModule} from "@angular/material/dialog";
-import {MatButtonModule} from "@angular/material/button";
-import {QuestionService} from "../../services/question.service";
+import {MatDialog} from "@angular/material/dialog";
 import {DeleteQuestionComponent} from "../../delete-question/delete-question.component";
+import {QuestionService} from "../../services/question.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 
 @Component({
@@ -19,9 +19,12 @@ export class ViewFormComponent {
     isPublic: boolean | undefined;
     readonly dialog = inject(MatDialog);
     
+    
     constructor(
         private route: ActivatedRoute,
-        private formService: FormService
+        private formService: FormService,
+        private questionService: QuestionService,
+        public snackBar: MatSnackBar
     ) {
     }
 
@@ -41,8 +44,23 @@ export class ViewFormComponent {
             this.isPublic = res.isPublic;
         });
     }
+    
+    changeIdX(increase: boolean, question: Question) {
+        if (increase) {
+            question.idX++;
+        } else {
+            question.idX--;
+        }
+        
+        this.questionService.changeIdx(question).subscribe(res => {
+            if (!res) {
+                this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', { duration: 10000 });
+            }
+            this.refresh();
+        });
+    }
 
-    openDialog(question: Question) {
+    openDialogDeleteQuestion(question: Question) {
         const dialogRef = this.dialog.open(DeleteQuestionComponent, {
             data: {
                 question: question

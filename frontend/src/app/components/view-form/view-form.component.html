@@ -20,9 +20,13 @@
         <mat-card class="mb-2 p-4" appearance="outlined">
             <div class="row ">
                 <mat-card-title class="col-10">{{ question.title }}</mat-card-title>
-                <div class="col-2">
-                    <mat-icon class="me-2">arrow_upward</mat-icon>
-                    <mat-icon>arrow_downward</mat-icon>
+                <div class="col-2 d-flex justify-content-end">
+                    @if (question.idX != 1) {
+                        <button mat-icon-button (click)="changeIdX(false, question)"><mat-icon class="me-2">arrow_upward</mat-icon></button>
+                    }
+                    @if (form?.questions && question.idX < form!.questions.length) {
+                        <button mat-icon-button (click)="changeIdX(true, question)"><mat-icon>arrow_downward</mat-icon></button>
+                    }
                 </div>
             </div>
             <div class="row">
@@ -39,9 +43,9 @@
                         }
                     </div>
                 </div>
-                <div class="col-2 mt-auto">
-                    <mat-icon class="me-2">edit</mat-icon>
-                    <button mat-icon-button (click)="openDialog(question)"><mat-icon>delete</mat-icon></button>
+                <div class="col-2 mt-auto d-flex justify-content-end">
+                    <button mat-icon-button><mat-icon class="me-2">edit</mat-icon></button>
+                    <button mat-icon-button (click)="openDialogDeleteQuestion(question)"><mat-icon>delete</mat-icon></button>
                 </div>
             </div>
         </mat-card>
