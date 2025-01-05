@@ -16,17 +16,23 @@ import {JwtInterceptor} from "../interceptors/jwt.interceptor";
 import {UnknownComponent} from "../components/unknown/unknown.component";
 import {TemplateComponent} from "../components/template/template.component";
 import { LoginComponent } from '../components/login/login.component';
-import {HomeComponent} from "../components/home/home.component";
+import {ViewFormsComponent} from "../components/view-forms/view-forms.component";
+import {SignupComponent} from "../components/signup/signup.component";
+import {ViewFormComponent} from "../components/view-form/view-form.component";
+import {DeleteQuestionComponent} from "../delete-question/delete-question.component";
 
 @NgModule({
     declarations: [
         UnknownComponent,
         TemplateComponent,
-        HomeComponent,
+        ViewFormsComponent,
         AppComponent, 
         SetFocusDirective,
         NavBarComponent,
         LoginComponent,
+        SignupComponent,
+        ViewFormComponent,
+        DeleteQuestionComponent
     ],
     imports: [
         BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),

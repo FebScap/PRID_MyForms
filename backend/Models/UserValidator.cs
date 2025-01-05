@@ -6,9 +6,9 @@ namespace prid_2425_f02.Models;
 
 public class UserValidator : AbstractValidator<User>
 {
-    private readonly FormContext _context;
+    private readonly Context _context;
 
-    public UserValidator(FormContext context) {
+    public UserValidator(Context context) {
         _context = context;
 
         RuleFor(u => u.Email)
@@ -51,9 +51,9 @@ public class UserValidator : AbstractValidator<User>
                 .MustAsync((u, token) => BeUniqueFullName(u.FirstName, u.LastName, token))
                 .WithMessage("This full name already exists");
 
-            RuleFor(u => new { u.FirstName, u.LastName })
+            /*RuleFor(u => new { u.FirstName, u.LastName })
                 .Must((u) => !(string.IsNullOrEmpty(u.FirstName) && string.IsNullOrEmpty(u.LastName)))
-                .WithMessage("At least one of your first or last name must be specified");
+                .WithMessage("At least one of your first or last name must be specified");*/
         });
 
         // Validations spécifiques pour l'authentification

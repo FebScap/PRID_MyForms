@@ -4,9 +4,9 @@ namespace prid_2425_f02.Models
 {
     public class QuestionValidator : AbstractValidator<Question>
     {
-        private readonly FormContext _context;
+        private readonly Context _context;
         
-        public QuestionValidator(FormContext context) {
+        public QuestionValidator(Context context) {
             _context = context;
 
             RuleFor(q => q.Form)

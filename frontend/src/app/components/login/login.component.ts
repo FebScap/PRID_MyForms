@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { AuthenticationService } from '../../services/authentication.service';
 
 enum Profiles {
-    admin = "admin@epfc.eu", guest = "guest@epfc.eu", ben = "ben@epfc.eu", boris = "boris@epfc.eu", bruno = "bruno@epfc.eu"
+    admin = "admin@epfc.eu", guest = "guest@epfc.eu", ben = "bepenelle@epfc.eu", boris = "boverhaegen@epfc.eu", bruno = "brlacroix@epfc.eu"
 }
 
 @Component({

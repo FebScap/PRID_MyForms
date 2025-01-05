@@ -44,9 +44,9 @@ export class AuthenticationService {
         return this.http.get<boolean>(`${this.baseUrl}api/users/available/${email}`);
     }
 
-    public signup(email: string, password: string): Observable<User> {
-        return this.http.post<User>(`${this.baseUrl}api/users/signup`, { email: email, password: password }).pipe(
-            mergeMap(res => this.login(email, password)),
+    public signup(userData : any): Observable<User> {
+        return this.http.post<User>(`${this.baseUrl}api/users/signup`, userData).pipe(
+            mergeMap(res => this.login(userData.email.valueOf(), userData.password.valueOf())),
         );
     }
 }

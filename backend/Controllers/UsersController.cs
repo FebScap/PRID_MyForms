@@ -1,5 +1,4 @@
 using AutoMapper;
-using AutoMapper.Execution;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +15,7 @@ namespace prid_2425_f02.Controllers;
 [Authorize]
 [Route("api/[controller]")]
 [ApiController]
-public class UsersController(FormContext context, IMapper mapper) : ControllerBase
+public class UsersController(Context context, IMapper mapper) : ControllerBase
 {
     [Authorized(Role.Admin)]
     [HttpGet]
@@ -94,7 +93,12 @@ public class UsersController(FormContext context, IMapper mapper) : ControllerBa
     [AllowAnonymous]
     [HttpPost("authenticate")]
     public async Task<ActionResult<UserDTO>> Authenticate(UserDTO dto) {
-        var user = await Authenticate(dto.Email, dto.Password);
+        User? user;
+        if (dto.Role == Role.Guest) {
+            user = await Authenticate(dto.Email, dto.Password, true);
+        } else {
+            user = await Authenticate(dto.Email, dto.Password);
+        }
 
         var result = await new UserValidator(context).ValidateForAuthenticate(user);
         if (!result.IsValid)
@@ -102,8 +106,8 @@ public class UsersController(FormContext context, IMapper mapper) : ControllerBa
 
         return Ok(mapper.Map<UserDTO>(user));
     }
-    
-    private async Task<User?> Authenticate(string email, string password) {
+
+    private async Task<User?> Authenticate(string email, string password, bool isGuest = false) {
         var user = await context.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
 
         // return null if member not found
@@ -111,7 +115,7 @@ public class UsersController(FormContext context, IMapper mapper) : ControllerBa
             return null;
 
         var hash = TokenHelper.GetPasswordHash(password);
-        if (user.Password == hash) {
+        if (user.Password == hash || isGuest) {
             // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes("my-super-secret-key my-super-secret-key");
@@ -122,13 +126,26 @@ public class UsersController(FormContext context, IMapper mapper) : ControllerBa
                 }),
                 IssuedAt = DateTime.UtcNow,
                 Expires = DateTime.UtcNow.AddMinutes(10),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             user.Token = tokenHandler.WriteToken(token);
         }
 
         return user;
+    }
+    
+    [AllowAnonymous]
+    [HttpGet("available/{email}")]
+    public async Task<ActionResult<bool>> IsAvailable(string email) {
+        return !await context.Users.AnyAsync(u => u.Email == email);
+    }
+    
+    [AllowAnonymous]
+    [HttpPost("signup")]
+    public async Task<ActionResult<UserDTO>> Signup(UserDTO data) {
+        return await PostUser(data);
     }
     
 }

@@ -2,11 +2,11 @@ using FluentValidation;
 
 namespace prid_2425_f02.Models;
 
-public class AnswersValidator : AbstractValidator<Answer>
+public class AnswerValidator : AbstractValidator<Answer>
 {
-    private readonly FormContext _context;
+    private readonly Context _context;
 
-    public AnswersValidator(FormContext context) {
+    public AnswerValidator(Context context) {
         _context = context;
 
         RuleFor(a => a.Instance)
