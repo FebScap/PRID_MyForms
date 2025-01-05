@@ -6,6 +6,7 @@ import {Question, Type} from "../../models/question";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {QuestionService} from "../../services/question.service";
+import {DeleteQuestionComponent} from "../../delete-question/delete-question.component";
 
 
 @Component({
@@ -34,30 +35,24 @@ export class ViewFormComponent {
         }
     }
 
+    refresh() {
+        this.formService.getById(this.id!).subscribe((res) => {
+            this.form = res;
+            this.isPublic = res.isPublic;
+        });
+    }
 
     openDialog(question: Question) {
-        const dialogRef = this.dialog.open(DeleteQuestionDialogComponent, {
+        const dialogRef = this.dialog.open(DeleteQuestionComponent, {
             data: {
                 question: question
             }
         });
+        
+        dialogRef.afterClosed().subscribe(result => {
+            this.refresh();
+        });
     }
 
     protected readonly Type = Type;
-}
-
-@Component({
-    templateUrl: 'delete-question-dialog.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-export class DeleteQuestionDialogComponent {
-    data = inject(MAT_DIALOG_DATA);
-
-    constructor(private questionService: QuestionService) {
-    }
-
-    deleteQuestion(id: number) {
-        this.questionService.deleteById(id).subscribe(res => {
-        });
-    }
 }

@@ -15,8 +15,13 @@ export class QuestionService {
 
     deleteById(id: number): Observable<boolean> {
         return this.http.delete<boolean>(`${this.baseUrl}api/questions/${id}`).pipe(
-            catchError(err => of(false))
+            map(res => true),
+            catchError(err => {
+                console.error(err);
+                return of(false);
+            })
         );
     }
 
+    
 }
