@@ -2,22 +2,32 @@
 
 <div class="signup position-relative h-100">
     <mat-card appearance="raised" class="p-4 position-absolute top-50 start-50 translate-middle">
-        <form [formGroup]="frm" (ngSubmit)="signup()" class="d-flex flex-column">
+        <form [formGroup]="frm" novalidate class="d-flex flex-column">
             <span class="text-center fs-4">Sign Up</span>
             <hr>
             <div class="p-2 d-flex flex-column pb-0">
                 <mat-form-field appearance="outline">
                     <mat-icon matPrefix>person</mat-icon>
                     <mat-label>First Name</mat-label>
-                    <input matInput [formControl]="ctlFirstName" required>
-                    <mat-error *ngIf="ctlFirstName.hasError('required')">Required</mat-error>
+                    <input matInput [formControl]="ctlFirstName" appSetFocus>
+                    @if (ctlFirstName.hasError('required')) {
+                        <mat-error class="field-error">Required</mat-error>
+                    }
+                    @if (ctlFirstName.hasError('minlength')) {
+                        <mat-error class="field-error">Minimum length is {{ctlFirstName.errors?.minlength?.requiredLength}}</mat-error>
+                    }
                 </mat-form-field>
 
                 <mat-form-field appearance="outline">
                     <mat-icon matPrefix>person</mat-icon>
                     <mat-label>Last Name</mat-label>
-                    <input matInput [formControl]="ctlLastName" required>
-                    <mat-error *ngIf="ctlLastName.hasError('required')">Required</mat-error>
+                    <input matInput [formControl]="ctlLastName">
+                    @if (ctlLastName.hasError('required')) {
+                        <mat-error class="field-error">Required</mat-error>
+                    }
+                    @if (ctlLastName.hasError('minlength')) {
+                        <mat-error class="field-error">Minimum length is {{ctlLastName.errors?.minlength?.requiredLength}}</mat-error>
+                    }
                 </mat-form-field>
 
                 <mat-form-field appearance="outline">
@@ -33,26 +43,51 @@
                     <mat-icon matPrefix>email</mat-icon>
                     <mat-label>Email</mat-label>
                     <input matInput [formControl]="ctlEmail" required>
-                    <mat-error *ngIf="ctlEmail.hasError('required')">Required</mat-error>
-                    <mat-error *ngIf="ctlEmail.hasError('email')">Invalid email</mat-error>
+                    @if (ctlEmail.hasError('required')) {
+                        <mat-error class="field-error">Required</mat-error>
+                    }
+                    @if (ctlEmail.hasError('email')) {
+                        <mat-error class="field-error">Must be a valid email address</mat-error>
+                    }
+                    @if (ctlEmail.hasError('emailUsed')) {
+                        <mat-error class="field-error">Email address is already used</mat-error>
+                    }
                 </mat-form-field>
 
                 <mat-form-field appearance="outline">
                     <mat-icon matPrefix>key</mat-icon>
                     <mat-label>Password</mat-label>
                     <input matInput type="password" [formControl]="ctlPassword" required>
-                    <mat-error *ngIf="ctlPassword.hasError('required')">Required</mat-error>
+                    @if (ctlPassword.hasError('required')) {
+                        <mat-error class="field-error">Required</mat-error>
+                    }
+                    @if (ctlPassword.hasError('minlength')) {
+                        <mat-error class="field-error">Minimum length is {{ctlPassword.errors?.minlength?.requiredLength}}</mat-error>
+                    }
+                    @if (ctlPassword.hasError('maxLength')) {
+                        <mat-error class="field-error">Maximum length is {{ctlPassword.errors?.maxLength?.requiredLength}}</mat-error>
+                    }
                 </mat-form-field>
 
                 <mat-form-field appearance="outline">
                     <mat-icon matPrefix>key</mat-icon>
                     <mat-label>Confirm Password</mat-label>
                     <input matInput type="password" [formControl]="ctlConfirmPassword" required>
-                    <mat-error *ngIf="ctlConfirmPassword.hasError('required')">Required</mat-error>
-                    <mat-error *ngIf="ctlConfirmPassword.hasError('mismatch')">Passwords do not match</mat-error>
+                    @if (ctlConfirmPassword.hasError('required')) {
+                        <mat-error class="field-error">Required</mat-error>
+                    }
+                    @if (ctlConfirmPassword.hasError('minlength')) {
+                        <mat-error class="field-error">Minimum length is {{ctlConfirmPassword.errors?.minlength?.requiredLength}}</mat-error>
+                    }
+                    @if (ctlConfirmPassword.hasError('maxLength')) {
+                        <mat-error class="field-error">Maximum length is {{ctlConfirmPassword.errors?.maxLength?.requiredLength}}</mat-error>
+                    }
                 </mat-form-field>
+                @if (frm.hasError('passwordNotConfirmed') && ctlConfirmPassword.dirty && ctlConfirmPassword.valid) {
+                    <mat-error class="field-error">The passwords don't match</mat-error>
+                }
 
-                <button [disabled]="loading || !frm.valid" mat-stroked-button class="w-100">Sign Up</button>
+                <button (click)="signup()" [disabled]="frm.invalid" mat-stroked-button class="w-100">Sign Up</button>
             </div>
         </form>
     </mat-card>

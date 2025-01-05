@@ -135,4 +135,17 @@ public class UsersController(Context context, IMapper mapper) : ControllerBase
 
         return user;
     }
+    
+    [AllowAnonymous]
+    [HttpGet("available/{email}")]
+    public async Task<ActionResult<bool>> IsAvailable(string email) {
+        return !await context.Users.AnyAsync(u => u.Email == email);
+    }
+    
+    [AllowAnonymous]
+    [HttpPost("signup")]
+    public async Task<ActionResult<UserDTO>> Signup(UserDTO data) {
+        return await PostUser(data);
+    }
+    
 }

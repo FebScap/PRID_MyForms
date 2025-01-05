@@ -16,7 +16,6 @@ export class SignupComponent {
     public ctlEmail!: FormControl;
     public ctlPassword!: FormControl;
     public ctlConfirmPassword!: FormControl;
-    loading = false;    // utilisé en HTML pour désactiver le bouton pendant la requête de login
     
     constructor(
         private formBuilder: FormBuilder,
