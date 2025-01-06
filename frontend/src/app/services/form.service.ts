@@ -46,4 +46,14 @@ export class FormService {
             })
         );
     }
+
+    deleteById(id: number): Observable<boolean> {
+        return this.http.delete<boolean>(`${this.baseUrl}api/forms/${id}`).pipe(
+            map(res => true),
+            catchError(err => {
+                console.error(err);
+                return of(false);
+            })
+        );
+    }
 }

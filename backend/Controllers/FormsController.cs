@@ -87,6 +87,17 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
         await context.SaveChangesAsync();
         return mapper.Map<FormDTO>(form);
     }
+    
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<bool>> Delete(int id) {
+        var f = await context.Forms.FindAsync(id);
+        if (f != null) {
+            context.Forms.Remove(f);
+            await context.SaveChangesAsync();
+            return true;
+        }
+        return NotFound();
+    }
 
     private bool HasAccessEditor(Form form, int userId) {
         return form.OwnerId == userId || form.Accesses.Any(a => a.UserId == userId && a.AccessType == AccessType.Editor);

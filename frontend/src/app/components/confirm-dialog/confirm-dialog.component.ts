@@ -9,6 +9,7 @@ import {FormService} from "../../services/form.service";
 })
 export class ConfirmDialogComponent {
     data = inject(MAT_DIALOG_DATA);
+    protected readonly confirmDialogType = confirmDialogType;
 
     constructor(
         private questionService: QuestionService,
@@ -16,8 +17,12 @@ export class ConfirmDialogComponent {
         private dialogRef: MatDialogRef<ConfirmDialogComponent>
     ) {
         this.dialogRef.backdropClick().subscribe(() => {
-            this.dialogRef.close('backdropClick');
+            this.dialogRef.close('cancel');
         });
+    }
+
+    cancel() {
+        this.dialogRef.close('cancel');
     }
 
     getConfirmDialogType() {
@@ -40,15 +45,14 @@ export class ConfirmDialogComponent {
         });
     }
 
-    protected readonly confirmDialogType = confirmDialogType;
-
-    cancel() {
-        this.dialogRef.close('cancel');
+    deleteForm() {
+        let f = this.data.form;
+        this.formService.deleteById(f.id).subscribe(res => {
+            this.dialogRef.close(res);
+        });
     }
-
-
 }
 
 export enum confirmDialogType {
-    DELETE_QUESTION, TOGGLE_PUBLIC
+    DELETE_QUESTION, TOGGLE_PUBLIC, DELETE_FORM,
 }

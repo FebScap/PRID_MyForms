@@ -1,8 +1,13 @@
-import {Component, Input} from '@angular/core';
+import {Component, inject, Input} from '@angular/core';
 import {Router} from "@angular/router";
 import {AuthenticationService} from "../../services/authentication.service";
 import {Role} from "../../models/user";
 import {BooleanInput, coerceBooleanProperty} from "@angular/cdk/coercion";
+import {Form} from "../../models/form";
+import {FormService} from "../../services/form.service";
+import {ConfirmDialogComponent, confirmDialogType} from "../confirm-dialog/confirm-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
     selector: 'app-nav-bar',
@@ -12,22 +17,23 @@ import {BooleanInput, coerceBooleanProperty} from "@angular/cdk/coercion";
 export class NavBarComponent {
     @Input() title: string = '<undefined>';
     @Input() formIsReadOnly: BooleanInput = true;
+    @Input() form: Form | undefined;
+    @Input() snackBar: MatSnackBar | undefined;
+    readonly dialog = inject(MatDialog);
 
     constructor(
         private router: Router,
-        private authenticationService: AuthenticationService
-    ) { }
+        private authenticationService: AuthenticationService,
+        private formService: FormService
+    ) {
+    }
 
     get currentUser() {
         return this.authenticationService.currentUser;
     }
-    
+
     get currentPath() {
         return this.router.url;
-    }
-
-    get isAdmin() {
-        return this.currentUser && this.currentUser.role === Role.Admin;
     }
 
     get isGuest() {
@@ -40,4 +46,26 @@ export class NavBarComponent {
     }
 
     protected readonly coerceBooleanProperty = coerceBooleanProperty;
+
+    deleteForm() {
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            data: {
+                dialogType: confirmDialogType.DELETE_FORM,
+                form: this.form
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(res => {
+            console.log(res);
+            if (!res) {
+                if (this.snackBar) {
+                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+                } else {
+                    console.log(`There was an error at the server. The update has not been done! Please try again.`);
+                }
+            } else if (res !== 'cancel') {
+                this.router.navigate(['/']);
+            }
+        });
+    }
 }

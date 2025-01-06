@@ -7,6 +7,8 @@
         } @else {
             Make Form Public
         }
+    } @else if (getConfirmDialogType() == confirmDialogType.DELETE_FORM) {
+        Delete Form
     }
 </h2>
 <mat-dialog-content>
@@ -18,6 +20,8 @@
         } @else {
             Are you sure you want to make this form public? This will delete all existing shared with 'Users' access to this form.
         }
+    } @else if (getConfirmDialogType() == confirmDialogType.DELETE_FORM) {
+        Are you sure you want to delete this form?
     }
 </mat-dialog-content>
 <mat-dialog-actions>
@@ -26,5 +30,7 @@
         <button mat-button cdkFocusInitial (click)="deleteQuestion()">Yes</button>
     } @else if (getConfirmDialogType() == confirmDialogType.TOGGLE_PUBLIC) {
         <button mat-button cdkFocusInitial (click)="togglePublic()">Yes</button>
+    } @else if (getConfirmDialogType() == confirmDialogType.DELETE_FORM) {
+        <button mat-button cdkFocusInitial (click)="deleteForm()">Yes</button>
     }
 </mat-dialog-actions>
