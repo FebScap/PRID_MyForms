@@ -67,9 +67,22 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
         var form = await context.Forms.FindAsync(dto.Id);
         
         if (form == null) return NotFound();
+        
+        // Vérifie si l'utilisateur a le droit de modifier le form
         if (!HasAccessEditor(form, Convert.ToInt32(User.Identity?.Name))) return Forbid("You are not allowed to edit this form");
         
-        form.IsPublic = dto.IsPublic;
+        // Pour le toggle public
+        if (form.IsPublic != dto.IsPublic) {
+            form.IsPublic = dto.IsPublic;
+            
+            // Si le form devient public, on supprime tous les accès lecture
+            if (dto.IsPublic) {
+                var accesses = await context.Accesses.Where(a => a.FormId == form.Id && a.AccessType == AccessType.User).ToListAsync();
+                accesses.ForEach(a => {
+                    context.Accesses.Remove(a);
+                });
+            }
+        }
         
         await context.SaveChangesAsync();
         return mapper.Map<FormDTO>(form);
