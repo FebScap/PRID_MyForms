@@ -121,7 +121,7 @@ public class UsersController(Context context, IMapper mapper) : ControllerBase
             var key = Encoding.ASCII.GetBytes("my-super-secret-key my-super-secret-key");
             var tokenDescriptor = new SecurityTokenDescriptor {
                 Subject = new ClaimsIdentity(new Claim[] {
-                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Name, user.Id.ToString()),
                     new Claim(ClaimTypes.Role, user.Role.ToString())
                 }),
                 IssuedAt = DateTime.UtcNow,

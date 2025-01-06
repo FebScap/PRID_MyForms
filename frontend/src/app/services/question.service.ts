@@ -22,6 +22,14 @@ export class QuestionService {
             })
         );
     }
-
     
+    public changeIdx(q: Question): Observable<boolean> {
+        return this.http.put<Question>(`${this.baseUrl}api/questions`, q).pipe(
+            map(res => true),
+            catchError(err => {
+                console.error(err);
+                return of(false);
+            })
+        );
+    }
 }
