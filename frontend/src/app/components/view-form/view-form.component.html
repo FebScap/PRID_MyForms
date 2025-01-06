@@ -10,7 +10,7 @@
         <div class="col-9 fw-bold">{{ form?.owner?.firstName }} {{ form?.owner?.lastName }}</div>
         <div class="col-3">Public:</div>
         <div class="col-9 fw-bold">
-            <mat-slide-toggle [(ngModel)]="isPublic"/>
+            <mat-slide-toggle [(ngModel)]="isPublic" (click)="tooglePublic()" />
         </div>
     </div>
 

@@ -1,0 +1,54 @@
+import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {QuestionService} from "../../services/question.service";
+import {FormService} from "../../services/form.service";
+
+@Component({
+    templateUrl: 'confirm-dialog.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class ConfirmDialogComponent {
+    data = inject(MAT_DIALOG_DATA);
+
+    constructor(
+        private questionService: QuestionService,
+        private formService: FormService,
+        private dialogRef: MatDialogRef<ConfirmDialogComponent>
+    ) {
+        this.dialogRef.backdropClick().subscribe(() => {
+            this.dialogRef.close('backdropClick');
+        });
+    }
+
+    getConfirmDialogType() {
+        return this.data.dialogType;
+    }
+
+    deleteQuestion() {
+        let q = this.data.question;
+        this.questionService.deleteById(q.id).subscribe(res => {
+            this.dialogRef.close(res);
+        });
+    }
+
+    togglePublic() {
+        let f = this.data.form;
+
+        f.isPublic = !f.isPublic;
+        this.formService.update(f).subscribe(res => {
+            this.dialogRef.close(res);
+        });
+    }
+
+    protected readonly confirmDialogType = confirmDialogType;
+
+    cancel() {
+        this.dialogRef.close('cancel');
+    }
+
+
+}
+
+export enum confirmDialogType {
+    DELETE_QUESTION, TOGGLE_PUBLIC
+}

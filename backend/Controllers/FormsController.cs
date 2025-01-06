@@ -27,6 +27,9 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
     
     [HttpGet("user/{userId:int}")]
     public async Task<ActionResult<IEnumerable<FormDTO>>> GetAllByUser(int userId) {
+        var isAdmin = User.IsInRole(Role.Admin.ToString());
+        if (!isAdmin && userId.ToString() != User.Identity?.Name) return Forbid();
+        
         return mapper.Map<List<FormDTO>>(
             await context.Forms
                 .Where(f => f.Accesses.Any(ac => ac.UserId == userId) || f.OwnerId == userId)
@@ -57,5 +60,22 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
             .FirstOrDefaultAsync(f => f.Id == id);
         if (form == null) return NotFound();
         return mapper.Map<FormDTO>(form);
+    }
+    
+    [HttpPut]
+    public async Task<ActionResult<FormDTO>> Update(FormDTO dto) {
+        var form = await context.Forms.FindAsync(dto.Id);
+        
+        if (form == null) return NotFound();
+        if (!HasAccessEditor(form, Convert.ToInt32(User.Identity?.Name))) return Forbid("You are not allowed to edit this form");
+        
+        form.IsPublic = dto.IsPublic;
+        
+        await context.SaveChangesAsync();
+        return mapper.Map<FormDTO>(form);
+    }
+
+    private bool HasAccessEditor(Form form, int userId) {
+        return form.OwnerId == userId || form.Accesses.Any(a => a.UserId == userId && a.AccessType == AccessType.Editor);
     }
 }
