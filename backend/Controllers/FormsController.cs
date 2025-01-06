@@ -91,7 +91,10 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult<bool>> Delete(int id) {
         var f = await context.Forms.FindAsync(id);
+        
         if (f != null) {
+            if (!HasAccessEditor(f, Convert.ToInt32(User.Identity?.Name))) return Forbid("You are not allowed to edit this form");
+            
             context.Forms.Remove(f);
             await context.SaveChangesAsync();
             return true;
