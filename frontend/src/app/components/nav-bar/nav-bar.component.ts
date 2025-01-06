@@ -2,6 +2,7 @@ import {Component, Input} from '@angular/core';
 import {Router} from "@angular/router";
 import {AuthenticationService} from "../../services/authentication.service";
 import {Role} from "../../models/user";
+import {BooleanInput, coerceBooleanProperty} from "@angular/cdk/coercion";
 
 @Component({
     selector: 'app-nav-bar',
@@ -10,6 +11,7 @@ import {Role} from "../../models/user";
 })
 export class NavBarComponent {
     @Input() title: string = '<undefined>';
+    @Input() formIsReadOnly: BooleanInput = true;
 
     constructor(
         private router: Router,
@@ -36,4 +38,6 @@ export class NavBarComponent {
         this.authenticationService.logout();
         this.router.navigate(['/login']);
     }
+
+    protected readonly coerceBooleanProperty = coerceBooleanProperty;
 }
