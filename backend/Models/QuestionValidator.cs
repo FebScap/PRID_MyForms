@@ -8,9 +8,6 @@ namespace prid_2425_f02.Models
         
         public QuestionValidator(Context context) {
             _context = context;
-
-            RuleFor(q => q.Form)
-                .NotEmpty(); 
             
             RuleFor(q => q.Id)
                 .NotEmpty();
@@ -24,9 +21,6 @@ namespace prid_2425_f02.Models
 
             RuleFor(q => q.Type)
                 .IsInEnum();
-
-            RuleFor(q => q.Required)
-                .NotEmpty();
         }
     }
 }
