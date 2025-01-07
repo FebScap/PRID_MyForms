@@ -8,6 +8,7 @@ import {ConfirmDialogComponent, confirmDialogType} from "../confirm-dialog/confi
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Router} from "@angular/router";
+import {forEach} from "lodash-es";
 
 
 @Component({
@@ -17,6 +18,7 @@ import {Router} from "@angular/router";
 })
 export class ViewFormsComponent {
     forms?: Form[];
+    instances?: Instance[];
     currentUser: User | undefined = new User();
     protected readonly Instance = Instance;
     readonly dialog = inject(MatDialog);
@@ -48,8 +50,14 @@ export class ViewFormsComponent {
      *          2 - Completed
      */
     getInstancesStatus(form: Form): number {
-        if (form.instances.length != 0) {
-            if (form.instances[form.instances.length - 1].completed) {
+        let instances: Instance[] = [];
+        form.instances.forEach((instance) => {
+            if (this.authenticationService.currentUser?.id == instance.userId) {
+                instances.push(instance);
+            }
+        });
+        if (instances.length != 0) {
+            if (instances[instances.length - 1].completed) {
                 return 2;//completed
             } else {
                 return 1;//in progress
@@ -59,6 +67,13 @@ export class ViewFormsComponent {
     }
 
     openForm(form: Form) {
+        let instances: Instance[] = [];
+        form.instances.forEach((instance) => {
+            console.log(instance);
+            if (this.authenticationService.currentUser?.id == instance.userId) {
+                instances.push(instance);
+            }
+        });
         switch (this.getInstancesStatus(form)) {
             default:
             case 0:
@@ -67,7 +82,7 @@ export class ViewFormsComponent {
                 });
                 break;
             case 1:
-                this.router.navigate(['/instance', form.instances[form.instances.length - 1].id]);
+                this.router.navigate(['/instance', instances[instances.length - 1].id]);
                 break;
             case 2:
                 const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -80,7 +95,7 @@ export class ViewFormsComponent {
                     if (!res) {
                         this.snackBar.open(`There was an error at the server. Please try again.`, 'Dismiss', {duration: 10000});
                     } else if (res == 'read') {
-                        this.router.navigate(['/instance', form.instances[form.instances.length - 1].id]);
+                        this.router.navigate(['/instance', instances[instances.length - 1].id]);
                     } else if (res.id) {
                         this.router.navigate(['/instance', res.id]);
                     } else if (res != 'cancel') {

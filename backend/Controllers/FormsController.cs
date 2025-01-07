@@ -69,7 +69,8 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
         if (form == null) return NotFound();
         
         // Vérifie si l'utilisateur a le droit de modifier le form
-        if (!HasAccessEditor(form, Convert.ToInt32(User.Identity?.Name))) return Forbid("You are not allowed to edit this form");
+        form.Accesses = await context.Accesses.Where(a => a.FormId == form.Id).ToListAsync();
+        if (!HasAccessEditor(form, Convert.ToInt32(User.Identity?.Name))) return Forbid();
         
         // Pour le toggle public
         if (form.IsPublic != dto.IsPublic) {
@@ -93,8 +94,9 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
         var f = await context.Forms.FindAsync(id);
         
         if (f != null) {
+            f.Accesses = await context.Accesses.Where(a => a.FormId == f.Id).ToListAsync();
             if (!HasAccessEditor(f, Convert.ToInt32(User.Identity?.Name))) 
-                return Forbid("You are not allowed to edit this form");
+                return Forbid();
             
             context.Forms.Remove(f);
             await context.SaveChangesAsync();
@@ -108,9 +110,10 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
         var f = await context.Forms.FindAsync(dto.Id);
         
         if (f != null) {
+            f.Accesses = await context.Accesses.Where(a => a.FormId == f.Id).ToListAsync();
             // Vérifie si l'utilisateur a le droit de modifier le form
             if (!HasAccessReader(f, Convert.ToInt32(User.Identity?.Name))) 
-                return Forbid("You are not allowed to open this form");
+                return Forbid();
             
             Instance instance = new Instance {
                 FormId = f.Id,
@@ -129,6 +132,6 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
     }
     
     private bool HasAccessReader(Form form, int userId) {
-        return form.OwnerId == userId || form.Accesses.Any(a => a.UserId == userId && a.AccessType == AccessType.User) || form.IsPublic;
+        return form.OwnerId == userId || form.Accesses.Any(a => a.UserId == userId) || form.IsPublic;
     }
 }
