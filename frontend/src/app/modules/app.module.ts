@@ -21,6 +21,7 @@ import {SignupComponent} from "../components/signup/signup.component";
 import {ViewFormComponent} from "../components/view-form/view-form.component";
 import {InformationComponent} from "../components/information/information.component";
 import {ConfirmDialogComponent} from "../components/confirm-dialog/confirm-dialog.component";
+import {AddFormComponent} from "../components/add-form/add-form.component";
 
 @NgModule({
     declarations: [
@@ -34,7 +35,8 @@ import {ConfirmDialogComponent} from "../components/confirm-dialog/confirm-dialo
         SignupComponent,
         ViewFormComponent,
         ConfirmDialogComponent,
-        InformationComponent
+        InformationComponent,
+        AddFormComponent,
         
     ],
     imports: [

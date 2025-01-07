@@ -6,6 +6,7 @@ import {AuthGuard} from "../services/auth.guard";
 import {ViewFormsComponent} from "../components/view-forms/view-forms.component";
 import {SignupComponent} from "../components/signup/signup.component";
 import {ViewFormComponent} from "../components/view-form/view-form.component";
+import {AddFormComponent} from "../components/add-form/add-form.component";
 
 const appRoutes: Routes = [
 
@@ -21,9 +22,9 @@ const appRoutes: Routes = [
         canActivate: [AuthGuard]
     },
     {   path: 'login', component: LoginComponent },
+    {   path: 'add-form', component: AddFormComponent },
     {   path: 'signup', component: SignupComponent},
     {   path: '**', component: UnknownComponent }
-
 ];
 
 export const AppRoutes = RouterModule.forRoot(appRoutes);
