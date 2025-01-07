@@ -51,8 +51,18 @@ export class ConfirmDialogComponent {
             this.dialogRef.close(res);
         });
     }
+
+    openForm(isNewResponse: boolean) {
+        if (isNewResponse) {
+            this.formService.createInstance(this.data.form).subscribe(res => {
+                this.dialogRef.close(res);
+            });
+        } else {
+            this.dialogRef.close('read');
+        }
+    }
 }
 
 export enum confirmDialogType {
-    DELETE_QUESTION, TOGGLE_PUBLIC, DELETE_FORM,
+    DELETE_QUESTION, TOGGLE_PUBLIC, DELETE_FORM, OPEN_FORM,
 }

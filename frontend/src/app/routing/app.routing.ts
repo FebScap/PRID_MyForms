@@ -6,6 +6,7 @@ import {AuthGuard} from "../services/auth.guard";
 import {ViewFormsComponent} from "../components/view-forms/view-forms.component";
 import {SignupComponent} from "../components/signup/signup.component";
 import {ViewFormComponent} from "../components/view-form/view-form.component";
+import {InstanceComponent} from "../components/instance/instance.component";
 
 const appRoutes: Routes = [
 
@@ -18,6 +19,11 @@ const appRoutes: Routes = [
     {
         path: 'view_form/:id',
         component: ViewFormComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'instance/:id',
+        component: InstanceComponent,
         canActivate: [AuthGuard]
     },
     {   path: 'login', component: LoginComponent },

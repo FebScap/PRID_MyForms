@@ -9,6 +9,8 @@
         }
     } @else if (getConfirmDialogType() == confirmDialogType.DELETE_FORM) {
         Delete Form
+    } @else if (getConfirmDialogType() == confirmDialogType.OPEN_FORM) {
+        Open Form
     }
 </h2>
 <mat-dialog-content>
@@ -22,15 +24,23 @@
         }
     } @else if (getConfirmDialogType() == confirmDialogType.DELETE_FORM) {
         Are you sure you want to delete this form?
+    } @else if (getConfirmDialogType() == confirmDialogType.OPEN_FORM) {
+        You have already answered this form. What would you like to do?
     }
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button (click)="cancel()">No</button>
+    @if (getConfirmDialogType() != confirmDialogType.OPEN_FORM) {
+        <button mat-button (click)="cancel()">No</button>
+    }
     @if (getConfirmDialogType() == confirmDialogType.DELETE_QUESTION) {
         <button mat-button cdkFocusInitial (click)="deleteQuestion()">Yes</button>
     } @else if (getConfirmDialogType() == confirmDialogType.TOGGLE_PUBLIC) {
         <button mat-button cdkFocusInitial (click)="togglePublic()">Yes</button>
     } @else if (getConfirmDialogType() == confirmDialogType.DELETE_FORM) {
         <button mat-button cdkFocusInitial (click)="deleteForm()">Yes</button>
+    } @else if (getConfirmDialogType() == confirmDialogType.OPEN_FORM) {
+        <button mat-button (click)="openForm(false)">Read</button>
+        <button mat-button (click)="openForm(true)">Respond</button>
+        <button mat-button (click)="cancel()">Cancel</button>
     }
 </mat-dialog-actions>

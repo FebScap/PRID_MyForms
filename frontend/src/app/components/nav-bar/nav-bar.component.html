@@ -2,7 +2,7 @@
     <!-- éléments de gauche -->
     @if (currentPath == "/login") {
         <mat-icon class="mx-2">history_edu</mat-icon>
-    } @else if (currentPath.includes("/view_form")) {
+    } @else if (currentPath.includes("/view_form") || currentPath.includes("/instance")) {
         <button mat-icon-button [routerLink]="['/']">
             <mat-icon>arrow_back_ios</mat-icon>
         </button>

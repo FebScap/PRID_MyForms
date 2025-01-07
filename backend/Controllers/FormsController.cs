@@ -93,7 +93,8 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
         var f = await context.Forms.FindAsync(id);
         
         if (f != null) {
-            if (!HasAccessEditor(f, Convert.ToInt32(User.Identity?.Name))) return Forbid("You are not allowed to edit this form");
+            if (!HasAccessEditor(f, Convert.ToInt32(User.Identity?.Name))) 
+                return Forbid("You are not allowed to edit this form");
             
             context.Forms.Remove(f);
             await context.SaveChangesAsync();
@@ -102,7 +103,32 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
         return NotFound();
     }
 
+    [HttpPost("new_instance")]
+    public async Task<ActionResult<InstanceDTO>> CreateInstance(FormDTO dto) {
+        var f = await context.Forms.FindAsync(dto.Id);
+        
+        if (f != null) {
+            // Vérifie si l'utilisateur a le droit de modifier le form
+            if (!HasAccessReader(f, Convert.ToInt32(User.Identity?.Name))) 
+                return Forbid("You are not allowed to open this form");
+            
+            Instance instance = new Instance {
+                FormId = f.Id,
+                UserId = Convert.ToInt32(User.Identity?.Name),
+                Started = DateTimeOffset.Now
+            };
+            context.Instances.Add(instance);
+            await context.SaveChangesAsync();
+            return mapper.Map<InstanceDTO>(instance);
+        }
+        return NotFound();
+    }
+
     private bool HasAccessEditor(Form form, int userId) {
         return form.OwnerId == userId || form.Accesses.Any(a => a.UserId == userId && a.AccessType == AccessType.Editor);
+    }
+    
+    private bool HasAccessReader(Form form, int userId) {
+        return form.OwnerId == userId || form.Accesses.Any(a => a.UserId == userId && a.AccessType == AccessType.User) || form.IsPublic;
     }
 }
