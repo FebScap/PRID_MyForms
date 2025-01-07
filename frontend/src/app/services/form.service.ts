@@ -27,7 +27,6 @@ export class FormService {
     }
 
     getAllForCurrentUser(): Observable<Form[]> {
-        console.log(`${this.baseUrl}api/forms/user/${this.authenticationService.currentUser?.id}`);
         return this.http.get<any[]>(`${this.baseUrl}api/forms/user/${this.authenticationService.currentUser?.id}`).pipe(
             map(res => plainToInstance(Form, res))
         );

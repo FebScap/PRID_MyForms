@@ -69,7 +69,6 @@ export class ViewFormsComponent {
     openForm(form: Form) {
         let instances: Instance[] = [];
         form.instances.forEach((instance) => {
-            console.log(instance);
             if (this.authenticationService.currentUser?.id == instance.userId) {
                 instances.push(instance);
             }

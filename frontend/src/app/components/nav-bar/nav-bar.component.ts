@@ -56,12 +56,11 @@ export class NavBarComponent {
         });
 
         dialogRef.afterClosed().subscribe(res => {
-            console.log(res);
             if (!res) {
                 if (this.snackBar) {
                     this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
                 } else {
-                    console.log(`There was an error at the server. The update has not been done! Please try again.`);
+                    console.error(`There was an error at the server. The update has not been done! Please try again.`);
                 }
             } else if (res !== 'cancel') {
                 this.router.navigate(['/']);
