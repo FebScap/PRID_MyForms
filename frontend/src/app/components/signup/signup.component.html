@@ -12,7 +12,7 @@
                     <mat-icon matPrefix>person</mat-icon>
                     <mat-label>First Name</mat-label>
                     <input matInput [formControl]="ctlFirstName" appSetFocus>
-                    <mat-error *ngIf="ctlFirstName.hasError('required')">Required if Last Name is filled</mat-error>
+                    <mat-error *ngIf="frm.hasError('namesIncomplete') && ctlFirstName.dirty">First Name and Last Name must both be empty or both filled</mat-error>
                     <mat-error *ngIf="ctlFirstName.hasError('minlength')">Minimum length is 3</mat-error>
                     <mat-error *ngIf="ctlFirstName.hasError('maxlength')">Maximum length is 50</mat-error>
                     <mat-error *ngIf="ctlFirstName.hasError('trimSpaces')">Cannot start or end with spaces</mat-error>
@@ -23,7 +23,7 @@
                     <mat-icon matPrefix>person</mat-icon>
                     <mat-label>Last Name</mat-label>
                     <input matInput [formControl]="ctlLastName">
-                    <mat-error *ngIf="ctlLastName.hasError('required')">Required if First Name is filled</mat-error>
+                    <mat-error *ngIf="frm.hasError('namesIncomplete') && ctlLastName.dirty">First Name and Last Name must both be empty or both filled</mat-error>
                     <mat-error *ngIf="ctlLastName.hasError('minlength')">Minimum length is 3</mat-error>
                     <mat-error *ngIf="ctlLastName.hasError('maxlength')">Maximum length is 50</mat-error>
                     <mat-error *ngIf="ctlLastName.hasError('trimSpaces')">Cannot start or end with spaces</mat-error>
