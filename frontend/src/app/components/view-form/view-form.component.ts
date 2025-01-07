@@ -1,12 +1,13 @@
-﻿import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+﻿import {Component, inject} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {Form} from "../../models/form";
 import {FormService} from "../../services/form.service";
 import {Question, Type} from "../../models/question";
-import {MAT_DIALOG_DATA, MatDialog, MatDialogModule} from "@angular/material/dialog";
-import {MatButtonModule} from "@angular/material/button";
+import {MatDialog} from "@angular/material/dialog";
 import {QuestionService} from "../../services/question.service";
-import {DeleteQuestionComponent} from "../../delete-question/delete-question.component";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {InformationComponent} from "../information/information.component";
+import {ConfirmDialogComponent, confirmDialogType} from "../confirm-dialog/confirm-dialog.component";
 
 
 @Component({
@@ -17,11 +18,15 @@ export class ViewFormComponent {
     id: string | undefined;
     form?: Form;
     isPublic: boolean | undefined;
+    isReadOnly: boolean | undefined;
     readonly dialog = inject(MatDialog);
-    
+
+
     constructor(
         private route: ActivatedRoute,
-        private formService: FormService
+        private formService: FormService,
+        private questionService: QuestionService,
+        public snackBar: MatSnackBar
     ) {
     }
 
@@ -31,6 +36,15 @@ export class ViewFormComponent {
             this.formService.getById(this.id).subscribe((res) => {
                 this.form = res;
                 this.isPublic = res.isPublic;
+                res.instances.length > 0 ? this.isReadOnly = true : this.isReadOnly = false;
+                
+                if (this.isReadOnly) {
+                    const dialogRef = this.dialog.open(InformationComponent, {
+                        data: {
+                            text: "There are already answers for this form. You can only delete this form or manage sharing"
+                        }
+                    });
+                }
             });
         }
     }
@@ -42,14 +56,51 @@ export class ViewFormComponent {
         });
     }
 
-    openDialog(question: Question) {
-        const dialogRef = this.dialog.open(DeleteQuestionComponent, {
+    changeIdX(increase: boolean, question: Question) {
+        if (increase) {
+            question.idX++;
+        } else {
+            question.idX--;
+        }
+
+        this.questionService.changeIdx(question).subscribe(res => {
+            if (!res) {
+                this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+            }
+            this.refresh();
+        });
+    }
+    
+    tooglePublic() {
+        if (this.form) {
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                data: {
+                    dialogType: confirmDialogType.TOGGLE_PUBLIC,
+                    form: this.form
+                }
+            });
+
+            dialogRef.afterClosed().subscribe(res => {
+                if (!res) {
+                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', { duration: 10000 });
+                }
+                this.refresh();
+            });
+        }
+    }
+
+    openDialogDeleteQuestion(question: Question) {
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
             data: {
+                dialogType: confirmDialogType.DELETE_QUESTION,
                 question: question
             }
         });
-        
-        dialogRef.afterClosed().subscribe(result => {
+
+        dialogRef.afterClosed().subscribe(res => {
+            if (!res) {
+                this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', { duration: 10000 });
+            }
             this.refresh();
         });
     }

@@ -25,15 +25,20 @@
             </button>
         }
     } @else if (currentPath.includes("/view_form")) {
-        <button mat-icon-button>
+        <button [disabled]="formIsReadOnly" mat-icon-button>
             <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button>
+        <button mat-icon-button (click)="deleteForm()">
             <mat-icon>delete</mat-icon>
         </button>
         <button mat-icon-button>
             <mat-icon>share</mat-icon>
         </button>
+        @if (coerceBooleanProperty(formIsReadOnly)) {
+            <button mat-icon-button>
+                <mat-icon>query_stats</mat-icon>
+            </button>
+        }
     }
     <ng-content/>
 </mat-toolbar>

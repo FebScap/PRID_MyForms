@@ -58,6 +58,8 @@ public class TokenHelper
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("my-super-secret-key my-super-secret-key")),
             ValidateLifetime = false //here we are saying that we don't care about the token's expiration date
         };
+        
+        
 
         var tokenHandler = new JwtSecurityTokenHandler();
         SecurityToken securityToken;

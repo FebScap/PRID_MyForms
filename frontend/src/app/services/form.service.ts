@@ -37,4 +37,23 @@ export class FormService {
         );
     }
 
+    update(form: Form) {
+        return this.http.put<any>(`${this.baseUrl}api/forms`, form).pipe(
+            map(res => true),
+            catchError(err => {
+                console.error(err);
+                return of(false);
+            })
+        );
+    }
+
+    deleteById(id: number): Observable<boolean> {
+        return this.http.delete<boolean>(`${this.baseUrl}api/forms/${id}`).pipe(
+            map(res => true),
+            catchError(err => {
+                console.error(err);
+                return of(false);
+            })
+        );
+    }
 }
