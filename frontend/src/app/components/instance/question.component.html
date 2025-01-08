@@ -1,0 +1,15 @@
+<div class="d-flex align-items-center flex-column container">
+    <p class="fst-italic fs-5">Question {{ getCountTostring() }}</p>
+    
+    <mat-card appearance="outlined" class="w-100">
+        <mat-card-content>
+            <p class="h3 fst-italic">
+                @if (question?.required) {
+                    (*)
+                }
+                {{ question?.title }}
+            </p>
+            <p class="fst-italic">{{ question?.description }}</p>
+        </mat-card-content>
+    </mat-card>
+</div>
