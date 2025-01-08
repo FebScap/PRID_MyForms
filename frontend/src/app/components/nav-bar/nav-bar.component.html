@@ -2,11 +2,7 @@
     <!-- éléments de gauche -->
     @if (currentPath == "/login") {
         <mat-icon class="mx-2">history_edu</mat-icon>
-    } @else if (currentPath.startsWith("/view_form") || currentPath.startsWith("/instance")) {
-    } @else if (currentPath.includes("/signup")) {
-        <mat-icon class="mx-2">history_edu</mat-icon>
-    } @else if (currentPath.includes("/view_form") || (currentPath.includes("/add-form"))) {
-    } @else if (currentPath.startsWith("/view_form") || currentPath.startsWith("/instance") || currentPath == '/signup') {
+    } @else if (currentPath.startsWith("/view_form") || currentPath.startsWith("/instance") || currentPath == '/signup' || (currentPath.includes("/add-form"))) {
         <button mat-icon-button [routerLink]="['/']">
             <mat-icon>arrow_back_ios</mat-icon>
         </button>
@@ -16,7 +12,7 @@
         </button>
     }
     <span class="title">{{ title }}</span>
-    
+
     <span class="spacer"></span>
     <!-- éléments à droite -->
     @if (currentPath == "/") {

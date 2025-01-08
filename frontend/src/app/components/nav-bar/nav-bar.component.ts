@@ -37,7 +37,7 @@ export class NavBarComponent {
         private instanceService: InstanceService,
         private openInstanceService: OpenInstanceService,
         private addFormService: AddFormService,
-        private formService: FormService,
+        private formService: FormService
     ) {
     }
 
