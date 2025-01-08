@@ -15,6 +15,12 @@
             <mat-error *ngIf="formGroup.get('description')?.hasError('maxlength')">Maximum length is 200</mat-error>
         </mat-form-field>
 
+        <mat-form-field appearance="outline">
+            <mat-label>Owner</mat-label>
+            <input matInput formControlName="owner" [value]="currentUser?.name">
+        </mat-form-field>
+
+
         <mat-checkbox formControlName="isPublic">Public Form</mat-checkbox>
 
         <div class="d-flex justify-content-between">

@@ -13,6 +13,7 @@ import { Observable } from 'rxjs';
 })
 export class AddFormComponent {
     public formGroup!: FormGroup;
+    public currentUser: any;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -30,7 +31,8 @@ export class AddFormComponent {
                 '',
                 [Validators.minLength(3), Validators.maxLength(200)]
             ],
-            isPublic: [false]
+            isPublic: [false],
+            owner: [{ value: this.authenticationService.currentUser?.firstName + " " + this.authenticationService.currentUser?.lastName, disabled: true }]
         });
     }
 
@@ -41,13 +43,13 @@ export class AddFormComponent {
     saveForm() {
         if (this.isFormValid) {
             const newForm = {
-                ...this.formGroup.value,
+                ...this.formGroup.getRawValue(), // Récupère toutes les valeurs, y compris les champs désactivés
                 owner: this.authenticationService.currentUser?.id, // Le propriétaire est l'utilisateur connecté
                 questions: [] // Formulaire vide
             };
-
+            console.log('addform compo');
             this.formService.addForm(newForm).subscribe(() => {
-                this.router.navigate(['/view-forms']); // Retour à la liste des formulaires
+                this.router.navigate(['/']); // Retour à la liste des formulaires
             });
         }
     }
