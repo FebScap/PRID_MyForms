@@ -19,13 +19,12 @@ namespace prid_2425_f02.Controllers
         }
         
         [HttpGet("{instanceId:int}/answers")]
-        public async Task<ActionResult<AnswerDTO>> GetAnswers(int instanceId) {
-            var instance = await context.Instances
-                .Include(i => i.Answers)
-                .FirstOrDefaultAsync(i => i.Id == instanceId);
-            if (instance == null) return NotFound();
+        public async Task<ActionResult<AnswerDTO[]>> GetAnswers(int instanceId) {
+            var answers = await context.Answers
+                .Where(a => a.InstanceId == instanceId)
+                .ToArrayAsync();
         
-            return mapper.Map<AnswerDTO>(instance);
+            return mapper.Map<AnswerDTO[]>(answers);
         }
     }
 }

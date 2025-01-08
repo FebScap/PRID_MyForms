@@ -6,6 +6,8 @@ import {InstanceService} from "../../services/instance.service";
 import {Instance} from "../../models/instance";
 import {Question} from "../../models/question";
 import {Subscription} from "rxjs";
+import {FormBuilder, FormGroup} from "@angular/forms";
+import {Answer} from "../../models/answer";
 
 
 @Component({
@@ -17,32 +19,43 @@ export class InstanceComponent implements OnDestroy {
     form?: Form;
     instance?: Instance;
     questions: Question[] = [];
+    answers: Answer[] = [];
     subscription: Subscription;
     questionX: number = 0;
+    answerForm!: FormGroup; 
     
     constructor(
         private route: ActivatedRoute,
         private formService: FormService,
         private instanceService: InstanceService,
+        private formBuilder: FormBuilder
     ) {
         this.instanceService.reset();
         this.subscription = this.instanceService.questionX$.subscribe(x => {
             this.questionX = x;
         });
+        
+        this.answerForm = this.formBuilder.group({
+            answers: this.answers
+        })
     }
 
     ngOnInit(): void {
         this.id = this.route.snapshot.paramMap.get('id') ?? undefined;
         if (this.id) {
-            this.instanceService.getById(this.id).subscribe((res) => {
-                this.instance = res;
-                this.formService.getById(res.formId.toString()).subscribe((f) => {
+            this.instanceService.getById(this.id).subscribe((inst) => {
+                this.instance = inst;
+                this.formService.getById(inst.formId.toString()).subscribe((f) => {
                     this.form = f;
                     this.questions = f.questions;
+                });
+                this.instanceService.getAnswers(inst.id).subscribe((ans) => {
+                    this.answers = ans;
                 });
             });
                 
         }
+        console.log(this.answers);
     }
     
     ngOnDestroy(): void {

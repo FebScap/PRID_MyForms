@@ -5,6 +5,7 @@ import { plainToInstance } from 'class-transformer';
 import {AuthenticationService} from "./authentication.service";
 import {Instance} from "../models/instance";
 import {map} from "rxjs/operators";
+import {Answer} from "../models/answer";
 
 @Injectable({ providedIn: 'root' })
 export class InstanceService {
@@ -19,8 +20,8 @@ export class InstanceService {
         );
     }
     
-    getAnswers(id: number): Observable<any> {
-        return this.http.get<any>(`${this.baseUrl}api/instances/${id}/answers`);
+    getAnswers(id: number): Observable<Answer[]> {
+        return this.http.get<Answer[]>(`${this.baseUrl}api/instances/${id}/answers`);
     }
 
     nextQuestion() {
