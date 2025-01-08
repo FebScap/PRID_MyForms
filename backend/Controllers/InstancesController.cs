@@ -20,10 +20,11 @@ namespace prid_2425_f02.Controllers
         
         [HttpGet("{instanceId:int}/answers")]
         public async Task<ActionResult<AnswerDTO[]>> GetAnswers(int instanceId) {
+            Console.WriteLine(instanceId);
             var answers = await context.Answers
                 .Where(a => a.InstanceId == instanceId)
                 .ToArrayAsync();
-        
+            
             return mapper.Map<AnswerDTO[]>(answers);
         }
     }

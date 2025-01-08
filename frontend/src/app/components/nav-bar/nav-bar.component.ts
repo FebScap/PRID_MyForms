@@ -9,6 +9,7 @@ import {ConfirmDialogComponent, confirmDialogType} from "../confirm-dialog/confi
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {InstanceService} from "../../services/instance.service";
+import {OpenInstanceService} from "../../services/open-instance.service";
 import {FormGroup} from "@angular/forms";
 import {AddFormService} from "../../services/add-form.service";
 import {QuestionService} from "../../services/question.service";
@@ -34,8 +35,9 @@ export class NavBarComponent {
         private router: Router,
         private authenticationService: AuthenticationService,
         private instanceService: InstanceService,
+        private openInstanceService: OpenInstanceService,
         private addFormService: AddFormService,
-        private formService: FormService,
+        private formService: FormService
     ) {
     }
 
@@ -80,15 +82,15 @@ export class NavBarComponent {
     }
 
     previousQuestion() {
-        this.instanceService.previousQuestion();
+        this.openInstanceService.previousQuestion();
     }
 
     nextQuestion() {
-        this.instanceService.nextQuestion();
+        this.openInstanceService.nextQuestion();
     }
     
     getQuestionX() {
-        return this.instanceService.getquestionX();
+        return this.openInstanceService.getquestionX();
     }
     
     public addForm() {

@@ -9,4 +9,6 @@ public class OptionList
     public string Name { get; set; }
     public int? OwnerId  { get; set; }
     public User? Owner { get; set; }
+    
+    public ICollection<OptionValue> Values { get; set;} = new HashSet<OptionValue>();
 }

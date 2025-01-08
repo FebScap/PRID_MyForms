@@ -8,6 +8,7 @@ import {Question} from "../../models/question";
 import {Subscription} from "rxjs";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {Answer} from "../../models/answer";
+import {OpenInstanceService} from "../../services/open-instance.service";
 
 
 @Component({
@@ -28,13 +29,13 @@ export class InstanceComponent implements OnDestroy {
         private route: ActivatedRoute,
         private formService: FormService,
         private instanceService: InstanceService,
+        private openInstanceService: OpenInstanceService,
         private formBuilder: FormBuilder
     ) {
-        this.instanceService.reset();
-        this.subscription = this.instanceService.questionX$.subscribe(x => {
+        this.openInstanceService.reset();
+        this.subscription = this.openInstanceService.questionX$.subscribe(x => {
             this.questionX = x;
         });
-        
         this.answerForm = this.formBuilder.group({
             answers: this.answers
         })
@@ -55,7 +56,6 @@ export class InstanceComponent implements OnDestroy {
             });
                 
         }
-        console.log(this.answers);
     }
     
     ngOnDestroy(): void {

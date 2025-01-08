@@ -34,6 +34,7 @@ export class ViewFormsComponent {
             this.formService.getAll().subscribe((res) => this.forms = res);
         } else if (this.currentUser?.role == Role.Guest) {
             this.formService.getAllPublic().subscribe((res) => this.forms = res);
+            
         } else {
             this.formService.getAllForCurrentUser().subscribe((res) => this.forms = res);
         }
@@ -57,13 +58,23 @@ export class ViewFormsComponent {
             }
         });
         if (instances.length != 0) {
-            if (instances[instances.length - 1].completed) {
+            if (instances[instances.length - 1].completed != null) {
                 return 2;//completed
             } else {
                 return 1;//in progress
             }
         }
         return 0;//no instances
+    }
+    
+    getLatestInstance(form: Form): Instance | undefined {
+        let instances: Instance[] = [];
+        form.instances.forEach((instance) => {
+            if (this.authenticationService.currentUser?.id == instance.userId) {
+                instances.push(instance);
+            }
+        });
+        return instances[instances.length - 1];
     }
 
     openForm(form: Form) {

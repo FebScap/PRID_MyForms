@@ -26,6 +26,12 @@ public class MappingProfile : Profile
         
         CreateMap<Access, AccessDTO>();
         CreateMap<AccessDTO, Access>();
+
+        CreateMap<OptionList, OptionListDTO>();
+        CreateMap<OptionListDTO, OptionList>();
+
+        CreateMap<OptionValue, OptionValueDTO>();
+        CreateMap<OptionValueDTO, OptionValue>();
     }
     
     

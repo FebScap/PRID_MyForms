@@ -24,6 +24,7 @@ import {ConfirmDialogComponent} from "../components/confirm-dialog/confirm-dialo
 import {InstanceComponent} from "../components/instance/instance.component";
 import {QuestionComponent} from "../components/instance/question.component";
 import {AddFormComponent} from "../components/add-form/add-form.component";
+import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 
 @NgModule({
     declarations: [
@@ -51,6 +52,8 @@ import {AddFormComponent} from "../components/add-form/add-form.component";
         AppRoutes,
         BrowserAnimationsModule,
         SharedModule,
+        MatRadioGroup,
+        MatRadioButton,
     ],
     providers: [
         {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
