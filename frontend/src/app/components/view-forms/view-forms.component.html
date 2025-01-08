@@ -25,11 +25,11 @@
                     <div>
                         @if (getInstancesStatus(form) > 0) {
                             started:
-                            <b>{{ form.instances[form.instances.length - 1].started.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</b>
+                            <b>{{ getLatestInstance(form)?.started!.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</b>
                             <br>
                             @if (getInstancesStatus(form) == 2) {
                                 completed:
-                                <b>{{ form.instances[form.instances.length - 1].completed.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</b>
+                                <b>{{ getLatestInstance(form)?.completed!.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</b>
                             } @else {
                                 in progress
                             }

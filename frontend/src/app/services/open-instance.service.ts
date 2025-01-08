@@ -9,19 +9,25 @@ import {Answer} from "../models/answer";
 import {Form} from "../models/form";
 
 @Injectable({ providedIn: 'root' })
-export class InstanceService {
-    
+export class OpenInstanceService {
+    private questionXSource = new BehaviorSubject<number>(0);
+    public questionX$ = this.questionXSource.asObservable();
+
     constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private authenticationService: AuthenticationService) { }
-    
-    getById(id: string): Observable<Instance> {
-        return this.http.get<any>(`${this.baseUrl}api/instances/${id}`).pipe(
-            map(res => plainToInstance(Instance, res))
-        );
+
+    nextQuestion() {
+        this.questionXSource.next(this.questionXSource.getValue() + 1);
     }
-    
-    getAnswers(instanceId: number): Observable<Answer[]> {
-        return this.http.get<any[]>(`${this.baseUrl}api/instances/${instanceId}/answers`).pipe(
-            map(res => plainToInstance(Answer, res))
-        );
+
+    previousQuestion() {
+        this.questionXSource.next(this.questionXSource.getValue() - 1);
+    }
+
+    getquestionX(): number {
+        return this.questionXSource.getValue();
+    }
+
+    reset() {
+        this.questionXSource.next(0);
     }
 }

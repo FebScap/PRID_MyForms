@@ -9,6 +9,10 @@ import {ConfirmDialogComponent, confirmDialogType} from "../confirm-dialog/confi
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {InstanceService} from "../../services/instance.service";
+import {OpenInstanceService} from "../../services/open-instance.service";
+import {FormGroup} from "@angular/forms";
+import {AddFormService} from "../../services/add-form.service";
+import {QuestionService} from "../../services/question.service";
 
 @Component({
     selector: 'app-nav-bar',
@@ -22,6 +26,8 @@ export class NavBarComponent {
     @Input() snackBar: MatSnackBar | undefined;
     //@ts-ignore
     @Input() questionCount: NumberInput | undefined;
+    @Input() isFormValid: BooleanInput | undefined;
+    
     
     readonly dialog = inject(MatDialog);
 
@@ -29,6 +35,9 @@ export class NavBarComponent {
         private router: Router,
         private authenticationService: AuthenticationService,
         private instanceService: InstanceService,
+        private openInstanceService: OpenInstanceService,
+        private addFormService: AddFormService,
+        private formService: FormService
     ) {
     }
 
@@ -73,19 +82,30 @@ export class NavBarComponent {
     }
 
     previousQuestion() {
-        this.instanceService.previousQuestion();
+        this.openInstanceService.previousQuestion();
     }
 
     nextQuestion() {
-        this.instanceService.nextQuestion();
+        this.openInstanceService.nextQuestion();
     }
     
     getQuestionX() {
-        return this.instanceService.getquestionX();
+        return this.openInstanceService.getquestionX();
     }
     
     public addForm() {
-        console.log('Navigation vers /add-form');
         this.router.navigate(['/add-form']);
+    }
+
+    saveForm() {
+        let newForm = this.addFormService.getForm();
+        this.formService.addForm(newForm).subscribe({
+            next: () => {
+                this.router.navigate(['/']);
+            },
+            error: (err) => {
+                console.error('Error saving form:', err);
+            }
+        });
     }
 }

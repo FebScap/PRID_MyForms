@@ -18,5 +18,5 @@
 </div>
 
 @for (q of questions; track $index) {
-    <app-question [hidden]="$index != questionX" [question]="q" [instance]="instance" questionCount="{{ questions.length }}"></app-question>
+    <app-question [hidden]="$index != questionX" [question]="q" [instance]="instance" questionCount="{{ questions.length }}" [answer]="answers[$index]"></app-question>
 }
