@@ -96,7 +96,7 @@ export class NavBarComponent {
     }
 
     saveForm() {
-        let newForm = this.addFormService.addForm;
+        let newForm = this.addFormService.getForm();
         this.formService.addForm(newForm).subscribe({
             next: () => {
                 this.router.navigate(['/']);

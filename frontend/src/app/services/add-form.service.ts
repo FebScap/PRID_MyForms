@@ -25,4 +25,8 @@ export class AddFormService {
         this.addFormSource.next(new Form());
     }
     
+    getForm() {
+        return this.addFormSource.value;
+    }
+    
 }
