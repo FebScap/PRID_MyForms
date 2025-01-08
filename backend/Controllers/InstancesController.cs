@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using prid_2425_f02.Models;
 
 namespace prid_2425_f02.Controllers
@@ -15,6 +16,16 @@ namespace prid_2425_f02.Controllers
             var instance = await context.Instances.FindAsync(id);
             if (instance == null) return NotFound();
             return mapper.Map<InstanceDTO>(instance);
+        }
+        
+        [HttpGet("{instanceId:int}/answers")]
+        public async Task<ActionResult<AnswerDTO>> GetAnswers(int instanceId) {
+            var instance = await context.Instances
+                .Include(i => i.Answers)
+                .FirstOrDefaultAsync(i => i.Id == instanceId);
+            if (instance == null) return NotFound();
+        
+            return mapper.Map<AnswerDTO>(instance);
         }
     }
 }

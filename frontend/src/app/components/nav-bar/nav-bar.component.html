@@ -40,11 +40,11 @@
             </button>
         }
     } @else if (currentPath.startsWith("/instance")) {
-        <button mat-icon-button>
-            <mat-icon>keyboard_arrow_left</mat-icon>
+        <button [disabled]="getQuestionX() == 0" mat-icon-button>
+            <mat-icon (click)="previousQuestion()">keyboard_arrow_left</mat-icon>
         </button>
-        <button mat-icon-button>
-            <mat-icon>keyboard_arrow_right</mat-icon>
+        <button [disabled]="getQuestionX() == questionCount" mat-icon-button>
+            <mat-icon (click)="nextQuestion()">keyboard_arrow_right</mat-icon>
         </button>
         <button mat-icon-button>
             <mat-icon>delete</mat-icon>

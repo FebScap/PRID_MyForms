@@ -22,6 +22,7 @@ import {ViewFormComponent} from "../components/view-form/view-form.component";
 import {InformationComponent} from "../components/information/information.component";
 import {ConfirmDialogComponent} from "../components/confirm-dialog/confirm-dialog.component";
 import {InstanceComponent} from "../components/instance/instance.component";
+import {QuestionComponent} from "../components/instance/question.component";
 
 @NgModule({
     declarations: [
@@ -36,7 +37,8 @@ import {InstanceComponent} from "../components/instance/instance.component";
         ViewFormComponent,
         ConfirmDialogComponent,
         InformationComponent,
-        InstanceComponent
+        InstanceComponent,
+        QuestionComponent
         
     ],
     imports: [

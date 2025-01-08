@@ -2,12 +2,13 @@ import {Component, inject, Input} from '@angular/core';
 import {Router} from "@angular/router";
 import {AuthenticationService} from "../../services/authentication.service";
 import {Role} from "../../models/user";
-import {BooleanInput, coerceBooleanProperty} from "@angular/cdk/coercion";
+import {BooleanInput, coerceBooleanProperty, NumberInput} from "@angular/cdk/coercion";
 import {Form} from "../../models/form";
 import {FormService} from "../../services/form.service";
 import {ConfirmDialogComponent, confirmDialogType} from "../confirm-dialog/confirm-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {InstanceService} from "../../services/instance.service";
 
 @Component({
     selector: 'app-nav-bar',
@@ -19,12 +20,15 @@ export class NavBarComponent {
     @Input() formIsReadOnly: BooleanInput = true;
     @Input() form: Form | undefined;
     @Input() snackBar: MatSnackBar | undefined;
+    //@ts-ignore
+    @Input() questionCount: NumberInput | undefined;
+    
     readonly dialog = inject(MatDialog);
 
     constructor(
         private router: Router,
         private authenticationService: AuthenticationService,
-        private formService: FormService
+        private instanceService: InstanceService,
     ) {
     }
 
@@ -66,5 +70,17 @@ export class NavBarComponent {
                 this.router.navigate(['/']);
             }
         });
+    }
+
+    previousQuestion() {
+        this.instanceService.previousQuestion();
+    }
+
+    nextQuestion() {
+        this.instanceService.nextQuestion();
+    }
+    
+    getQuestionX() {
+        return this.instanceService.getquestionX();
     }
 }
