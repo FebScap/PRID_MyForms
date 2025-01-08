@@ -154,6 +154,8 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<FormDTO>> Create(FormDTO formDto)
     {
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(formDto));
+        Console.WriteLine("debug");
         if (formDto == null)
             return BadRequest("formDto is required.");
 
