@@ -105,4 +105,21 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
     private bool HasAccessEditor(Form form, int userId) {
         return form.OwnerId == userId || form.Accesses.Any(a => a.UserId == userId && a.AccessType == AccessType.Editor);
     }
+    
+    [AllowAnonymous]
+    [HttpGet("is-title-unique")]
+    public async Task<ActionResult<bool>> IsTitleUnique([FromQuery] string title, [FromQuery] int ownerId)
+    {
+        // Vérifie si les paramètres nécessaires sont fournis
+        if (string.IsNullOrWhiteSpace(title) || ownerId <= 0)
+        {
+            return BadRequest("Title and ownerId are required.");
+        }
+
+        // Vérifie si un formulaire avec le même titre existe déjà pour ce propriétaire
+        var isUnique = !await context.Forms.AnyAsync(f => f.Title == title && f.OwnerId == ownerId);
+    
+        return Ok(isUnique);
+    }
+
 }

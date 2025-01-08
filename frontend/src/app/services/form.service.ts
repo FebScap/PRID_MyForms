@@ -67,4 +67,21 @@ export class FormService {
         );
     }
 
+    isTitleUnique(title: string, ownerId: string | undefined): Observable<boolean> {
+        // Vérification si le propriétaire est bien défini
+        if (!ownerId) {
+            console.error("Owner ID is not provided");
+            return of(false);
+        }
+        return this.http.get<boolean>(`${this.baseUrl}api/forms/is-title-unique`, {
+            params: { title, ownerId }
+        }).pipe(
+            catchError(err => {
+                console.error("Error checking title uniqueness:", err);
+                return of(false);
+            })
+        );
+    }
+
+
 }

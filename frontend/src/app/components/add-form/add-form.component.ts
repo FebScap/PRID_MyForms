@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AsyncValidatorFn, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FormService } from '../../services/form.service';
 import { AuthenticationService } from '../../services/authentication.service';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-add-form',
@@ -19,8 +21,15 @@ export class AddFormComponent {
         private authenticationService: AuthenticationService
     ) {
         this.formGroup = this.formBuilder.group({
-            title: ['', [Validators.required, Validators.minLength(3)]],
-            description: ['', [Validators.maxLength(200)]],
+            title: [
+                '',
+                [Validators.required, Validators.minLength(3)],
+                [this.uniqueTitleValidator()]
+            ],
+            description: [
+                '',
+                [Validators.minLength(3), Validators.maxLength(200)]
+            ],
             isPublic: [false]
         });
     }
@@ -49,5 +58,14 @@ export class AddFormComponent {
 
     ngOnInit() {
         console.log('AddFormComponent chargé');
+    }
+
+    private uniqueTitleValidator(): AsyncValidatorFn {
+        return (control: AbstractControl): Observable<{ [key: string]: boolean } | null> => {
+            const currentOwnerId = this.authenticationService.currentUser?.id;
+            return this.formService.isTitleUnique(control.value, currentOwnerId).pipe(
+                map((isUnique: boolean) => (isUnique ? null : { notUnique: true }))
+            );
+        };
     }
 }

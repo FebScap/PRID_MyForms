@@ -1,6 +1,3 @@
-<app-nav-bar title="MyForm" class="toolbar-actions">
-
-</app-nav-bar>
 <mat-card class="p-4">
     <form [formGroup]="formGroup" (ngSubmit)="saveForm()" class="d-flex flex-column gap-4">
         <mat-form-field appearance="outline">
@@ -8,11 +5,13 @@
             <input matInput formControlName="title" placeholder="Enter the title">
             <mat-error *ngIf="formGroup.get('title')?.hasError('required')">Title is required</mat-error>
             <mat-error *ngIf="formGroup.get('title')?.hasError('minlength')">Minimum length is 3</mat-error>
+            <mat-error *ngIf="formGroup.get('title')?.hasError('notUnique')">Title must be unique</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
             <mat-label>Description</mat-label>
             <textarea matInput formControlName="description" placeholder="Enter a description (optional)"></textarea>
+            <mat-error *ngIf="formGroup.get('description')?.hasError('minlength')">Minimum length is 3</mat-error>
             <mat-error *ngIf="formGroup.get('description')?.hasError('maxlength')">Maximum length is 200</mat-error>
         </mat-form-field>
 
