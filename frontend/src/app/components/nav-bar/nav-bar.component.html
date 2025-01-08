@@ -2,7 +2,7 @@
     <!-- éléments de gauche -->
     @if (currentPath == "/login") {
         <mat-icon class="mx-2">history_edu</mat-icon>
-    } @else if (currentPath.includes("/view_form") || currentPath.includes("/instance")) {
+    } @else if (currentPath.startsWith("/view_form") || currentPath.startsWith("/instance")) {
         <button mat-icon-button [routerLink]="['/']">
             <mat-icon>arrow_back_ios</mat-icon>
         </button>
@@ -14,7 +14,7 @@
     <span class="title">{{ title }}</span>
     
     <span class="spacer"></span>
-    <!-- pour mettre des éléments à droite -->
+    <!-- éléments à droite -->
     @if (currentPath == "/") {
         <button mat-icon-button>
             <mat-icon>search</mat-icon>
@@ -24,7 +24,7 @@
                 <mat-icon>add</mat-icon>
             </button>
         }
-    } @else if (currentPath.includes("/view_form")) {
+    } @else if (currentPath.startsWith("/view_form")) {
         <button [disabled]="formIsReadOnly" mat-icon-button>
             <mat-icon>edit</mat-icon>
         </button>
@@ -39,10 +39,24 @@
                 <mat-icon>query_stats</mat-icon>
             </button>
         }
+    } @else if (currentPath.startsWith("/instance")) {
+        <button mat-icon-button>
+            <mat-icon>keyboard_arrow_left</mat-icon>
+        </button>
+        <button mat-icon-button>
+            <mat-icon>keyboard_arrow_right</mat-icon>
+        </button>
+        <button mat-icon-button>
+            <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-icon-button>
+            <mat-icon>save</mat-icon>
+        </button>
     }
     <ng-content/>
 </mat-toolbar>
 
+<!-- Menu -->
 <mat-menu #menu="matMenu">
     <button mat-menu-item routerLink="/">
         <mat-icon>home</mat-icon>
