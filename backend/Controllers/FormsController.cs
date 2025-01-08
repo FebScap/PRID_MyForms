@@ -150,4 +150,27 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
     private bool HasAccessReader(Form form, int userId) {
         return form.OwnerId == userId || form.Accesses.Any(a => a.UserId == userId) || form.IsPublic;
     }
+    
+    [HttpPost]
+    public async Task<ActionResult<FormDTO>> Create(FormDTO formDto)
+    {
+        if (formDto == null)
+            return BadRequest("formDto is required.");
+
+        var form = new Form
+        {
+            Title = formDto.Title,
+            Description = formDto.Description,
+            IsPublic = formDto.IsPublic,
+            OwnerId = formDto.Owner.Id 
+        };
+
+        context.Forms.Add(form);
+        await context.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetById), new { id = form.Id }, mapper.Map<FormDTO>(form));
+    }
+
+
+
 }

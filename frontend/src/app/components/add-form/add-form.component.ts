@@ -42,17 +42,32 @@ export class AddFormComponent {
 
     saveForm() {
         if (this.isFormValid) {
+            const currentUser = this.authenticationService.currentUser;
+
             const newForm = {
-                ...this.formGroup.getRawValue(), // Récupère toutes les valeurs, y compris les champs désactivés
-                owner: this.authenticationService.currentUser?.id, // Le propriétaire est l'utilisateur connecté
-                questions: [] // Formulaire vide
+                title: this.formGroup.get('title')?.value,
+                description: this.formGroup.get('description')?.value,
+                isPublic: this.formGroup.get('isPublic')?.value,
+                owner: {
+                    id: currentUser?.id,
+                    firstName: currentUser?.firstName,
+                    lastName: currentUser?.lastName,
+                    email: currentUser?.email,
+                    password: currentUser?.password
+                }
             };
-            console.log('addform compo');
-            this.formService.addForm(newForm).subscribe(() => {
-                this.router.navigate(['/']); // Retour à la liste des formulaires
+
+            this.formService.addForm(newForm).subscribe({
+                next: () => {
+                    this.router.navigate(['/']);
+                },
+                error: (err) => {
+                    console.error('Error saving form:', err);
+                }
             });
         }
     }
+
 
     goBack() {
         this.router.navigate(['/']); // Retour à la vue précédente
