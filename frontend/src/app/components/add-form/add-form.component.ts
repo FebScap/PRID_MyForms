@@ -4,7 +4,7 @@ import {Router} from '@angular/router';
 import {FormService} from '../../services/form.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {map} from 'rxjs/operators';
-import {Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {AddFormService} from "../../services/add-form.service";
 import {Form} from "../../models/form";
 
@@ -17,6 +17,7 @@ export class AddFormComponent implements OnDestroy {
     public formGroup!: FormGroup;
     public currentUser: any;
     private sub = new Subscription();
+    public isFormValid$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
     constructor(
         private formBuilder: FormBuilder,
@@ -43,6 +44,10 @@ export class AddFormComponent implements OnDestroy {
             }]
         });
         this.sub = this.addFormService.addForm.subscribe();
+        //pour surveiller les changements d'état de validation
+        this.formGroup.statusChanges.subscribe(status => {
+            this.isFormValid$.next(this.formGroup.valid);
+        });
     }
 
     get isFormValid() {

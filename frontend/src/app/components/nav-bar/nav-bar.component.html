@@ -53,7 +53,7 @@
             <mat-icon>save</mat-icon>
         </button>
     } @else if (currentPath.startsWith("/add-form")) {
-        <button mat-icon-button="!isFormValid" (click)="saveForm()">
+        <button mat-icon-button [disabled]="!coerceBooleanProperty(isFormValid)" (click)="saveForm()">
             <mat-icon>save</mat-icon>
         </button>
     }

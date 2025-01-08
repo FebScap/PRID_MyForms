@@ -10,9 +10,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {InstanceService} from "../../services/instance.service";
 import {OpenInstanceService} from "../../services/open-instance.service";
-import {FormGroup} from "@angular/forms";
 import {AddFormService} from "../../services/add-form.service";
-import {QuestionService} from "../../services/question.service";
 
 @Component({
     selector: 'app-nav-bar',
