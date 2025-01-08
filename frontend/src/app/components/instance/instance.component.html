@@ -1,0 +1,22 @@
+﻿<app-nav-bar title="{{ form?.title }}" questionCount="{{ questions.length - 1 }}" class="toolbar-actions"></app-nav-bar>
+
+<div class="body mx-1">
+    <div class="row">
+        <div class="col-3">Title:</div>
+        <div class="col-9 fw-bold">{{ form?.title }}</div>
+        <div class="col-3">Description:</div>
+        <div class="col-9 fw-bold">{{ form?.description }}</div>
+        <div class="col-3">Started:</div>
+        <div class="col-9 fw-bold">{{ instance?.started?.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</div>
+        @if (instance?.completed) {
+            <div class="col-3">Completed:</div>
+            <div class="col-9 fw-bold">{{ instance?.completed?.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</div>
+        } @else {
+            <div class="col-3 fw-medium">in progress</div>
+        }
+    </div>
+</div>
+
+@for (q of questions; track $index) {
+    <app-question [hidden]="$index != questionX" [question]="q" [instance]="instance" questionCount="{{ questions.length }}"></app-question>
+}

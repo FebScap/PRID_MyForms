@@ -23,11 +23,11 @@
                     </p>
                     <p>by <b>{{ form.owner.firstName }} {{ form.owner.lastName }}</b></p>
                     <div>
-                        @if (form.instances.length != 0) {
+                        @if (getInstancesStatus(form) > 0) {
                             started:
                             <b>{{ form.instances[form.instances.length - 1].started.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</b>
                             <br>
-                            @if (form.instances[form.instances.length - 1].completed) {
+                            @if (getInstancesStatus(form) == 2) {
                                 completed:
                                 <b>{{ form.instances[form.instances.length - 1].completed.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</b>
                             } @else {
@@ -37,7 +37,7 @@
                     </div>
                 </mat-card-content>
                 <mat-card-footer class="d-flex justify-content-center">
-                    <a mat-button href="#">Open</a>
+                    <button mat-button (click)="openForm(form)">Open</button>
                     @if (form.owner.id == currentUser?.id) {
                         <a mat-button href="/view_form/{{ form.id }}">Manage</a>
                     } @else {

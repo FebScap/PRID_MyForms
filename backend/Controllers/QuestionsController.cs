@@ -41,7 +41,6 @@ namespace prid_2425_f02.Controllers
             mapper.Map<QuestionDTO, Question>(dto, question);
             
             var result = await new QuestionValidator(context).ValidateAsync(question);
-            Console.WriteLine(result.Errors);
             if (!result.IsValid)
                 return BadRequest(result);
             
