@@ -62,7 +62,7 @@ export class AddFormComponent {
 
     private uniqueTitleValidator(): AsyncValidatorFn {
         return (control: AbstractControl): Observable<{ [key: string]: boolean } | null> => {
-            const currentOwnerId = this.authenticationService.currentUser?.id;
+            const currentOwnerId = this.authenticationService.currentUser?.id.toString();
             return this.formService.isTitleUnique(control.value, currentOwnerId).pipe(
                 map((isUnique: boolean) => (isUnique ? null : { notUnique: true }))
             );
