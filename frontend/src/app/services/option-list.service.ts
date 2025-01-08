@@ -7,21 +7,16 @@ import {Instance} from "../models/instance";
 import {map} from "rxjs/operators";
 import {Answer} from "../models/answer";
 import {Form} from "../models/form";
+import {OptionList} from "../models/option-list";
 
 @Injectable({ providedIn: 'root' })
-export class InstanceService {
-    
+export class OptionListService {
+
     constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private authenticationService: AuthenticationService) { }
-    
-    getById(id: string): Observable<Instance> {
-        return this.http.get<any>(`${this.baseUrl}api/instances/${id}`).pipe(
-            map(res => plainToInstance(Instance, res))
-        );
-    }
-    
-    getAnswers(instanceId: number): Observable<Answer[]> {
-        return this.http.get<any[]>(`${this.baseUrl}api/instances/${instanceId}/answers`).pipe(
-            map(res => plainToInstance(Answer, res))
+
+    getById(id: number): Observable<OptionList> {
+        return this.http.get<any>(`${this.baseUrl}api/OptionLists/${id}`).pipe(
+            map(res => plainToInstance(OptionList, res))
         );
     }
 }
