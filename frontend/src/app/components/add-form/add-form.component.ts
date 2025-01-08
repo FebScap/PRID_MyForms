@@ -1,26 +1,31 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AsyncValidatorFn, AbstractControl } from '@angular/forms';
-import { Router } from '@angular/router';
-import { FormService } from '../../services/form.service';
-import { AuthenticationService } from '../../services/authentication.service';
-import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators, AsyncValidatorFn, AbstractControl} from '@angular/forms';
+import {Router} from '@angular/router';
+import {FormService} from '../../services/form.service';
+import {AuthenticationService} from '../../services/authentication.service';
+import {map} from 'rxjs/operators';
+import {Observable, Subscription} from 'rxjs';
+import {AddFormService} from "../../services/add-form.service";
+import {Form} from "../../models/form";
 
 @Component({
     selector: 'app-add-form',
     templateUrl: './add-form.component.html',
-    styleUrls: ['./add-form.component.css']
+    styleUrls: ['./add-form.component.css'],
 })
-export class AddFormComponent {
+export class AddFormComponent implements OnDestroy {
     public formGroup!: FormGroup;
     public currentUser: any;
+    private sub = new Subscription();
 
     constructor(
         private formBuilder: FormBuilder,
         private router: Router,
         private formService: FormService,
-        private authenticationService: AuthenticationService
+        private authenticationService: AuthenticationService,
+        private addFormService: AddFormService,
     ) {
+        this.addFormService.reset();
         this.formGroup = this.formBuilder.group({
             title: [
                 '',
@@ -32,8 +37,12 @@ export class AddFormComponent {
                 [Validators.minLength(3), Validators.maxLength(200)]
             ],
             isPublic: [false],
-            owner: [{ value: this.authenticationService.currentUser?.firstName + " " + this.authenticationService.currentUser?.lastName, disabled: true }]
+            owner: [{
+                value: this.authenticationService.currentUser?.firstName + " " + this.authenticationService.currentUser?.lastName,
+                disabled: true
+            }]
         });
+        this.sub = this.addFormService.addForm.subscribe();
     }
 
     get isFormValid() {
@@ -44,27 +53,16 @@ export class AddFormComponent {
         if (this.isFormValid) {
             const currentUser = this.authenticationService.currentUser;
 
-            const newForm = {
-                title: this.formGroup.get('title')?.value,
-                description: this.formGroup.get('description')?.value,
-                isPublic: this.formGroup.get('isPublic')?.value,
-                owner: {
-                    id: currentUser?.id,
-                    firstName: currentUser?.firstName,
-                    lastName: currentUser?.lastName,
-                    email: currentUser?.email,
-                    password: currentUser?.password
-                }
-            };
+            const newForm = new Form();
 
-            this.formService.addForm(newForm).subscribe({
-                next: () => {
-                    this.router.navigate(['/']);
-                },
-                error: (err) => {
-                    console.error('Error saving form:', err);
-                }
-            });
+            newForm.title = this.formGroup.get('title')?.value;
+            newForm.description = this.formGroup.get('description')?.value;
+            newForm.isPublic = this.formGroup.get('isPublic')?.value;
+            newForm.ownerId = currentUser!.id;
+            
+            console.log(newForm);
+
+            this.addFormService.setForm(newForm);
         }
     }
 
@@ -77,11 +75,15 @@ export class AddFormComponent {
         console.log('AddFormComponent chargé');
     }
 
+    ngOnDestroy() {
+        this.sub.unsubscribe();
+    }
+
     private uniqueTitleValidator(): AsyncValidatorFn {
         return (control: AbstractControl): Observable<{ [key: string]: boolean } | null> => {
             const currentOwnerId = this.authenticationService.currentUser?.id.toString();
             return this.formService.isTitleUnique(control.value, currentOwnerId).pipe(
-                map((isUnique: boolean) => (isUnique ? null : { notUnique: true }))
+                map((isUnique: boolean) => (isUnique ? null : {notUnique: true}))
             );
         };
     }
