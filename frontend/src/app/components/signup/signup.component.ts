@@ -43,7 +43,7 @@ export class SignupComponent {
             email: this.ctlEmail,
             password: this.ctlPassword,
             confirmPassword: this.ctlConfirmPassword
-        }, { validators: [this.passwordMatchValidator] });
+        }, { validators: [this.passwordMatchValidator, this.firstAndLastNameValidator] });
     }
 
     emailUsed(): AsyncValidatorFn {
@@ -89,6 +89,16 @@ export class SignupComponent {
         }
 
         return age < 18 || age > 125 ? { invalidAge: true } : null;
+    }
+
+    firstAndLastNameValidator(group: FormGroup): ValidationErrors | null {
+        const firstName = group.get('firstName')?.value.trim();
+        const lastName = group.get('lastName')?.value.trim();
+
+        const bothFilled = firstName !== '' && lastName !== '';
+        const bothEmpty = firstName === '' && lastName === '';
+
+        return bothFilled || bothEmpty ? null : { namesIncomplete: true };
     }
 
     signup() {

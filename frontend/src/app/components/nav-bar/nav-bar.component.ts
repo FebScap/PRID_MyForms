@@ -68,4 +68,9 @@ export class NavBarComponent {
             }
         });
     }
+    
+    public addForm() {
+        console.log('Navigation vers /add-form');
+        this.router.navigate(['/add-form']);
+    }
 }

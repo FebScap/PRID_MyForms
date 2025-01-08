@@ -56,4 +56,33 @@ export class FormService {
             })
         );
     }
+
+    addForm(formData: any): Observable<boolean> {
+        console.log('addform service');
+        return this.http.post('${this.baseUrl}/api/forms', formData).pipe(
+            map(res => true),
+            catchError(err => {
+                console.error(err);
+                return of(false);
+            })
+        );
+    }
+
+    isTitleUnique(title: string, ownerId: string | undefined): Observable<boolean> {
+        // Vérification si le propriétaire est bien défini
+        if (!ownerId) {
+            console.error("Owner ID is not provided");
+            return of(false);
+        }
+        return this.http.get<boolean>(`${this.baseUrl}api/forms/is-title-unique`, {
+            params: { title, ownerId }
+        }).pipe(
+            catchError(err => {
+                console.error("Error checking title uniqueness:", err);
+                return of(false);
+            })
+        );
+    }
+
+
 }

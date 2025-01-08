@@ -2,6 +2,8 @@
     <!-- éléments de gauche -->
     @if (currentPath == "/login") {
         <mat-icon class="mx-2">history_edu</mat-icon>
+    } @else if (currentPath.includes("/signup")) {
+        <mat-icon class="mx-2">history_edu</mat-icon>
     } @else if (currentPath.includes("/view_form")) {
         <button mat-icon-button [routerLink]="['/']">
             <mat-icon>arrow_back_ios</mat-icon>
@@ -20,7 +22,7 @@
             <mat-icon>search</mat-icon>
         </button>
         @if (!isGuest) {
-            <button mat-icon-button>
+            <button mat-icon-button (click)="addForm()">
                 <mat-icon>add</mat-icon>
             </button>
         }
