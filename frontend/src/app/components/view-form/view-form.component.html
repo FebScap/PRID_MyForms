@@ -1,4 +1,5 @@
-﻿<app-nav-bar title="{{ form?.title }}" formIsReadOnly="{{ isReadOnly }}" [form]="form" [snackBar]="snackBar" class="toolbar-actions"></app-nav-bar>
+﻿<app-nav-bar title="{{ form?.title }}" formIsReadOnly="{{ isReadOnly }}" [form]="form" [snackBar]="snackBar"
+             class="toolbar-actions"></app-nav-bar>
 
 <div class="body mx-1">
     <div class="row">
@@ -10,7 +11,7 @@
         <div class="col-9 fw-bold">{{ form?.owner?.firstName }} {{ form?.owner?.lastName }}</div>
         <div class="col-3">Public:</div>
         <div class="col-9 fw-bold">
-            <mat-slide-toggle [(ngModel)]="isPublic" (click)="tooglePublic()" />
+            <mat-slide-toggle [(ngModel)]="isPublic" (click)="tooglePublic()"/>
         </div>
     </div>
 
@@ -22,10 +23,14 @@
                 <mat-card-title class="col-10">{{ question.title }}</mat-card-title>
                 <div class="col-2 d-flex justify-content-end">
                     @if (question.idX != 1) {
-                        <button mat-icon-button (click)="changeIdX(false, question)"><mat-icon class="me-2">arrow_upward</mat-icon></button>
+                        <button mat-icon-button (click)="changeIdX(false, question)">
+                            <mat-icon class="me-2">arrow_upward</mat-icon>
+                        </button>
                     }
                     @if (form?.questions && question.idX < form!.questions.length) {
-                        <button mat-icon-button (click)="changeIdX(true, question)"><mat-icon>arrow_downward</mat-icon></button>
+                        <button mat-icon-button (click)="changeIdX(true, question)">
+                            <mat-icon>arrow_downward</mat-icon>
+                        </button>
                     }
                 </div>
             </div>
@@ -44,13 +49,17 @@
                     </div>
                 </div>
                 <div class="col-2 mt-auto d-flex justify-content-end">
-                    <button mat-icon-button><mat-icon class="me-2">edit</mat-icon></button>
-                    <button mat-icon-button (click)="openDialogDeleteQuestion(question)"><mat-icon>delete</mat-icon></button>
+                    <button mat-icon-button (click)="openAddEditQuestion(question.id)">
+                        <mat-icon class="me-2">edit</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="openDialogDeleteQuestion(question)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
                 </div>
             </div>
         </mat-card>
     }
     <div class="w-100 text-center">
-        <button mat-raised-button>Add Question</button>
+        <button  mat-raised-button (click)="openAddEditQuestion()" >Add Question</button>
     </div>
 </div>

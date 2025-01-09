@@ -8,6 +8,7 @@ import {SignupComponent} from "../components/signup/signup.component";
 import {ViewFormComponent} from "../components/view-form/view-form.component";
 import {AddFormComponent} from "../components/add-form/add-form.component";
 import {InstanceComponent} from "../components/instance/instance.component";
+import {AddEditQuestionComponent} from "../components/add-edit-question/add-edit-question.component";
 
 const appRoutes: Routes = [
 
@@ -29,6 +30,8 @@ const appRoutes: Routes = [
     },
     {   path: 'login', component: LoginComponent },
     {   path: 'add-form', component: AddFormComponent },
+    { path: 'add-edit-question', component: AddEditQuestionComponent },
+    { path: 'add-edit-question/:id', component: AddEditQuestionComponent },
     {   path: 'signup', component: SignupComponent},
     {   path: '**', component: UnknownComponent },
     {

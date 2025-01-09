@@ -1,54 +1,65 @@
-<mat-card class="p-4">
-    <form [formGroup]="questionForm" (ngSubmit)="saveQuestion()" class="d-flex flex-column gap-4">
-        <!-- Titre -->
-        <mat-form-field appearance="outline">
-            <mat-label>Title</mat-label>
-            <input matInput formControlName="title" placeholder="Enter the title">
-            <mat-error *ngIf="questionForm.get('title')?.hasError('required')">Title is required</mat-error>
-            <mat-error *ngIf="questionForm.get('title')?.hasError('minlength')">Minimum length is 3</mat-error>
-        </mat-form-field>
+<app-nav-bar title="Add/Edit Question" [isQuestionValid]="questionForm.valid" class="toolbar-actions"></app-nav-bar>
 
-        <!-- Description -->
-        <mat-form-field appearance="outline">
-            <mat-label>Description</mat-label>
-            <textarea matInput formControlName="description" placeholder="Enter a description (optional)"></textarea>
-            <mat-error *ngIf="questionForm.get('description')?.hasError('minlength')">Minimum length is 3</mat-error>
-        </mat-form-field>
+<div class="position-relative h-100">
+    <mat-card appearance="raised" class="p-4 position-absolute top-50 start-50 translate-middle">
+        <form [formGroup]="questionForm" (ngSubmit)="saveQuestion()" class="d-flex flex-column gap-4">
 
-        <!-- Type -->
-        <mat-form-field appearance="outline">
-            <mat-label>Type</mat-label>
-            <mat-select formControlName="type" (selectionChange)="onTypeChange()">
-                <mat-option *ngFor="let type of questionTypes" [value]="type">{{ type }}</mat-option>
-            </mat-select>
-        </mat-form-field>
+            <!-- Titre -->
+            <mat-form-field appearance="outline">
+                <mat-label>Title</mat-label>
+                <input matInput formControlName="title" placeholder="Enter the title">
+                <mat-error *ngIf="questionForm.get('title')?.hasError('required')">Title is required</mat-error>
+                <mat-error *ngIf="questionForm.get('title')?.hasError('minlength')">Minimum length is 3</mat-error>
+            </mat-form-field>
 
-        <!-- Option List -->
-        <mat-form-field *ngIf="requiresOptionList" appearance="outline">
-            <mat-label>Option List</mat-label>
-            <mat-select formControlName="optionList">
-                <mat-option *ngFor="let option of optionLists" [value]="option.id">{{ option.name }}</mat-option>
-            </mat-select>
-            <mat-error *ngIf="questionForm.get('optionList')?.hasError('required')">Option list is required</mat-error>
-        </mat-form-field>
+            <!-- Description -->
+            <mat-form-field appearance="outline">
+                <mat-label>Description</mat-label>
+                <textarea matInput formControlName="description" placeholder="Enter a description (optional)"></textarea>
+                <mat-error *ngIf="questionForm.get('description')?.hasError('minlength')">Minimum length is 3</mat-error>
+            </mat-form-field>
 
-        <!-- Actions sur les listes d'options -->
-        <div class="d-flex align-items-center" *ngIf="requiresOptionList">
-            <button mat-icon-button color="primary" (click)="createOptionList()" [disabled]="!canAddOptionList">
-                <mat-icon>add</mat-icon>
-            </button>
-            <button mat-icon-button color="primary" (click)="editOptionList()" [disabled]="!canEditOptionList">
-                <mat-icon>edit</mat-icon>
-            </button>
-        </div>
+            <!-- Type -->
+            <mat-form-field appearance="outline">
+                <mat-label>Type</mat-label>
+                <mat-select formControlName="type" (selectionChange)="onTypeChange()">
+                    <mat-option *ngFor="let type of questionTypes" [value]="type.value">
+                        {{ type.label }}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="questionForm.get('type')?.hasError('required')">Type is required</mat-error>
+            </mat-form-field>
 
-        <!-- Required -->
-        <mat-checkbox formControlName="required">Required</mat-checkbox>
+            <!-- Option List -->
+            <mat-form-field *ngIf="requiresOptionList" appearance="outline">
+                <mat-label>Option List</mat-label>
+                <mat-select formControlName="optionList">
+                    <mat-option *ngFor="let option of optionLists" [value]="option.id">{{ option.name }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="questionForm.get('optionList')?.hasError('required')">Option list is required</mat-error>
+            </mat-form-field>
 
-        <!-- Navigation -->
-        <div class="d-flex justify-content-between">
-            <button mat-stroked-button type="button" (click)="goBack()">&#x3c; Back</button>
-            <button mat-flat-button color="primary" [disabled]="!questionForm.valid" type="submit">Save</button>
-        </div>
-    </form>
-</mat-card>
+            <!-- Actions sur les listes d'options -->
+            <div class="d-flex align-items-center" *ngIf="requiresOptionList">
+                <!-- Ajouter une liste d'options -->
+                <button mat-icon-button color="primary" (click)="createOptionList()" [disabled]="!canAddOptionList">
+                    <mat-icon>add</mat-icon>
+                </button>
+
+                <!-- Modifier une liste d'options -->
+                <button mat-icon-button color="primary" (click)="editOptionList()" [disabled]="!canEditOptionList">
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </div>
+
+            <!-- Required -->
+            <mat-checkbox formControlName="required">Required</mat-checkbox>
+
+            <!-- Navigation -->
+            <div class="d-flex justify-content-between">
+                <button mat-stroked-button type="button" (click)="goBack()">&#x3c; Back</button>
+                <button mat-flat-button color="primary" [disabled]="!questionForm.valid" type="submit">Save</button>
+            </div>
+        </form>
+    </mat-card>
+</div>

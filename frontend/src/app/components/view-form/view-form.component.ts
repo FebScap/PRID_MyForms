@@ -1,5 +1,5 @@
 ﻿import {Component, inject} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {Form} from "../../models/form";
 import {FormService} from "../../services/form.service";
 import {Question, Type} from "../../models/question";
@@ -26,7 +26,8 @@ export class ViewFormComponent {
         private route: ActivatedRoute,
         private formService: FormService,
         private questionService: QuestionService,
-        public snackBar: MatSnackBar
+        public snackBar: MatSnackBar,
+        private router: Router,
     ) {
     }
 
@@ -106,4 +107,15 @@ export class ViewFormComponent {
     }
 
     protected readonly Type = Type;
+
+    openAddEditQuestion(questionId?: number): void {
+        if (questionId) {
+            // Si un ID de question est fourni, naviguer vers l'édition
+            this.router.navigate(['/add-edit-question', { id: questionId }]);
+        } else {
+            // Si aucun ID n'est fourni, naviguer vers l'ajout d'une nouvelle question
+            this.router.navigate(['/add-edit-question']);
+        }
+    }
+
 }
