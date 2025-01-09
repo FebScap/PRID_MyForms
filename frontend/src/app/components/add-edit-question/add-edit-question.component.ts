@@ -54,7 +54,7 @@ export class AddEditQuestionComponent implements OnInit {
                     title: question.title,
                     description: question.description,
                     type: question.type,
-                    optionList: question.optionListId,
+                    optionList: question.optionList,
                     required: question.required
                 });
 
@@ -101,7 +101,7 @@ export class AddEditQuestionComponent implements OnInit {
         if (this.isNew) {
             this.questionService.create(questionData).subscribe({
                 next: () => {
-                    this.router.navigate(['/view-form', { id: questionData.formId }]);
+                    this.router.navigate(['/', { id: questionData.formId }]);
                 },
                 error: (err) => {
                     console.error('Error creating question:', err);
@@ -110,7 +110,7 @@ export class AddEditQuestionComponent implements OnInit {
         } else {
             this.questionService.update(questionData).subscribe({
                 next: () => {
-                    this.router.navigate(['/view-form', { id: questionData.formId }]);
+                    this.router.navigate(['/', { id: questionData.formId }]);
                 },
                 error: (err) => {
                     console.error('Error updating question:', err);

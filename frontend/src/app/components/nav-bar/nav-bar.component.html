@@ -56,6 +56,10 @@
         <button mat-icon-button [disabled]="!coerceBooleanProperty(isFormValid)" (click)="saveForm()">
             <mat-icon>save</mat-icon>
         </button>
+    } @else if (currentPath.startsWith("/add-edit-question")) {
+        <button mat-icon-button [disabled]="!coerceBooleanProperty(isQuestionValid)" (click)="saveQuestion()">
+            <mat-icon>save</mat-icon>
+        </button>
     }
     <ng-content/>
 </mat-toolbar>

@@ -25,6 +25,7 @@ export class NavBarComponent {
     //@ts-ignore
     @Input() questionCount: NumberInput | undefined;
     @Input() isFormValid: BooleanInput | undefined;
+    @Input() isQuestionValid: BooleanInput | undefined;
     
     
     readonly dialog = inject(MatDialog);
@@ -105,5 +106,9 @@ export class NavBarComponent {
                 console.error('Error saving form:', err);
             }
         });
+    }
+    
+    saveQuestion () {
+        
     }
 }

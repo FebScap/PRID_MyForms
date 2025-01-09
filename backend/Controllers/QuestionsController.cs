@@ -93,12 +93,12 @@ namespace prid_2425_f02.Controllers
                 return BadRequest("A question with the same index already exists in this form.");
 
             // Vérifier si le type nécessite une liste d'options
-            if (new[] { "check", "combo", "radio" }.Contains(questionDto.Type)) {
+            if (new List<string> { "check", "combo", "radio" }.Contains(questionDto.Type.ToString())) {
                 if (questionDto.OptionList == null)
                     return BadRequest("Option list is required for the selected question type.");
 
                 // Vérifier si la liste d'options existe
-                var optionListExists = await context.OptionLists.AnyAsync(ol => ol.Id == questionDto.OptionList);
+                var optionListExists = await context.OptionsLists.AnyAsync(ol => ol.Id == questionDto.OptionList);
                 if (!optionListExists)
                     return BadRequest($"Option list with ID {questionDto.OptionList} does not exist.");
             } else {

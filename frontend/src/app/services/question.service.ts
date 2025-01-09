@@ -32,4 +32,20 @@ export class QuestionService {
             })
         );
     }
+
+    getById(questionId: number): Observable<Question> {
+        return this.http.get<Question>(`${this.baseUrl}api/questions/${questionId}`).pipe(
+            map((response) => response)
+        );
+    }
+    
+    // Créer une nouvelle question
+    create(question: Question): Observable<Question> {
+        return this.http.post<Question>(`${this.baseUrl}api/questions`, question);
+    }
+
+    // Mettre à jour une question existante
+    update(question: Question): Observable<void> {
+        return this.http.put<void>(`${this.baseUrl}api/questions`, question);
+    }
 }

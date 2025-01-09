@@ -19,4 +19,8 @@ export class OptionListService {
             map(res => plainToInstance(OptionList, res))
         );
     }
+
+    getAll(): Observable<OptionList[]> {
+        return this.http.get<OptionList[]>(`${this.baseUrl}api/Optionlists`);
+    }
 }
