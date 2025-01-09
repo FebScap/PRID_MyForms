@@ -59,7 +59,7 @@ export class AddEditQuestionComponent implements OnInit {
                 });
 
                 // Activer ou désactiver le champ optionList en fonction du type de question
-                this.toggleOptionList(question.type);
+                this.toggleOptionList(question.type.toString());
             },
             error: (err) => {
                 console.error('Error loading question:', err);
