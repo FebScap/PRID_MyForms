@@ -15,6 +15,7 @@ export class AddEditQuestionComponent implements OnInit {
     public questionTypes: string[] = ['short', 'long', 'date', 'email', 'integer', 'check', 'combo', 'radio'];
     public optionLists: any[] = []; // Remplir avec les listes d'options disponibles
     public requiresOptionList: boolean = false;
+    public questionId?: number;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -46,54 +47,75 @@ export class AddEditQuestionComponent implements OnInit {
         this.loadOptionLists();
     }
 
-    loadQuestion(id: number): void {
-        this.questionService.getQuestionById(id).subscribe(question => {
-            this.questionForm.patchValue({
-                title: question.title,
-                description: question.description,
-                type: question.type,
-                optionList: question.optionList,
-                required: question.required
-            });
+    private loadQuestion(questionId: number): void {
+        this.questionService.getById(questionId).subscribe({
+            next: (question) => {
+                this.questionForm.patchValue({
+                    title: question.title,
+                    description: question.description,
+                    type: question.type,
+                    optionList: question.optionListId,
+                    required: question.required
+                });
 
-            this.requiresOptionList = ['check', 'combo', 'radio'].includes(question.type);
+                // Activer ou désactiver le champ optionList en fonction du type de question
+                this.toggleOptionList(question.type);
+            },
+            error: (err) => {
+                console.error('Error loading question:', err);
+            }
         });
     }
-
-    loadOptionLists(): void {
-        this.optionListService.getOptionLists().subscribe(optionLists => {
-            this.optionLists = optionLists;
+    
+    private loadOptionLists(): void {
+        this.optionListService.getAll().subscribe({
+            next: (optionLists) => {
+                this.optionLists = optionLists; // Variable contenant les options disponibles
+            },
+            error: (err) => {
+                console.error('Error loading option lists:', err);
+            }
         });
     }
 
     onTypeChange(): void {
         const selectedType = this.questionForm.get('type')?.value;
-        this.requiresOptionList = ['check', 'combo', 'radio'].includes(selectedType);
-
-        if (this.requiresOptionList) {
-            this.questionForm.get('optionList')?.enable();
-            this.questionForm.get('optionList')?.setValidators([Validators.required]);
-        } else {
-            this.questionForm.get('optionList')?.disable();
-            this.questionForm.get('optionList')?.clearValidators();
-        }
-
-        this.questionForm.get('optionList')?.updateValueAndValidity();
+        this.toggleOptionList(selectedType);
     }
 
-    saveQuestion(): void {
-        if (this.questionForm.valid) {
-            const questionData = this.questionForm.value;
+    private toggleOptionList(type: string): void {
+        const optionListControl = this.questionForm.get('optionList');
+        if (['radio', 'check', 'combo'].includes(type)) {
+            optionListControl?.enable();
+        } else {
+            optionListControl?.disable();
+            optionListControl?.setValue(null); // Réinitialiser la valeur
+        }
+    }
 
-            if (this.isNew) {
-                this.questionService.addQuestion(questionData).subscribe(() => {
-                    this.router.navigate(['/view-form']);
-                });
-            } else {
-                this.questionService.updateQuestion(questionData).subscribe(() => {
-                    this.router.navigate(['/view-form']);
-                });
-            }
+
+    saveQuestion(): void {
+        if (this.questionForm.invalid) return;
+
+        const questionData = this.questionForm.value;
+        if (this.isNew) {
+            this.questionService.create(questionData).subscribe({
+                next: () => {
+                    this.router.navigate(['/view-form', { id: questionData.formId }]);
+                },
+                error: (err) => {
+                    console.error('Error creating question:', err);
+                }
+            });
+        } else {
+            this.questionService.update(questionData).subscribe({
+                next: () => {
+                    this.router.navigate(['/view-form', { id: questionData.formId }]);
+                },
+                error: (err) => {
+                    console.error('Error updating question:', err);
+                }
+            });
         }
     }
 
