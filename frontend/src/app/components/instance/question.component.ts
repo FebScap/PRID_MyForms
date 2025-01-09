@@ -19,7 +19,6 @@ export class QuestionComponent {
     @Input() answer: Answer | undefined;
     @Input() questionCount: NumberInput | undefined;
     public optionList: OptionList | undefined;
-    isChecked: boolean = false;
 
     constructor(
         private openInstanceService: OpenInstanceService,
@@ -49,9 +48,11 @@ export class QuestionComponent {
         return Number(this.answer?.value) ?? 0;
     }
     
-    
+    isReadOnly(): boolean {
+        return this.instance?.completed != null;
+    }
 
     onChange() {
-
+        this.openInstanceService.formChanged();
     }
 }

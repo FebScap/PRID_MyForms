@@ -14,36 +14,36 @@
             @switch (getType()) {
                 @case (Type.Short) {
                     <mat-form-field class="w-100">
-                        <input matInput name="{{ question?.id }}" [ngModel]="answer?.value" (change)="onChange()" [required]="question!.required">
+                        <input matInput [disabled]="isReadOnly()" name="{{ question?.id }}" [ngModel]="answer?.value" (change)="onChange()" [required]="question!.required">
                     </mat-form-field>
                 }
                 @case (Type.Long) {
                     <mat-form-field class="w-100">
-                        <textarea matInput name="{{ question?.id }}" [ngModel]="answer?.value" (change)="onChange()" [required]="question!.required"></textarea>
+                        <textarea matInput [disabled]="isReadOnly()" name="{{ question?.id }}" [ngModel]="answer?.value" (change)="onChange()" [required]="question!.required"></textarea>
                     </mat-form-field>
                 }
                 @case (Type.Date) {
                     <mat-form-field class="w-100">
-                        <input matInput type="date" name="{{ question?.id }}" [ngModel]="answer?.value" (change)="onChange()" [required]="question!.required">
+                        <input matInput [disabled]="isReadOnly()" type="date" name="{{ question?.id }}" [ngModel]="answer?.value" (change)="onChange()" [required]="question!.required">
                     </mat-form-field>
                 }
                 @case (Type.Email) {
                     <mat-form-field class="w-100">
-                        <input matInput type="email" name="{{ question?.id }}" [ngModel]="answer?.value" (change)="onChange()" [required]="question!.required">
+                        <input matInput [disabled]="isReadOnly()" type="email" name="{{ question?.id }}" [ngModel]="answer?.value" (change)="onChange()" [required]="question!.required">
                     </mat-form-field>
                 }
                 @case (Type.Integer) {
                     <mat-form-field class="w-100">
-                        <input matInput type="number" name="{{ question?.id }}" [ngModel]="answer?.value" (change)="onChange()" [required]="question!.required">
+                        <input matInput [disabled]="isReadOnly()" type="number" name="{{ question?.id }}" [ngModel]="answer?.value" (change)="onChange()" [required]="question!.required">
                     </mat-form-field> 
                 }
                 @case (Type.Check) {
                     <div class="row row-cols-2">
                         @for (option of optionList?.values; track $index) {
                             @if (getOptionListValue() == option.idx) {
-                                <mat-checkbox class="col flex-wrap" [ngModel]="true" (change)="onChange()" [required]="question!.required">{{ option.label }}</mat-checkbox>
+                                <mat-checkbox [disabled]="isReadOnly()" class="col flex-wrap" [ngModel]="true" (change)="onChange()" [required]="question!.required">{{ option.label }}</mat-checkbox>
                             } @else {
-                                <mat-checkbox class="col flex-wrap" [ngModel]="false" (change)="onChange()" [required]="question!.required">{{ option.label }}</mat-checkbox>
+                                <mat-checkbox [disabled]="isReadOnly()" class="col flex-wrap" [ngModel]="false" (change)="onChange()" [required]="question!.required">{{ option.label }}</mat-checkbox>
                             }
 
                         }
@@ -51,8 +51,8 @@
                 }
                 @case (Type.Combo) {
                     <mat-form-field class="w-100">
-                        <mat-select [value]="getOptionListValue()" (change)="onChange()" [required]="question!.required">
-                            <mat-option [value]="0" class="fst-italic">(no value)</mat-option>
+                        <mat-select class="fst-italic" [disabled]="isReadOnly()" [value]="getOptionListValue()" placeholder="(no value)" (change)="onChange()" [required]="question!.required">
+                            <mat-option [value]="" class="fst-italic">(no value)</mat-option>
                             @for (option of optionList?.values; track $index) {
                                 <mat-option [value]="option.idx">{{ option.label }}</mat-option>
                             }
@@ -60,7 +60,7 @@
                     </mat-form-field>
                 }
                 @case (Type.Radio) {
-                    <mat-radio-group class="w-100 row row-cols-2" name="{{ question?.id }}" [value]="getOptionListValue()" (change)="onChange()" [required]="question!.required">
+                    <mat-radio-group [disabled]="isReadOnly()" class="w-100 row row-cols-2" name="{{ question?.id }}" [value]="getOptionListValue()" (change)="onChange()" [required]="question!.required">
                         @for (option of optionList?.values; track $index) {
                             <mat-radio-button class="col flex-wrap" [value]="option.idx">{{ option.label }}</mat-radio-button>
                         }

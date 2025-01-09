@@ -12,8 +12,7 @@ import {OpenInstanceService} from "../../services/open-instance.service";
 
 
 @Component({
-    templateUrl: './instance.component.html',
-    styleUrl: './instance.component.css'
+    templateUrl: './instance.component.html'
 })
 export class InstanceComponent implements OnDestroy {
     id: string | undefined;
@@ -21,7 +20,8 @@ export class InstanceComponent implements OnDestroy {
     instance?: Instance;
     questions: Question[] = [];
     answers: Answer[] = [];
-    subscription: Subscription;
+    questionXSubscription: Subscription;
+    answersSubscription: Subscription;
     questionX: number = 0;
     answerForm!: FormGroup; 
     
@@ -33,12 +33,13 @@ export class InstanceComponent implements OnDestroy {
         private formBuilder: FormBuilder
     ) {
         this.openInstanceService.reset();
-        this.subscription = this.openInstanceService.questionX$.subscribe(x => {
+        this.questionXSubscription = this.openInstanceService.questionX$.subscribe(x => {
             this.questionX = x;
         });
-        this.answerForm = this.formBuilder.group({
-            answers: this.answers
-        })
+        this.answersSubscription = this.openInstanceService.answers.subscribe(ans => {
+            this.answers = ans;
+            this.answerForm = this.formBuilder.group(ans);
+        });
     }
 
     ngOnInit(): void {
@@ -59,6 +60,6 @@ export class InstanceComponent implements OnDestroy {
     }
     
     ngOnDestroy(): void {
-        this.subscription.unsubscribe();
+        this.questionXSubscription.unsubscribe();
     }
 }
