@@ -57,7 +57,7 @@
             <mat-icon>save</mat-icon>
         </button>
     } @else if (currentPath.startsWith("/add-edit-question")) {
-        <button mat-icon-button [disabled]="!coerceBooleanProperty(isQuestionValid)" (click)="saveQuestion()">
+        <button mat-icon-button [disabled]="!isQuestionValid" (click)="onSaveClick()">
             <mat-icon>save</mat-icon>
         </button>
     }

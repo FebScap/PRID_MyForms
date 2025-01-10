@@ -1,4 +1,4 @@
-<app-nav-bar title="Add/Edit Question" [isQuestionValid]="questionForm.valid" class="toolbar-actions"></app-nav-bar>
+<app-nav-bar title="Add/Edit Question" [isQuestionValid]="questionForm.valid" (saveQuestion)="saveQuestion()" class="toolbar-actions"></app-nav-bar>
 
 <div class="position-relative h-100">
     <mat-card appearance="raised" class="p-4 position-absolute top-50 start-50 translate-middle">
@@ -54,12 +54,7 @@
 
             <!-- Required -->
             <mat-checkbox formControlName="required">Required</mat-checkbox>
-
-            <!-- Navigation -->
-            <div class="d-flex justify-content-between">
-                <button mat-stroked-button type="button" (click)="goBack()">&#x3c; Back</button>
-                <button mat-flat-button color="primary" [disabled]="!questionForm.valid" type="submit">Save</button>
-            </div>
+            
         </form>
     </mat-card>
 </div>

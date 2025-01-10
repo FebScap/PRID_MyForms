@@ -1,4 +1,4 @@
-import {Component, inject, Input} from '@angular/core';
+import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
 import {Router} from "@angular/router";
 import {AuthenticationService} from "../../services/authentication.service";
 import {Role} from "../../models/user";
@@ -25,7 +25,8 @@ export class NavBarComponent {
     //@ts-ignore
     @Input() questionCount: NumberInput | undefined;
     @Input() isFormValid: BooleanInput | undefined;
-    @Input() isQuestionValid: BooleanInput | undefined;
+    @Input() isQuestionValid: boolean | undefined;
+    @Output() saveQuestion = new EventEmitter<void>();
     
     
     readonly dialog = inject(MatDialog);
@@ -108,7 +109,7 @@ export class NavBarComponent {
         });
     }
     
-    saveQuestion () {
-        
+    onSaveClick () {
+        this.saveQuestion.emit();
     }
 }
