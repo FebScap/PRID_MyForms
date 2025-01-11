@@ -5,8 +5,9 @@ import {NumberInput} from "@angular/cdk/coercion";
 import {Answer} from "../../models/answer";
 import {OpenInstanceService} from "../../services/open-instance.service";
 import {OptionListService} from "../../services/option-list.service";
-import {InformationComponent} from "../information/information.component";
 import {OptionList} from "../../models/option-list";
+import {FormControl, FormGroup} from "@angular/forms";
+import {MatCheckboxChange} from "@angular/material/checkbox";
 
 @Component({
     selector: 'app-question',
@@ -16,9 +17,13 @@ export class QuestionComponent {
     protected readonly Type = Type;
     @Input() question: Question | undefined;
     @Input() instance: Instance | undefined;
-    @Input() answer: Answer | undefined;
+    @Input() answers: Answer[] | undefined;
     @Input() questionCount: NumberInput | undefined;
+    @Input() questionControl: FormControl | undefined;
+    @Input() questionGroup: FormGroup | undefined;
+
     public optionList: OptionList | undefined;
+    public ans: Answer | undefined;
 
     constructor(
         private openInstanceService: OpenInstanceService,
@@ -34,6 +39,9 @@ export class QuestionComponent {
                 });
             }
         }
+        if (this.question?.type != Type.Check) {
+            this.ans = this.answers?.[0];
+        }
     }
 
     getCountTostring(): string {
@@ -43,16 +51,23 @@ export class QuestionComponent {
     getType(): Type {
         return this.question?.type ?? Type.Short;
     }
-    
-    getOptionListValue(): number {
-        return Number(this.answer?.value) ?? 0;
-    }
-    
-    isReadOnly(): boolean {
-        return this.instance?.completed != null;
+
+    isChecked(optionId: number): boolean {
+        return this.questionGroup?.get(optionId.toString())?.value;
     }
 
     onChange() {
         this.openInstanceService.formChanged();
+    }
+
+    selectOption($event: MatCheckboxChange) {
+        const value = $event.source.value;
+        const options = this.questionGroup?.value;
+        
+        if ($event.checked) {
+            this.questionGroup?.get(value)?.setValue(true);
+        } else {
+            this.questionGroup?.get(value)?.setValue(false);
+        }
     }
 }

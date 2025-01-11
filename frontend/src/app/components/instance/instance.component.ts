@@ -4,11 +4,13 @@ import {ActivatedRoute} from "@angular/router";
 import {FormService} from "../../services/form.service";
 import {InstanceService} from "../../services/instance.service";
 import {Instance} from "../../models/instance";
-import {Question} from "../../models/question";
+import {Question, Type} from "../../models/question";
 import {Subscription} from "rxjs";
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {Answer} from "../../models/answer";
 import {OpenInstanceService} from "../../services/open-instance.service";
+import {OptionListService} from "../../services/option-list.service";
+import {G} from "@angular/cdk/keycodes";
 
 
 @Component({
@@ -23,14 +25,15 @@ export class InstanceComponent implements OnDestroy {
     questionXSubscription: Subscription;
     answersSubscription: Subscription;
     questionX: number = 0;
-    answerForm!: FormGroup; 
-    
+    answerForm = new FormGroup({});
+
     constructor(
         private route: ActivatedRoute,
         private formService: FormService,
         private instanceService: InstanceService,
         private openInstanceService: OpenInstanceService,
-        private formBuilder: FormBuilder
+        private formBuilder: FormBuilder,
+        private optionListService: OptionListService
     ) {
         this.openInstanceService.reset();
         this.questionXSubscription = this.openInstanceService.questionX$.subscribe(x => {
@@ -38,7 +41,6 @@ export class InstanceComponent implements OnDestroy {
         });
         this.answersSubscription = this.openInstanceService.answers.subscribe(ans => {
             this.answers = ans;
-            this.answerForm = this.formBuilder.group(ans);
         });
     }
 
@@ -50,16 +52,57 @@ export class InstanceComponent implements OnDestroy {
                 this.formService.getById(inst.formId.toString()).subscribe((f) => {
                     this.form = f;
                     this.questions = f.questions;
+                    console.log(f.questions);
+
+                    // Creation des controls pour chaque question
+                    this.questions.forEach((q) => {
+                        let control = this.formBuilder.control('');
+                        let group: FormGroup = new FormGroup({});
+                        if (this.instance?.completed != null) {
+                            //control.disable();
+                        }
+                        if (q.optionList && q.type == Type.Check) {
+                            this.optionListService.getById(q.optionList).subscribe((opt) => {
+                                opt.values.forEach((v) => {
+                                    if (this.getAnswers(q.id).find(ans => ans.value == v.idx.toString())) {
+                                        group.addControl(v.idx.toString(), this.formBuilder.control(true));
+                                    } else {
+                                        group.addControl(v.idx.toString(), this.formBuilder.control(false));
+                                    }
+                                });
+                            });
+                            this.answerForm.addControl(q.id.toString(), group);
+                        } else {
+                            control.setValue(this.getAnswers(q.id)[0].value);
+                            this.answerForm.addControl(q.id.toString(), control);
+                        }
+                    });
+                    console.log(this.answerForm);
                 });
                 this.instanceService.getAnswers(inst.id).subscribe((ans) => {
                     this.answers = ans;
+                    console.log(ans);
                 });
             });
-                
+
         }
     }
-    
+
+    getAnswers(questionId: number): Answer[] {
+        return this.answers.filter(ans => ans.questionId == questionId);
+    }
+
     ngOnDestroy(): void {
         this.questionXSubscription.unsubscribe();
     }
+
+    getQuestionControl(questionId: number): FormControl {
+        return this.answerForm.get(questionId.toString()) as FormControl;
+    }
+    
+    getQuestionGroup(questionId: number): FormGroup {
+        return this.answerForm.get(questionId.toString()) as FormGroup;
+    }
+
+    protected readonly Type = Type;
 }

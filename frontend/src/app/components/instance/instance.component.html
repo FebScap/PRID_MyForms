@@ -15,8 +15,11 @@
             <div class="col-3 fw-medium">in progress</div>
         }
     </div>
-</div>
 
-@for (q of questions; track $index) {
-    <app-question [hidden]="$index != questionX" [question]="q" [instance]="instance" questionCount="{{ questions.length }}" [answer]="answers[$index]"></app-question>
-}
+    <form [formGroup]="answerForm">
+        @for (q of questions; track q.id) {
+            <app-question [hidden]="$index != questionX" [question]="q" [instance]="instance"
+                          questionCount="{{ questions.length }}" [answers]="getAnswers(q.id)" [questionControl]="getQuestionControl(q.id)" [questionGroup]="getQuestionGroup(q.id)"></app-question>
+        }
+    </form>
+</div>

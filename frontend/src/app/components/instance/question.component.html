@@ -1,6 +1,6 @@
 <div class="d-flex align-items-center flex-column container">
     <p class="fst-italic fs-5">Question {{ getCountTostring() }}</p>
-    
+
     <mat-card appearance="outlined" class="w-100">
         <mat-card-content>
             <p class="h3 fst-italic">
@@ -14,60 +14,66 @@
             @switch (getType()) {
                 @case (Type.Short) {
                     <mat-form-field class="w-100">
-                        <input matInput [disabled]="isReadOnly()" name="{{ question?.id }}" [ngModel]="answer?.value" (change)="onChange()" [required]="question!.required">
+                        <input matInput [formControl]="questionControl!" name="{{ question?.id }}"
+                               (change)="onChange()">
                     </mat-form-field>
                 }
                 @case (Type.Long) {
                     <mat-form-field class="w-100">
-                        <textarea matInput [disabled]="isReadOnly()" name="{{ question?.id }}" [ngModel]="answer?.value" (change)="onChange()" [required]="question!.required"></textarea>
+                        <textarea matInput [formControl]="questionControl!" name="{{ question?.id }}"
+                                  (change)="onChange()"
+                        ></textarea>
                     </mat-form-field>
                 }
                 @case (Type.Date) {
                     <mat-form-field class="w-100">
-                        <input matInput [disabled]="isReadOnly()" type="date" name="{{ question?.id }}" [ngModel]="answer?.value" (change)="onChange()" [required]="question!.required">
+                        <input matInput [formControl]="questionControl!" type="date" name="{{ question?.id }}"
+                               (change)="onChange()">
                     </mat-form-field>
                 }
                 @case (Type.Email) {
                     <mat-form-field class="w-100">
-                        <input matInput [disabled]="isReadOnly()" type="email" name="{{ question?.id }}" [ngModel]="answer?.value" (change)="onChange()" [required]="question!.required">
+                        <input matInput [formControl]="questionControl!" type="email" name="{{ question?.id }}"
+                               (change)="onChange()">
                     </mat-form-field>
                 }
                 @case (Type.Integer) {
                     <mat-form-field class="w-100">
-                        <input matInput [disabled]="isReadOnly()" type="number" name="{{ question?.id }}" [ngModel]="answer?.value" (change)="onChange()" [required]="question!.required">
-                    </mat-form-field> 
-                }
-                @case (Type.Check) {
-                    <div class="row row-cols-2">
-                        @for (option of optionList?.values; track $index) {
-                            @if (getOptionListValue() == option.idx) {
-                                <mat-checkbox [disabled]="isReadOnly()" class="col flex-wrap" [ngModel]="true" (change)="onChange()" [required]="question!.required">{{ option.label }}</mat-checkbox>
-                            } @else {
-                                <mat-checkbox [disabled]="isReadOnly()" class="col flex-wrap" [ngModel]="false" (change)="onChange()" [required]="question!.required">{{ option.label }}</mat-checkbox>
-                            }
-
-                        }
-                    </div>
+                        <input matInput [formControl]="questionControl!" type="number" name="{{ question?.id }}"
+                               (change)="onChange()">
+                    </mat-form-field>
                 }
                 @case (Type.Combo) {
                     <mat-form-field class="w-100">
-                        <mat-select class="fst-italic" [disabled]="isReadOnly()" [value]="getOptionListValue()" placeholder="(no value)" (change)="onChange()" [required]="question!.required">
-                            <mat-option [value]="" class="fst-italic">(no value)</mat-option>
-                            @for (option of optionList?.values; track $index) {
-                                <mat-option [value]="option.idx">{{ option.label }}</mat-option>
-                            }
+                        <mat-select class="fst-italic" [formControl]="questionControl!" placeholder="(no value)"
+                                    (change)="onChange()">
+                            <mat-option value="" class="fst-italic">(no value)</mat-option>
+                            <mat-option *ngFor="let option of optionList?.values"
+                                        [value]="option.idx.toString()">{{ option.label }}
+                            </mat-option>
                         </mat-select>
                     </mat-form-field>
                 }
                 @case (Type.Radio) {
-                    <mat-radio-group [disabled]="isReadOnly()" class="w-100 row row-cols-2" name="{{ question?.id }}" [value]="getOptionListValue()" (change)="onChange()" [required]="question!.required">
-                        @for (option of optionList?.values; track $index) {
-                            <mat-radio-button class="col flex-wrap" [value]="option.idx">{{ option.label }}</mat-radio-button>
-                        }
+                    <mat-radio-group [formControl]="questionControl!" class="w-100 row row-cols-2"
+                                     (change)="onChange()">
+                        <mat-radio-button *ngFor="let option of optionList?.values" class="col flex-wrap"
+                                          [value]="option.idx.toString()">{{ option.label }}
+                        </mat-radio-button>
+                        
                     </mat-radio-group>
                 }
+                @case (Type.Check) {
+                    <form [formGroup]="questionGroup!" class="row row-cols-2">
+                        @for (option of optionList?.values; track option.idx) {
+                                <mat-checkbox value="{{ option.idx }}" [checked]="isChecked(option.idx)" class="col flex-wrap"
+                                              (change)="selectOption($event)">{{ option.label }}
+                                </mat-checkbox>
+                        }
+                    </form>
+                }
             }
-            
+
         </mat-card-content>
     </mat-card>
 </div>

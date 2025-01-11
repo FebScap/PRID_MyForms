@@ -35,5 +35,6 @@ export class OpenInstanceService {
     }
 
     formChanged() {
+        console.log(this.answersSource.getValue());
     }
 }
