@@ -12,7 +12,7 @@ import { OptionListService } from '../../services/option-list.service';
 export class AddEditQuestionComponent implements OnInit {
     public questionForm!: FormGroup;
     public isNew: boolean = true; // Par défaut, on suppose une nouvelle question
-    public questionTypes: string[] = ['short', 'long', 'date', 'email', 'integer', 'check', 'combo', 'radio'];
+    public questionTypes: string[] = ['Short', 'Long', 'Date', 'Email', 'Integer', 'Check', 'Combo', 'Radio'];
     public optionLists: any[] = []; // Remplir avec les listes d'options disponibles
     public requiresOptionList: boolean = false;
     public questionId?: number;
@@ -32,7 +32,9 @@ export class AddEditQuestionComponent implements OnInit {
             description: ['', [Validators.minLength(3)]],
             type: ['', Validators.required],
             optionList: [{ value: null, disabled: true }], // Désactivé par défaut
-            required: [false]
+            required: [false],
+            formId: [5, ], //RAW input
+            IdX: [1, ] //RAW INPUT
         });
 
         // Récupération des données d'édition si nécessaire
@@ -98,10 +100,11 @@ export class AddEditQuestionComponent implements OnInit {
         if (this.questionForm.invalid) return;
 
         const questionData = this.questionForm.value;
+        console.log('Question Data:', questionData); 
         if (this.isNew) {
             this.questionService.create(questionData).subscribe({
                 next: () => {
-                    this.router.navigate(['/', { id: questionData.formId }]);
+                    this.router.navigate(['/view-form', { id: questionData.formId }]);
                 },
                 error: (err) => {
                     console.error('Error creating question:', err);
@@ -110,7 +113,7 @@ export class AddEditQuestionComponent implements OnInit {
         } else {
             this.questionService.update(questionData).subscribe({
                 next: () => {
-                    this.router.navigate(['/', { id: questionData.formId }]);
+                    this.router.navigate(['/view-form', { id: questionData.formId }]);
                 },
                 error: (err) => {
                     console.error('Error updating question:', err);

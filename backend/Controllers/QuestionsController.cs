@@ -1,8 +1,10 @@
 using AutoMapper;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using prid_2425_f02.Models;
+using System.Text.Json;
 
 namespace prid_2425_f02.Controllers
 {
@@ -61,61 +63,55 @@ namespace prid_2425_f02.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<QuestionDTO>> Create(QuestionDTO questionDto) {
-            // Valider si le DTO est null
-            if (questionDto == null)
-                return BadRequest("Question data is required.");
+        public async Task<ActionResult<QuestionDTO>> Create(QuestionDTO dto)
+        {
+            // Afficher les données reçues pour débogage
+            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(dto));
+            Console.WriteLine("Debug: Adding a new question");
 
             // Récupérer le formulaire auquel appartient la question
             var form = await context.Forms
                 .Include(f => f.Instances)
-                .FirstOrDefaultAsync(f => f.Id == questionDto.FormId);
+                .FirstOrDefaultAsync(f => f.Id == dto.FormId);
 
             if (form == null)
-                return NotFound($"Form with ID {questionDto.FormId} not found.");
+            {
+                return NotFound($"Form with ID {dto.FormId} not found.");
+            }
 
             // Vérifier si le formulaire a des instances existantes
             if (form.Instances.Any())
-                return BadRequest("Cannot add or edit questions for forms with existing submissions.");
-
-            // Vérifier si le titre est unique pour ce formulaire
-            var titleExists = await context.Questions
-                .AnyAsync(q => q.FormId == questionDto.FormId && q.Title == questionDto.Title);
-
-            if (titleExists)
-                return BadRequest("A question with the same title already exists in this form.");
-
-            // Vérifier si l'indice (IdX) est unique pour ce formulaire
-            var IdXExists = await context.Questions
-                .AnyAsync(q => q.FormId == questionDto.FormId && q.IdX == questionDto.IdX);
-
-            if (IdXExists)
-                return BadRequest("A question with the same index already exists in this form.");
-
-            // Vérifier si le type nécessite une liste d'options
-            if (new List<string> { "check", "combo", "radio" }.Contains(questionDto.Type.ToString())) {
-                if (questionDto.OptionList == null)
-                    return BadRequest("Option list is required for the selected question type.");
-
-                // Vérifier si la liste d'options existe
-                var optionListExists = await context.OptionsLists.AnyAsync(ol => ol.Id == questionDto.OptionList);
-                if (!optionListExists)
-                    return BadRequest($"Option list with ID {questionDto.OptionList} does not exist.");
-            } else {
-                // S'assurer que la liste d'options est null pour les types qui ne la nécessitent pas
-                questionDto.OptionList = null;
+            {
+                return BadRequest("Cannot add questions to a form with existing submissions.");
             }
 
-            // Mapper le DTO vers l'entité
-            var question = mapper.Map<Question>(questionDto);
+            // Créer une nouvelle question
+            var question = new Question
+            {
+                Title = dto.Title,
+                Description = dto.Description,
+                Type = dto.Type,
+                Required = dto.Required,
+                IdX = dto.IdX, // Index de la question dans le formulaire
+                FormId = dto.FormId,
+                OptionList = dto.OptionList // Peut être null pour les types qui n'en nécessitent pas
+            };
+
+            // Valider la question avec un validateur
+            ValidationResult result = await new QuestionValidator(context).ValidateOnCreate(question);
+            if (!result.IsValid)
+            {
+                return BadRequest(result.Errors);
+            }
 
             // Ajouter la question à la base de données
             context.Questions.Add(question);
             await context.SaveChangesAsync();
 
-            // Retourner la question créée
+            // Retourner la réponse avec l'ID de la nouvelle question
             return CreatedAtAction(nameof(GetById), new { id = question.Id }, mapper.Map<QuestionDTO>(question));
         }
+
         
         // GET: api/questions/form/{formId}
         [HttpGet("form/{formId:int}")]
