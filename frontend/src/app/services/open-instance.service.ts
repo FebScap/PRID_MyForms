@@ -34,7 +34,7 @@ export class OpenInstanceService {
         this.questionXSource.next(0);
     }
 
-    formChanged() {
-        console.log(this.answersSource.getValue());
+    changeAnswer(answers: Answer[]) {
+        this.answersSource.next(answers);
     }
 }

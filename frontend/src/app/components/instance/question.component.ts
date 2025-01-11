@@ -8,6 +8,7 @@ import {OptionListService} from "../../services/option-list.service";
 import {OptionList} from "../../models/option-list";
 import {FormControl, FormGroup} from "@angular/forms";
 import {MatCheckboxChange} from "@angular/material/checkbox";
+import {AnswersService} from "../../services/answer.service";
 
 @Component({
     selector: 'app-question',
@@ -19,15 +20,15 @@ export class QuestionComponent {
     @Input() instance: Instance | undefined;
     @Input() answers: Answer[] | undefined;
     @Input() questionCount: NumberInput | undefined;
-    @Input() questionControl: FormControl | undefined;
-    @Input() questionGroup: FormGroup | undefined;
+    @Input() answerForm: FormGroup | undefined;
 
     public optionList: OptionList | undefined;
     public ans: Answer | undefined;
 
     constructor(
         private openInstanceService: OpenInstanceService,
-        private optionListService: OptionListService
+        private optionListService: OptionListService,
+        private answersService: AnswersService
     ) {
     }
 
@@ -52,22 +53,67 @@ export class QuestionComponent {
         return this.question?.type ?? Type.Short;
     }
 
-    isChecked(optionId: number): boolean {
-        return this.questionGroup?.get(optionId.toString())?.value;
+    getQuestionControl(): FormControl {
+        return this.answerForm?.get(this.question!.id.toString()) as FormControl;
     }
 
-    onChange() {
-        this.openInstanceService.formChanged();
+    getQuestionGroup(): FormGroup {
+        return this.answerForm?.get(this.question!.id.toString()) as FormGroup;
+    }
+
+    isChecked(optionId: number): boolean {
+        return this.answerForm?.get(this.question!.id.toString())?.get(optionId.toString())?.value;
     }
 
     selectOption($event: MatCheckboxChange) {
         const value = $event.source.value;
-        const options = this.questionGroup?.value;
-        
+
         if ($event.checked) {
-            this.questionGroup?.get(value)?.setValue(true);
+            this.answerForm?.get(this.question!.id.toString())?.get(value)?.setValue(true);
         } else {
-            this.questionGroup?.get(value)?.setValue(false);
+            this.answerForm?.get(this.question!.id.toString())?.get(value)?.setValue(false);
+        }
+        this.formChangedEvent();
+    }
+
+    formChangedEvent(question: Question = this.question!) {
+        let value = this.answerForm?.get(question.id.toString())?.value;
+        let answer = new Answer();
+        answer.questionId = question.id;
+        answer.instanceId = this.instance!.id;
+        
+        if (question.type == Type.Check) {
+            let chekedValues: number[] = [];
+            for (let key in value) {
+                if (value[key]) {
+                    chekedValues.push(parseInt(key));
+                    // TODO: Ajouter la gestion des réponses multiples
+                }
+            }
+            console.log(chekedValues);
+        } else {
+            answer.value = value;
+            
+            if (this.answers?.find(ans => ans.questionId == question.id)) {
+                let existingAnswer = this.answers?.find(ans => ans.questionId == question.id);
+                if (existingAnswer) {
+                    Object.assign(existingAnswer, answer);
+                    this.answersService.putAnswer(answer).subscribe(res => {
+                        if (res) {
+                            // Pour la mise à jour dynamique
+                            this.openInstanceService.changeAnswer(this.answers!);
+                        }
+                    });
+                }
+            } else {
+                this.answersService.postAnswer(answer).subscribe(res => {
+                    if (res) {
+                        // Pour la mise à jour dynamique
+                        this.answers?.push(answer);
+                        this.openInstanceService.changeAnswer(this.answers!);
+                    }
+                });
+            }
         }
     }
 }

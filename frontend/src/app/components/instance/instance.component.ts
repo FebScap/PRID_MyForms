@@ -1,4 +1,4 @@
-﻿import {Component, inject, OnDestroy} from '@angular/core';
+﻿import {Component, OnDestroy} from '@angular/core';
 import {Form} from "../../models/form";
 import {ActivatedRoute} from "@angular/router";
 import {FormService} from "../../services/form.service";
@@ -6,7 +6,7 @@ import {InstanceService} from "../../services/instance.service";
 import {Instance} from "../../models/instance";
 import {Question, Type} from "../../models/question";
 import {Subscription} from "rxjs";
-import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Answer} from "../../models/answer";
 import {OpenInstanceService} from "../../services/open-instance.service";
 import {OptionListService} from "../../services/option-list.service";
@@ -58,9 +58,10 @@ export class InstanceComponent implements OnDestroy {
                     this.questions.forEach((q) => {
                         let control = this.formBuilder.control('');
                         let group: FormGroup = new FormGroup({});
-                        if (this.instance?.completed != null) {
-                            //control.disable();
-                        }
+
+                        if (this.instance?.completed != null)
+                            control.disable();
+
                         if (q.optionList && q.type == Type.Check) {
                             this.optionListService.getById(q.optionList).subscribe((opt) => {
                                 opt.values.forEach((v) => {
@@ -71,20 +72,34 @@ export class InstanceComponent implements OnDestroy {
                                     }
                                 });
                             });
+                            if (q.required)
+                                group.addValidators((() => this.hasOneChecked(group) ? null : {required: true}));
+                            
                             this.answerForm.addControl(q.id.toString(), group);
                         } else {
-                            if (this.getAnswers(q.id)[0]) {
+                            // Mise en place d'une value
+                            if (this.getAnswers(q.id)[0])
                                 control.setValue(this.getAnswers(q.id)[0].value);
-                            }
+
+                            if (q.required)
+                                control.addValidators(Validators.required);
+                            if (q.type == Type.Integer)
+                                control.addValidators(Validators.pattern('^[0-9]*$'));
+                            if (q.type == Type.Email)
+                                control.addValidators(Validators.email);
+                            if (q.type == Type.Date)
+                                control.addValidators(Validators.pattern('^[0-9]{4}-[0-9]{2}-[0-9]{2}$'));
+
                             this.answerForm.addControl(q.id.toString(), control);
                         }
                     });
                 });
+
+                // Récupération des réponses
                 this.instanceService.getAnswers(inst.id).subscribe((ans) => {
                     this.answers = ans;
                 });
             });
-
         }
     }
 
@@ -96,15 +111,11 @@ export class InstanceComponent implements OnDestroy {
         this.questionXSubscription.unsubscribe();
     }
 
-    getQuestionControl(questionId: number): FormControl {
-        return this.answerForm.get(questionId.toString()) as FormControl;
-    }
-    
-    getQuestionGroup(questionId: number): FormGroup {
-        return this.answerForm.get(questionId.toString()) as FormGroup;
+    getForm() {
+        return this.answerForm as FormGroup;
     }
 
-    formChangedEvent($event: Event) {
-        console.log($event);
+    hasOneChecked(formGroup: FormGroup): boolean {
+        return Object.values(formGroup.controls).some(control => control.value == true);
     }
 }
