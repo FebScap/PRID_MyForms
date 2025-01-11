@@ -17,6 +17,7 @@ import {G} from "@angular/cdk/keycodes";
     templateUrl: './instance.component.html'
 })
 export class InstanceComponent implements OnDestroy {
+    protected readonly Type = Type;
     id: string | undefined;
     form?: Form;
     instance?: Instance;
@@ -52,7 +53,6 @@ export class InstanceComponent implements OnDestroy {
                 this.formService.getById(inst.formId.toString()).subscribe((f) => {
                     this.form = f;
                     this.questions = f.questions;
-                    console.log(f.questions);
 
                     // Creation des controls pour chaque question
                     this.questions.forEach((q) => {
@@ -73,15 +73,15 @@ export class InstanceComponent implements OnDestroy {
                             });
                             this.answerForm.addControl(q.id.toString(), group);
                         } else {
-                            control.setValue(this.getAnswers(q.id)[0].value);
+                            if (this.getAnswers(q.id)[0]) {
+                                control.setValue(this.getAnswers(q.id)[0].value);
+                            }
                             this.answerForm.addControl(q.id.toString(), control);
                         }
                     });
-                    console.log(this.answerForm);
                 });
                 this.instanceService.getAnswers(inst.id).subscribe((ans) => {
                     this.answers = ans;
-                    console.log(ans);
                 });
             });
 
@@ -104,5 +104,7 @@ export class InstanceComponent implements OnDestroy {
         return this.answerForm.get(questionId.toString()) as FormGroup;
     }
 
-    protected readonly Type = Type;
+    formChangedEvent($event: Event) {
+        console.log($event);
+    }
 }

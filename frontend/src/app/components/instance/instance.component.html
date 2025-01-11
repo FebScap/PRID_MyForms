@@ -16,9 +16,9 @@
         }
     </div>
 
-    <form [formGroup]="answerForm">
+    <form [formGroup]="answerForm" class="mt-4">
         @for (q of questions; track q.id) {
-            <app-question [hidden]="$index != questionX" [question]="q" [instance]="instance"
+            <app-question (change)="formChangedEvent($event)" [hidden]="$index != questionX" [question]="q" [instance]="instance"
                           questionCount="{{ questions.length }}" [answers]="getAnswers(q.id)" [questionControl]="getQuestionControl(q.id)" [questionGroup]="getQuestionGroup(q.id)"></app-question>
         }
     </form>
