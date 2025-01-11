@@ -115,6 +115,10 @@ export class InstanceComponent implements OnDestroy {
         return this.answerForm as FormGroup;
     }
 
+    get isFormValid() {
+        return this.answerForm.valid;
+    }
+
     hasOneChecked(formGroup: FormGroup): boolean {
         return Object.values(formGroup.controls).some(control => control.value == true);
     }

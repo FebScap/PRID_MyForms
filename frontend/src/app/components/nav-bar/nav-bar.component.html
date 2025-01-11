@@ -49,7 +49,7 @@
         <button mat-icon-button>
             <mat-icon>delete</mat-icon>
         </button>
-        <button mat-icon-button>
+        <button mat-icon-button [disabled]="!isFormValid">
             <mat-icon>save</mat-icon>
         </button>
     } @else if (currentPath.startsWith("/add-form")) {

@@ -1,4 +1,4 @@
-﻿<app-nav-bar title="{{ form?.title }}" questionCount="{{ questions.length - 1 }}" class="toolbar-actions"></app-nav-bar>
+﻿<app-nav-bar title="{{ form?.title }}" questionCount="{{ questions.length - 1 }}" [isFormValid]="isFormValid" class="toolbar-actions"></app-nav-bar>
 
 <div class="body mx-1">
     <div class="row">
