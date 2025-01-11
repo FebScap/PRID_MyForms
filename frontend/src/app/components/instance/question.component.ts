@@ -67,13 +67,31 @@ export class QuestionComponent {
 
     selectOption($event: MatCheckboxChange) {
         const value = $event.source.value;
+        let answer = new Answer();
+        answer.questionId = this.question!.id;
+        answer.instanceId = this.instance!.id;
+        answer.value = value;
 
         if ($event.checked) {
             this.answerForm?.get(this.question!.id.toString())?.get(value)?.setValue(true);
+            this.answersService.postAnswer(answer).subscribe(res => {
+                if (res) {
+                    // Pour la mise à jour dynamique
+                    this.answers?.push(answer);
+                    this.openInstanceService.changeAnswer(this.answers!);
+                }
+            });
         } else {
             this.answerForm?.get(this.question!.id.toString())?.get(value)?.setValue(false);
+            let existingAnswer = this.answers?.find(ans => ans.value == value);
+            this.answersService.deleteAnswer(existingAnswer!).subscribe(res => {
+                if (res) {
+                    // Pour la mise à jour dynamique
+                    this.answers?.splice(this.answers?.indexOf(existingAnswer!), 1);
+                    this.openInstanceService.changeAnswer(this.answers!);
+                }
+            });
         }
-        this.formChangedEvent();
     }
 
     formChangedEvent(question: Question = this.question!) {
@@ -81,39 +99,27 @@ export class QuestionComponent {
         let answer = new Answer();
         answer.questionId = question.id;
         answer.instanceId = this.instance!.id;
-        
-        if (question.type == Type.Check) {
-            let chekedValues: number[] = [];
-            for (let key in value) {
-                if (value[key]) {
-                    chekedValues.push(parseInt(key));
-                    // TODO: Ajouter la gestion des réponses multiples
+        answer.value = value;
+        answer.idx = 0;
+
+        if (this.answers?.find(ans => ans.questionId == question.id)) {
+            let existingAnswer = this.answers?.find(ans => ans.questionId == question.id);
+            Object.assign(existingAnswer!, answer);
+            this.answersService.putAnswer(answer).subscribe(res => {
+                if (res) {
+                    // Pour la mise à jour dynamique
+                    this.openInstanceService.changeAnswer(this.answers!);
                 }
-            }
-            console.log(chekedValues);
+            });
         } else {
-            answer.value = value;
-            
-            if (this.answers?.find(ans => ans.questionId == question.id)) {
-                let existingAnswer = this.answers?.find(ans => ans.questionId == question.id);
-                if (existingAnswer) {
-                    Object.assign(existingAnswer, answer);
-                    this.answersService.putAnswer(answer).subscribe(res => {
-                        if (res) {
-                            // Pour la mise à jour dynamique
-                            this.openInstanceService.changeAnswer(this.answers!);
-                        }
-                    });
+            this.answersService.postAnswer(answer).subscribe(res => {
+                if (res) {
+                    // Pour la mise à jour dynamique
+                    this.answers?.push(answer);
+                    this.openInstanceService.changeAnswer(this.answers!);
                 }
-            } else {
-                this.answersService.postAnswer(answer).subscribe(res => {
-                    if (res) {
-                        // Pour la mise à jour dynamique
-                        this.answers?.push(answer);
-                        this.openInstanceService.changeAnswer(this.answers!);
-                    }
-                });
-            }
+            });
         }
     }
+
 }

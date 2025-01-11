@@ -17,6 +17,7 @@ namespace prid_2425_f02.Controllers
             var answer = await context.Answers.Where(a => a.InstanceId == dto.InstanceId && a.QuestionId == dto.QuestionId).FirstOrDefaultAsync();
             if (answer == null) return NotFound();
             answer.Value = dto.Value;
+            answer.Idx = dto.Idx;
             await context.SaveChangesAsync();
             return true;
         }
@@ -25,7 +26,17 @@ namespace prid_2425_f02.Controllers
         public async Task<ActionResult<bool>> CreateAnswer(AnswerDTO dto)
         {
             var answer = mapper.Map<Answer>(dto);
+            answer.Idx = context.Answers.Max(a => a.Idx) + 1;
             context.Answers.Add(answer);
+            await context.SaveChangesAsync();
+            return true;
+        }
+        
+        [HttpDelete("{questionId}/{instanceId}")]
+        public async Task<ActionResult<bool>> DeleteAnswer(int questionId, int instanceId)
+        {
+            var answer = await context.Answers.Where(a => a.InstanceId == instanceId && a.QuestionId == questionId).FirstOrDefaultAsync();
+            if (answer == null) return NotFound();
             await context.SaveChangesAsync();
             return true;
         }

@@ -33,9 +33,13 @@ export class AnswersService {
         );
     }
 
-    getAnswers(instanceId: number): Observable<Answer[]> {
-        return this.http.get<any[]>(`${this.baseUrl}api/instances/${instanceId}/answers`).pipe(
-            map(res => plainToInstance(Answer, res))
+    deleteAnswer(answer: Answer): Observable<boolean> {
+        return this.http.delete<any>(`${this.baseUrl}api/answers/${answer.questionId}/${answer.instanceId}`).pipe(
+            map(res => true),
+            catchError(err => {
+                console.error(err);
+                return of(false);
+            })
         );
     }
 }
