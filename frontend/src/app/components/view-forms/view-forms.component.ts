@@ -4,19 +4,16 @@ import {Form} from "../../models/form";
 import {Instance} from "../../models/instance";
 import {AuthenticationService} from "../../services/authentication.service";
 import {Role, User} from "../../models/user";
-import {ConfirmDialogComponent, confirmDialogType} from "../confirm-dialog/confirm-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Router} from "@angular/router";
-import {forEach} from "lodash-es";
 import {SearchService} from "../../services/search.service";
-import {Subscription} from "rxjs";
+import {OpenFormDialogComponent} from "../open-form-dialog/open-form-dialog.component";
 
 
 @Component({
     selector: 'templateProject',
-    templateUrl: './view-forms.component.html',
-    styleUrl: './view-forms.component.css'
+    templateUrl: './view-forms.component.html'
 })
 export class ViewFormsComponent implements AfterViewInit {
     forms?: Form[] = [];
@@ -131,12 +128,10 @@ export class ViewFormsComponent implements AfterViewInit {
                 this.router.navigate(['/instance', instances[instances.length - 1].id]);
                 break;
             case 2:
-                const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                const dialogRef = this.dialog.open(OpenFormDialogComponent, {
                     data: {
                         title: 'Open Form',
-                        message: 'You have already answered this form. What would you like to do?',
-                        dialogType: confirmDialogType.OPEN_FORM,
-                        form: form
+                        message: 'You have already answered this form. What would you like to do?'
                     }
                 });
                 dialogRef.afterClosed().subscribe(res => {
@@ -144,7 +139,7 @@ export class ViewFormsComponent implements AfterViewInit {
                         this.snackBar.open(`There was an error at the server. Please try again.`, 'Dismiss', {duration: 10000});
                     } else if (res == 'read') {
                         this.router.navigate(['/instance', instances[instances.length - 1].id]);
-                    } else if (res.id) {
+                    } else if (res == 'open') {
                         this.router.navigate(['/instance', res.id]);
                     } else if (res != 'cancel') {
                         this.snackBar.open(`There was an error at the server. Please try again.`, 'Dismiss', {duration: 10000});
@@ -186,6 +181,10 @@ export class ViewFormsComponent implements AfterViewInit {
 
     switchSearchBarVisibility() {
         this.searchService.setSearchBarVisibility(!this.searchService.getSearchBarVisibility());
+        if (!this.searchService.getSearchBarVisibility()) {
+            this.searchService.setSearch(''); // Réinitialise le filtre
+            this.setForms(''); // Applique le filtre
+        }
     }
 
     get isGuest() {

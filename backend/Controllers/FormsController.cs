@@ -56,7 +56,7 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
     public async Task<ActionResult<FormDTO>> GetById(int id) {
         var form = await context.Forms
             .Include(f => f.Owner)
-            .Include(f => f.Instances)
+            .Include(f => f.Instances).ThenInclude(i => i.User)
             .Include(f => f.Accesses)
             .Include(f => f.Questions.OrderBy(q => q.IdX))
             .FirstOrDefaultAsync(f => f.Id == id);

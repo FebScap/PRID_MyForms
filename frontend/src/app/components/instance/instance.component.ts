@@ -6,12 +6,11 @@ import {InstanceService} from "../../services/instance.service";
 import {Instance} from "../../models/instance";
 import {Question, Type} from "../../models/question";
 import {Subscription} from "rxjs";
-import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Answer} from "../../models/answer";
 import {OpenInstanceService} from "../../services/open-instance.service";
 import {OptionListService} from "../../services/option-list.service";
-import {G} from "@angular/cdk/keycodes";
-import {ConfirmDialogComponent, confirmDialogType} from "../confirm-dialog/confirm-dialog.component";
+import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 
@@ -114,21 +113,23 @@ export class InstanceComponent implements OnDestroy {
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
             data: {
                 title: 'Delete Attempt',
-                message: 'Are you sure you want to delete this attempt?',
-                dialogType: confirmDialogType.DELETE_INSTANCE,
-                instance: this.instance
+                message: 'Are you sure you want to delete this attempt?'
             }
         });
 
         dialogRef.afterClosed().subscribe(res => {
-            if (!res) {
-                if (this.snackBar) {
-                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
-                } else {
-                    console.error(`There was an error at the server. The update has not been done! Please try again.`);
-                }
-            } else if (res !== 'cancel') {
-                this.router.navigate(['/']);
+            if (res === 'confirm') {
+                this.instanceService.deleteById(this.instance!.id).subscribe(res => {
+                    if (!res) {
+                        if (this.snackBar) {
+                            this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+                        } else {
+                            console.error(`There was an error at the server. The update has not been done! Please try again.`);
+                        }
+                    } else {
+                        this.router.navigate(['/']);
+                    }
+                });
             }
         });
     }

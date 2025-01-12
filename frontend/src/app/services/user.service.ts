@@ -15,5 +15,4 @@ export class UserService {
             map(res => plainToInstance(User, res))
         );
     }
-    
 }

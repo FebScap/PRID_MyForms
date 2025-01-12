@@ -1,4 +1,4 @@
-<app-nav-bar title="{{ form?.title }}" class="toolbar-actions">
+<app-nav-bar title="{{ form?.title }}" [hasArrowBack]="true" link="/view_form/{{ form?.id }}" class="toolbar-actions">
     <button mat-icon-button routerLink="view_instances">
         <mat-icon>list</mat-icon>
     </button>
