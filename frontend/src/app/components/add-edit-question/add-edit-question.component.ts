@@ -122,10 +122,6 @@ export class AddEditQuestionComponent implements OnInit {
         }
     }
 
-    goBack(): void {
-        this.router.navigate(['/view-form']);
-    }
-
     createOptionList(): void {
         // Naviguer vers la vue d'ajout d'une liste d'options
         this.router.navigate(['/add-edit-option-list']);

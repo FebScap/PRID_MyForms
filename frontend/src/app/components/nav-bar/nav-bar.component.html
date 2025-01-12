@@ -1,66 +1,18 @@
 <mat-toolbar>
-    <!-- éléments de gauche -->
-    @if (currentPath == "/login") {
-        <mat-icon class="mx-2">history_edu</mat-icon>
-    } @else if (currentPath.startsWith("/view_form") || currentPath.startsWith("/instance") || currentPath == '/signup' || (currentPath.includes("/add-form"))) {
-        <button mat-icon-button [routerLink]="['/']">
+    @if (hasArrowBack) {
+        <button mat-icon-button [routerLink]="link">
             <mat-icon>arrow_back_ios</mat-icon>
         </button>
-    } @else {
+    } @else if (hasMenu) {
         <button mat-icon-button [matMenuTriggerFor]="menu">
             <mat-icon>menu</mat-icon>
         </button>
+    } @else {
+        <mat-icon class='mx-2'>history_edu</mat-icon>
     }
     <span class="title">{{ title }}</span>
 
     <span class="spacer"></span>
-    <!-- éléments à droite -->
-    @if (currentPath == "/") {
-        <button mat-icon-button>
-            <mat-icon>search</mat-icon>
-        </button>
-        @if (!isGuest) {
-            <button mat-icon-button (click)="addForm()">
-                <mat-icon>add</mat-icon>
-            </button>
-        }
-    } @else if (currentPath.startsWith("/view_form")) {
-        <button [disabled]="formIsReadOnly" (click)="editForm(form?.id)" mat-icon-button>
-            <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button (click)="deleteForm()">
-            <mat-icon>delete</mat-icon>
-        </button>
-        <button mat-icon-button>
-            <mat-icon>share</mat-icon>
-        </button>
-        @if (coerceBooleanProperty(formIsReadOnly)) {
-            <button mat-icon-button>
-                <mat-icon>query_stats</mat-icon>
-            </button>
-        }
-    } @else if (currentPath.startsWith("/instance")) {
-        <button [disabled]="getQuestionX() == 0" mat-icon-button>
-            <mat-icon (click)="previousQuestion()">keyboard_arrow_left</mat-icon>
-        </button>
-        <button [disabled]="getQuestionX() == questionCount" mat-icon-button>
-            <mat-icon (click)="nextQuestion()">keyboard_arrow_right</mat-icon>
-        </button>
-        <button mat-icon-button>
-            <mat-icon>delete</mat-icon>
-        </button>
-        <button mat-icon-button>
-            <mat-icon>save</mat-icon>
-        </button>
-    } @else if (currentPath.startsWith("/add-form")) {
-        <button mat-icon-button [disabled]="!coerceBooleanProperty(isFormValid)" (click)="saveForm()">
-            <mat-icon>save</mat-icon>
-        </button>
-    } @else if (currentPath.startsWith("/add-edit-question")) {
-        <button mat-icon-button [disabled]="!isQuestionValid" (click)="onSaveClick()">
-            <mat-icon>save</mat-icon>
-        </button>
-    }
     <ng-content/>
 </mat-toolbar>
 
@@ -70,7 +22,7 @@
         <mat-icon>home</mat-icon>
         <span>My Forms</span>
     </button>
-    <button mat-menu-item [routerLink]='[]' (click)='logout()'>
+    <button mat-menu-item (click)='logout()'>
         <mat-icon>logout</mat-icon>
         <span>Logout ({{ currentUser?.firstName + " " + currentUser?.lastName }})</span>
     </button>

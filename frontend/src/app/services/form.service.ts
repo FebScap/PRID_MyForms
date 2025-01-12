@@ -65,11 +65,11 @@ export class FormService {
         );
     }
 
-    addForm(formData: any): Observable<boolean> {
-        console.log(formData);
-        return this.http.post(`${this.baseUrl}api/forms`, formData).pipe(
+    addForm(formData: Form): Observable<boolean> {
+        return this.http.post<Form>(`${this.baseUrl}api/forms`, formData).pipe(
             map(res => true),
             catchError(err => {
+                console.log(err);
                 return of(false);
             })
         );
@@ -88,6 +88,12 @@ export class FormService {
                 console.error("Error checking title uniqueness:", err);
                 return of(false);
             })
+        );
+    }
+    
+    analyze(formId: number, questionId: number): Observable<any> {
+        return this.http.get<any>(`${this.baseUrl}api/forms/${formId}/${questionId}/analyze`).pipe(
+            map(res => res)
         );
     }
 }

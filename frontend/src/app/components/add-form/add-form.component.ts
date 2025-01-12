@@ -1,12 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AsyncValidatorFn, AbstractControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormService } from '../../services/form.service';
-import { AuthenticationService } from '../../services/authentication.service';
-import { map } from 'rxjs/operators';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
-import { AddFormService } from "../../services/add-form.service";
-import { Form } from "../../models/form";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators, AsyncValidatorFn, AbstractControl} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {FormService} from '../../services/form.service';
+import {AuthenticationService} from '../../services/authentication.service';
+import {map} from 'rxjs/operators';
+import {Observable, Subscription} from 'rxjs';
+import {Form} from "../../models/form";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
     selector: 'app-add-form',
@@ -17,7 +17,7 @@ export class AddFormComponent implements OnInit, OnDestroy {
     public formGroup!: FormGroup;
     public currentUser: any;
     private sub = new Subscription();
-    public isFormValid$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    public isFormValid = false;
     public isNew: boolean = true; // Par défaut, on suppose qu'on ajoute un nouveau formulaire
     private formId?: number; // ID du formulaire en cas d'édition
 
@@ -26,10 +26,9 @@ export class AddFormComponent implements OnInit, OnDestroy {
         private router: Router,
         private formService: FormService,
         private authenticationService: AuthenticationService,
-        private addFormService: AddFormService,
+        private snackBar: MatSnackBar,
         private route: ActivatedRoute // Pour récupérer les paramètres de l'URL
     ) {
-        this.addFormService.reset();
         this.currentUser = this.authenticationService.currentUser;
         this.formGroup = this.formBuilder.group({
             title: [
@@ -48,9 +47,8 @@ export class AddFormComponent implements OnInit, OnDestroy {
             }]
         });
 
-        this.sub = this.addFormService.addForm.subscribe();
         this.formGroup.statusChanges.subscribe(status => {
-            this.isFormValid$.next(this.formGroup.valid);
+            this.isFormValid = this.formGroup.valid;
         });
     }
 
@@ -58,19 +56,28 @@ export class AddFormComponent implements OnInit, OnDestroy {
         console.log('AddFormComponent chargé');
 
         // Vérifier si l'URL contient un ID de formulaire
-        this.formId = Number(this.route.snapshot.paramMap.get('id'));
-        this.isNew = isNaN(this.formId); // Si pas d'ID dans l'URL, c'est un nouveau formulaire
+        const formIdParam = this.route.snapshot.paramMap.get('id');
+        this.formId = formIdParam ? Number(formIdParam) : undefined;
 
-        if (!this.isNew) {
+        this.isNew = !this.formId; // Si l'ID est absent ou invalide, on crée un nouveau formulaire
+
+        if (!this.isNew && this.formId !== undefined) {
             this.loadForm(this.formId); // Charger les données du formulaire existant
         }
     }
+
 
     ngOnDestroy() {
         this.sub.unsubscribe();
     }
 
     private loadForm(formId: number): void {
+        if (!formId || isNaN(formId)) {
+            console.error('Invalid form ID:', formId);
+            this.router.navigate(['/']); // Redirection si l'ID est invalide
+            return;
+        }
+
         this.formService.getById(String(formId)).subscribe({
             next: (form: Form) => {
                 this.formGroup.patchValue({
@@ -82,7 +89,7 @@ export class AddFormComponent implements OnInit, OnDestroy {
             },
             error: (err) => {
                 console.error('Error loading form:', err);
-                this.router.navigate(['/']); // Redirige si l'ID du formulaire n'existe pas
+                this.router.navigate(['/']); // Redirection si le formulaire n'existe pas
             }
         });
     }
@@ -90,26 +97,30 @@ export class AddFormComponent implements OnInit, OnDestroy {
     saveForm(): void {
         if (!this.formGroup.valid) return;
 
+        console.log(this.formGroup.value);
         const formData = {
             ...this.formGroup.value,
-            ownerId: this.currentUser.id
+            ownerId: this.currentUser?.id ?? 0,  // Assurez-vous que `ownerId` est valide
+            owner: this.currentUser
         };
 
+
         if (this.isNew) {
-            // Création d'un nouveau formulaire
             this.formService.addForm(formData).subscribe({
                 next: () => {
-                    this.router.navigate(['/']); // Redirection après création
+                    console.log('Form created successfully');
+                    this.router.navigate(['/']);
                 },
                 error: (err) => {
-                    console.error('Error creating form:', err);
+                    console.error('Error updating form:', err);
                 }
             });
+
         } else {
-            // Mise à jour d'un formulaire existant
-            this.formService.update({ ...formData, id: this.formId }).subscribe({
+            this.formService.update({...formData, id: this.formId}).subscribe({
                 next: () => {
-                    this.router.navigate(['/']); // Redirection après mise à jour
+                    console.log('Form updated successfully');
+                    this.router.navigate(['/']);
                 },
                 error: (err) => {
                     console.error('Error updating form:', err);
@@ -118,15 +129,11 @@ export class AddFormComponent implements OnInit, OnDestroy {
         }
     }
 
-    goBack() {
-        this.router.navigate(['/']); // Retour à la vue précédente
-    }
-
     private uniqueTitleValidator(): AsyncValidatorFn {
         return (control: AbstractControl): Observable<{ [key: string]: boolean } | null> => {
             const currentOwnerId = this.authenticationService.currentUser?.id.toString();
             return this.formService.isTitleUnique(control.value, currentOwnerId).pipe(
-                map((isUnique: boolean) => (isUnique ? null : { notUnique: true }))
+                map((isUnique: boolean) => (isUnique ? null : {notUnique: true}))
             );
         };
     }

@@ -9,6 +9,8 @@ import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Router} from "@angular/router";
 import {forEach} from "lodash-es";
+import {SearchService} from "../../services/search.service";
+import {Subscription} from "rxjs";
 
 
 @Component({
@@ -22,16 +24,19 @@ export class ViewFormsComponent implements AfterViewInit {
     currentUser: User | undefined = new User();
     protected readonly Instance = Instance;
     readonly dialog = inject(MatDialog);
+
     filteredForms: Form[] = []; // Liste des formulaires filtrés
-    filter: string = ''; // Valeur du filtre
+    filter: string = ''; // Filtre de recherche
 
     constructor(
         private formService: FormService,
         private authenticationService: AuthenticationService,
         private snackBar: MatSnackBar,
         private router: Router,
+        private searchService: SearchService
     ) {
         this.currentUser = this.authenticationService.currentUser;
+
         if (this.currentUser?.role == Role.Admin) {
             this.formService.getAll().subscribe((res) => {
                 this.forms = res
@@ -49,7 +54,7 @@ export class ViewFormsComponent implements AfterViewInit {
             });
         }
     }
-    
+
     ngAfterViewInit(): void {
         // Charger les formulaires en fonction du rôle de l'utilisateur
         if (this.currentUser?.role === Role.Admin) {
@@ -62,8 +67,14 @@ export class ViewFormsComponent implements AfterViewInit {
     }
 
     initForms(forms: Form[]): void {
+        this.filter = this.searchService.getSearchString(); // Récupère le filtre de recherche
+        if (this.filter !== '')
+            this.searchService.setSearchBarVisibility(true); // Affiche la barre de recherche si un filtre est déjà présent
+        else 
+            this.searchService.setSearchBarVisibility(false); // Cache la barre de recherche si aucun filtre n'est présent
+        
         this.forms = forms;              // Stocke tous les formulaires
-        this.filteredForms = [...forms]; // Initialise la liste filtrée avec tous les formulaires
+        this.setForms(this.filter);      // Applique le filtre
     }
 
     /**
@@ -91,7 +102,7 @@ export class ViewFormsComponent implements AfterViewInit {
         }
         return 0;//no instances
     }
-    
+
     getLatestInstance(form: Form): Instance | undefined {
         let instances: Instance[] = [];
         form.instances.forEach((instance) => {
@@ -122,6 +133,8 @@ export class ViewFormsComponent implements AfterViewInit {
             case 2:
                 const dialogRef = this.dialog.open(ConfirmDialogComponent, {
                     data: {
+                        title: 'Open Form',
+                        message: 'You have already answered this form. What would you like to do?',
                         dialogType: confirmDialogType.OPEN_FORM,
                         form: form
                     }
@@ -145,7 +158,12 @@ export class ViewFormsComponent implements AfterViewInit {
     // Méthode appelée lors d'un changement de filtre
     filterChanged(event: Event): void {
         const filterValue = (event.target as HTMLInputElement).value.toLowerCase().trim();
+        this.searchService.setSearch(filterValue); // Envoie le filtre à SearchService
 
+        this.setForms(filterValue); // Applique le filtre
+    }
+
+    setForms(filterValue: string): void {
         // @ts-ignore
         this.filteredForms = this.forms.filter(form => {
             return (
@@ -162,4 +180,16 @@ export class ViewFormsComponent implements AfterViewInit {
         return form.id; // Utilise l'ID comme clé unique
     }
     
+    get isSearchBarVisible(): boolean {
+        return this.searchService.getSearchBarVisibility(); // Récupère la visibilité de la barre de recherche
+    }
+
+    switchSearchBarVisibility() {
+        this.searchService.setSearchBarVisibility(!this.searchService.getSearchBarVisibility());
+    }
+
+    get isGuest() {
+        return this.currentUser && this.currentUser.role === Role.Guest;
+    }
+
 }
