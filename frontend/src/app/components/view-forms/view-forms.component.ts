@@ -13,8 +13,7 @@ import {OpenFormDialogComponent} from "../open-form-dialog/open-form-dialog.comp
 
 @Component({
     selector: 'templateProject',
-    templateUrl: './view-forms.component.html',
-    styleUrl: './view-forms.component.css'
+    templateUrl: './view-forms.component.html'
 })
 export class ViewFormsComponent implements AfterViewInit {
     forms?: Form[] = [];
