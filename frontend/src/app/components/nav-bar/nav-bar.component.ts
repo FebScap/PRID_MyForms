@@ -97,6 +97,10 @@ export class NavBarComponent {
     public addForm() {
         this.router.navigate(['/add-form']);
     }
+    
+    public editForm(formId: number | undefined) {
+        this.router.navigate(['/add-form', formId]);
+    }
 
     saveForm() {
         let newForm = this.addFormService.getForm();

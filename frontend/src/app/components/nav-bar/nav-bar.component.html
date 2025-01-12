@@ -25,7 +25,7 @@
             </button>
         }
     } @else if (currentPath.startsWith("/view_form")) {
-        <button [disabled]="formIsReadOnly" mat-icon-button>
+        <button [disabled]="formIsReadOnly" (click)="editForm(form?.id)" mat-icon-button>
             <mat-icon>edit</mat-icon>
         </button>
         <button mat-icon-button (click)="deleteForm()">
