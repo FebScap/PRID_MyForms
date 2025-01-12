@@ -118,4 +118,24 @@ export class ViewFormComponent {
         }
     }
 
+    deleteForm() {
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            data: {
+                dialogType: confirmDialogType.DELETE_FORM,
+                form: this.form
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(res => {
+            if (!res) {
+                if (this.snackBar) {
+                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+                } else {
+                    console.error(`There was an error at the server. The update has not been done! Please try again.`);
+                }
+            } else if (res !== 'cancel') {
+                this.router.navigate(['/']);
+            }
+        });
+    }
 }

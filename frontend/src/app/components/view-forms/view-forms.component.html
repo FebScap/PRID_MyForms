@@ -1,4 +1,13 @@
-﻿<app-nav-bar title="MyForm" class="toolbar-actions"></app-nav-bar>
+﻿<app-nav-bar title="MyForm" [hasMenu]="true" class="toolbar-actions">
+    <button mat-icon-button (click)="switchSearchBarVisibility()">
+        <mat-icon>search</mat-icon>
+    </button>
+    @if (!isGuest) {
+        <button mat-icon-button routerLink="add-form">
+            <mat-icon>add</mat-icon>
+        </button>
+    }
+</app-nav-bar>
 <div class="body">
     <!-- Champ de recherche -->
     <mat-form-field [hidden]="!isSearchBarVisible" appearance="outline" class="w-100 mb-4">

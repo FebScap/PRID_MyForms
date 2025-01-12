@@ -11,6 +11,7 @@ import {InstanceComponent} from "../components/instance/instance.component";
 import {AddEditQuestionComponent} from "../components/add-edit-question/add-edit-question.component";
 import {AddEditOptionListComponent} from "../components/add-edit-option-list/add-edit-option-list.component";
 import {AnalyzeComponent} from "../components/analyze/analyze.component";
+import {ViewInstancesComponent} from "../components/view-instances/view-instances.component";
 
 const appRoutes: Routes = [
 
@@ -18,6 +19,11 @@ const appRoutes: Routes = [
         path: '',
         component: ViewFormsComponent,
         pathMatch: 'full',
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'view_form/:id/analyze/view_instances',
+        component: ViewInstancesComponent,
         canActivate: [AuthGuard]
     },
     {

@@ -1,4 +1,17 @@
-﻿<app-nav-bar title="{{ form?.title }}" questionCount="{{ questions.length - 1 }}" [isFormValid]="isFormValid" [instance]="instance" class="toolbar-actions"></app-nav-bar>
+﻿<app-nav-bar title="{{ form?.title }}" [hasArrowBack]="true" class="toolbar-actions">
+    <button [disabled]="getQuestionX() == 0" mat-icon-button>
+        <mat-icon (click)="previousQuestion()">keyboard_arrow_left</mat-icon>
+    </button>
+    <button [disabled]="getQuestionX() == questions.length - 1" mat-icon-button>
+        <mat-icon (click)="nextQuestion()">keyboard_arrow_right</mat-icon>
+    </button>
+    <button mat-icon-button [disabled]="isInstanceReadOnly" (click)="deleteInstance()">
+        <mat-icon>delete</mat-icon>
+    </button>
+    <button mat-icon-button [disabled]="!isFormValid || isInstanceReadOnly" (click)="saveInstance()">
+        <mat-icon>save</mat-icon>
+    </button>
+</app-nav-bar>
 
 <div class="body mx-1">
     <div class="row">

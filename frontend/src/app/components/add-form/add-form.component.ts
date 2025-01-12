@@ -7,6 +7,8 @@ import { map } from 'rxjs/operators';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { AddFormService } from "../../services/add-form.service";
 import { Form } from "../../models/form";
+import {coerceBooleanProperty} from "@angular/cdk/coercion";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
     selector: 'app-add-form',
@@ -27,6 +29,7 @@ export class AddFormComponent implements OnInit, OnDestroy {
         private formService: FormService,
         private authenticationService: AuthenticationService,
         private addFormService: AddFormService,
+        private snackBar: MatSnackBar,
         private route: ActivatedRoute // Pour récupérer les paramètres de l'URL
     ) {
         this.addFormService.reset();
@@ -118,8 +121,20 @@ export class AddFormComponent implements OnInit, OnDestroy {
         }
     }
 
-    goBack() {
-        this.router.navigate(['/']); // Retour à la vue précédente
+    validateForm() {
+        let newForm = this.addFormService.getForm();
+        this.formService.addForm(newForm).subscribe({
+            next: () => {
+                this.router.navigate(['/']);
+            },
+            error: (err) => {
+                if (this.snackBar) {
+                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+                } else {
+                    console.error(`There was an error at the server. The update has not been done! Please try again.`);
+                }
+            }
+        });
     }
 
     private uniqueTitleValidator(): AsyncValidatorFn {
@@ -130,4 +145,6 @@ export class AddFormComponent implements OnInit, OnDestroy {
             );
         };
     }
+
+    protected readonly coerceBooleanProperty = coerceBooleanProperty;
 }

@@ -1,4 +1,8 @@
-<app-nav-bar title="Add/Edit Question" [isQuestionValid]="questionForm.valid" (saveQuestion)="saveQuestion()" class="toolbar-actions"></app-nav-bar>
+<app-nav-bar title="Add/Edit Question" [hasArrowBack]="true" class="toolbar-actions">
+    <button mat-icon-button [disabled]="!questionForm.valid" (click)="saveQuestion()">
+        <mat-icon>save</mat-icon>
+    </button>
+</app-nav-bar>
 
 <div class="position-relative h-100">
     <mat-card appearance="raised" class="p-4 position-absolute top-50 start-50 translate-middle">

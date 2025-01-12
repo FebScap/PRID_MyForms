@@ -1,6 +1,6 @@
-﻿import {Component, OnDestroy} from '@angular/core';
+﻿import {Component, inject, OnDestroy} from '@angular/core';
 import {Form} from "../../models/form";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {FormService} from "../../services/form.service";
 import {InstanceService} from "../../services/instance.service";
 import {Instance} from "../../models/instance";
@@ -11,6 +11,9 @@ import {Answer} from "../../models/answer";
 import {OpenInstanceService} from "../../services/open-instance.service";
 import {OptionListService} from "../../services/option-list.service";
 import {G} from "@angular/cdk/keycodes";
+import {ConfirmDialogComponent, confirmDialogType} from "../confirm-dialog/confirm-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 
 @Component({
@@ -27,14 +30,17 @@ export class InstanceComponent implements OnDestroy {
     answersSubscription: Subscription;
     questionX: number = 0;
     answerForm = new FormGroup({});
+    readonly dialog = inject(MatDialog);
 
     constructor(
+        private router: Router,
         private route: ActivatedRoute,
         private formService: FormService,
         private instanceService: InstanceService,
         private openInstanceService: OpenInstanceService,
         private formBuilder: FormBuilder,
-        private optionListService: OptionListService
+        private optionListService: OptionListService,
+        public snackBar: MatSnackBar,
     ) {
         this.openInstanceService.reset();
         this.questionXSubscription = this.openInstanceService.questionX$.subscribe(x => {
@@ -104,6 +110,45 @@ export class InstanceComponent implements OnDestroy {
         }
     }
 
+    deleteInstance() {
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            data: {
+                dialogType: confirmDialogType.DELETE_INSTANCE,
+                instance: this.instance
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(res => {
+            if (!res) {
+                if (this.snackBar) {
+                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+                } else {
+                    console.error(`There was an error at the server. The update has not been done! Please try again.`);
+                }
+            } else if (res !== 'cancel') {
+                this.router.navigate(['/']);
+            }
+        });
+    }
+
+    saveInstance() {
+        let i = this.instance!;
+        i.completed = new Date();
+        Object.assign(this.instance!, i);
+        this.instanceService.update(this.instance!).subscribe({
+            next: () => {
+                this.router.navigate(['/']);
+            },
+            error: (err) => {
+                if (this.snackBar) {
+                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+                } else {
+                    console.error(`There was an error at the server. The update has not been done! Please try again.`);
+                }
+            }
+        });
+    }
+
     getAnswers(questionId: number): Answer[] {
         return this.answers.filter(ans => ans.questionId == questionId);
     }
@@ -122,5 +167,21 @@ export class InstanceComponent implements OnDestroy {
 
     hasOneChecked(formGroup: FormGroup): boolean {
         return Object.values(formGroup.controls).some(control => control.value == true);
+    }
+
+    previousQuestion() {
+        this.openInstanceService.previousQuestion();
+    }
+
+    nextQuestion() {
+        this.openInstanceService.nextQuestion();
+    }
+
+    getQuestionX() {
+        return this.openInstanceService.getquestionX();
+    }
+    
+    get isInstanceReadOnly() {
+        return this.instance?.completed;
     }
 }

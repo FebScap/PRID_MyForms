@@ -182,4 +182,12 @@ export class ViewFormsComponent implements AfterViewInit {
         return this.searchService.getSearchBarVisibility(); // Récupère la visibilité de la barre de recherche
     }
 
+    switchSearchBarVisibility() {
+        this.searchService.setSearchBarVisibility(!this.searchService.getSearchBarVisibility());
+    }
+
+    get isGuest() {
+        return this.currentUser && this.currentUser.role === Role.Guest;
+    }
+
 }
