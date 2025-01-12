@@ -1,0 +1,11 @@
+<h2 mat-dialog-title>
+    {{ data.title }}
+</h2>
+<mat-dialog-content>
+    {{ data.message }}
+</mat-dialog-content>
+<mat-dialog-actions>
+        <button mat-button (click)="readForm()">Read</button>
+        <button mat-button (click)="openForm()">Respond</button>
+        <button mat-button (click)="cancel()">Cancel</button>
+</mat-dialog-actions>
