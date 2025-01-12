@@ -1,5 +1,19 @@
-﻿<app-nav-bar title="{{ form?.title }}" formIsReadOnly="{{ isReadOnly }}" [form]="form" [snackBar]="snackBar"
-             class="toolbar-actions"></app-nav-bar>
+﻿<app-nav-bar title="{{ form?.title }}" [hasArrowBack]="true" class="toolbar-actions">
+    <button [disabled]="isReadOnly" routerLink="add-form/{{ form?.id }}" mat-icon-button>
+        <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button (click)="deleteForm()">
+        <mat-icon>delete</mat-icon>
+    </button>
+    <button mat-icon-button>
+        <mat-icon>share</mat-icon>
+    </button>
+    @if (isReadOnly) {
+        <button mat-icon-button routerLink="analyze">
+            <mat-icon>query_stats</mat-icon>
+        </button>
+    }
+</app-nav-bar>
 
 <div class="body mx-1">
     <div class="row">
@@ -60,6 +74,6 @@
         </mat-card>
     }
     <div class="w-100 text-center">
-        <button  mat-raised-button (click)="openAddEditQuestion()" >Add Question</button>
+        <button mat-raised-button (click)="openAddEditQuestion()">Add Question</button>
     </div>
 </div>

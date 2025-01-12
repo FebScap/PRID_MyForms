@@ -10,6 +10,8 @@ import {AddFormComponent} from "../components/add-form/add-form.component";
 import {InstanceComponent} from "../components/instance/instance.component";
 import {AddEditQuestionComponent} from "../components/add-edit-question/add-edit-question.component";
 import {AddEditOptionListComponent} from "../components/add-edit-option-list/add-edit-option-list.component";
+import {AnalyzeComponent} from "../components/analyze/analyze.component";
+import {ViewInstancesComponent} from "../components/view-instances/view-instances.component";
 
 const appRoutes: Routes = [
 
@@ -17,6 +19,16 @@ const appRoutes: Routes = [
         path: '',
         component: ViewFormsComponent,
         pathMatch: 'full',
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'view_form/:id/analyze/view_instances',
+        component: ViewInstancesComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'view_form/:id/analyze',
+        component: AnalyzeComponent,
         canActivate: [AuthGuard]
     },
     {
@@ -42,7 +54,7 @@ const appRoutes: Routes = [
         path: 'instance/:id',
         component: InstanceComponent,
         canActivate: [AuthGuard]
-    },
+    }
 ];
 
 export const AppRoutes = RouterModule.forRoot(appRoutes);

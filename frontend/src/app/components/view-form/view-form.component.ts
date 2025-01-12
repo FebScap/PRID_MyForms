@@ -38,7 +38,7 @@ export class ViewFormComponent {
                 this.form = res;
                 this.isPublic = res.isPublic;
                 res.instances.length > 0 ? this.isReadOnly = true : this.isReadOnly = false;
-                
+
                 if (this.isReadOnly) {
                     const dialogRef = this.dialog.open(InformationComponent, {
                         data: {
@@ -71,19 +71,21 @@ export class ViewFormComponent {
             this.refresh();
         });
     }
-    
+
     tooglePublic() {
         if (this.form) {
             const dialogRef = this.dialog.open(ConfirmDialogComponent, {
                 data: {
                     dialogType: confirmDialogType.TOGGLE_PUBLIC,
+                    title: this.form.isPublic ? 'Make form private' : 'Make form public',
+                    message: this.form.isPublic ? 'Are you sure you want to make this form private? You will need to share this form again to allow \'Users\' access to other users.' : 'Are you sure you want to make this form public? This will delete all existing shared with \'Users\' access to this form.',
                     form: this.form
                 }
             });
 
             dialogRef.afterClosed().subscribe(res => {
                 if (!res) {
-                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', { duration: 10000 });
+                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
                 }
                 this.refresh();
             });
@@ -93,6 +95,8 @@ export class ViewFormComponent {
     openDialogDeleteQuestion(question: Question) {
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
             data: {
+                title: 'Delete question',
+                message: 'Are you sure you want to delete this question: ' + question.title + ' ?',
                 dialogType: confirmDialogType.DELETE_QUESTION,
                 question: question
             }
@@ -100,7 +104,7 @@ export class ViewFormComponent {
 
         dialogRef.afterClosed().subscribe(res => {
             if (!res) {
-                this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', { duration: 10000 });
+                this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
             }
             this.refresh();
         });
@@ -111,11 +115,33 @@ export class ViewFormComponent {
     openAddEditQuestion(questionId?: number): void {
         if (questionId) {
             // Si un ID de question est fourni, naviguer vers l'édition
-            this.router.navigate(['/add-edit-question', { id: questionId }]);
+            this.router.navigate(['/add-edit-question', {id: questionId}]);
         } else {
             // Si aucun ID n'est fourni, naviguer vers l'ajout d'une nouvelle question
             this.router.navigate(['/add-edit-question']);
         }
     }
 
+    deleteForm() {
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            data: {
+                title: 'Delete form',
+                message: 'Are you sure you want to delete this form? This action is irreversible.',
+                dialogType: confirmDialogType.DELETE_FORM,
+                form: this.form
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(res => {
+            if (!res) {
+                if (this.snackBar) {
+                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+                } else {
+                    console.error(`There was an error at the server. The update has not been done! Please try again.`);
+                }
+            } else if (res !== 'cancel') {
+                this.router.navigate(['/']);
+            }
+        });
+    }
 }

@@ -1,7 +1,7 @@
-<app-nav-bar [title]="isNew ? 'Add Form' : 'Edit Form'"
-             [isFormValid]="isFormValid$ | async"
-             (formSave)="saveForm()"
-             class="toolbar-actions">
+<app-nav-bar [title]="isNew ? 'Add Form' : 'Edit Form'" [hasArrowBack]="true" class="toolbar-actions">
+    <button mat-icon-button [disabled]="!isFormValid$" (click)="validateForm()">
+        <mat-icon>save</mat-icon>
+    </button>
 </app-nav-bar>
 
 <div class="signup position-relative h-100">

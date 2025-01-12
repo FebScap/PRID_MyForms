@@ -30,6 +30,7 @@
                     <mat-form-field class="w-100">
                         <input matInput [formControl]="getQuestionControl()!" (change)="formChangedEvent()"  type="date" name="{{ question?.id }}">
                         <mat-error *ngIf="getQuestionControl()?.hasError('required')">Field is required</mat-error>
+                        <mat-error *ngIf="getQuestionControl()?.hasError('pattern')">Must be a valid date</mat-error>
                     </mat-form-field>
                 }
                 
@@ -37,13 +38,15 @@
                     <mat-form-field class="w-100">
                         <input matInput [formControl]="getQuestionControl()!" (change)="formChangedEvent()"  type="email" name="{{ question?.id }}">
                         <mat-error *ngIf="getQuestionControl()?.hasError('required')">Field is required</mat-error>
+                        <mat-error *ngIf="getQuestionControl()?.hasError('pattern')">Must be a valid email</mat-error>
                     </mat-form-field>
                 }
                 
                 @case (Type.Integer) {
                     <mat-form-field class="w-100">
-                        <input matInput [formControl]="getQuestionControl()!" (change)="formChangedEvent()" type="number" name="{{ question?.id }}">
+                        <input matInput [formControl]="getQuestionControl()!" (change)="formChangedEvent()" name="{{ question?.id }}">
                         <mat-error *ngIf="getQuestionControl()?.hasError('required')">Field is required</mat-error>
+                        <mat-error *ngIf="getQuestionControl()?.hasError('pattern')">Must be a valid number</mat-error>
                     </mat-form-field>
                 }
                 
