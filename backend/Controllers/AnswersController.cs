@@ -17,7 +17,6 @@ namespace prid_2425_f02.Controllers
             var answer = await context.Answers.Where(a => a.InstanceId == dto.InstanceId && a.QuestionId == dto.QuestionId).FirstOrDefaultAsync();
             if (answer == null) return NotFound();
             answer.Value = dto.Value;
-            answer.Idx = dto.Idx;
             await context.SaveChangesAsync();
             return true;
         }

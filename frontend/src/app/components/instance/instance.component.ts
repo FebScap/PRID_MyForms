@@ -81,12 +81,13 @@ export class InstanceComponent implements OnDestroy {
                             if (this.getAnswers(q.id)[0])
                                 control.setValue(this.getAnswers(q.id)[0].value);
 
+                            // Mise en place des validators
                             if (q.required)
                                 control.addValidators(Validators.required);
                             if (q.type == Type.Integer)
                                 control.addValidators(Validators.pattern('^[0-9]*$'));
                             if (q.type == Type.Email)
-                                control.addValidators(Validators.email);
+                                control.addValidators(Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$'));
                             if (q.type == Type.Date)
                                 control.addValidators(Validators.pattern('^[0-9]{4}-[0-9]{2}-[0-9]{2}$'));
 

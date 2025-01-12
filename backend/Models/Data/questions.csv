@@ -5,7 +5,7 @@
 4;1;4;Your place of birth?;Your place of birth;short;0;
 5;1;5;Your nationality?;Your nationality;combo;1;4
 6;1;6;Your address?;Your address;short;0;
-7;1;7;Your postal code?;Your postal code;short;0;
+7;1;7;Your postal code?;Your postal code;integer;0;
 8;1;8;Your city?;Your city of residence;short;0;
 9;1;9;Your country?;Your country of residence;combo;0;4
 10;1;10;Your phone number?;Your phone number;short;0;
