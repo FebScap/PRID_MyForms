@@ -26,6 +26,7 @@ import {QuestionComponent} from "../components/instance/question.component";
 import {AddFormComponent} from "../components/add-form/add-form.component";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 import {AddEditQuestionComponent} from "../components/add-edit-question/add-edit-question.component";
+import {AddEditOptionListComponent} from "../components/add-edit-option-list/add-edit-option-list.component";
 
 @NgModule({
     declarations: [
@@ -45,6 +46,7 @@ import {AddEditQuestionComponent} from "../components/add-edit-question/add-edit
         InstanceComponent,
         QuestionComponent,
         AddEditQuestionComponent,
+        AddEditOptionListComponent
         
     ],
     imports: [
