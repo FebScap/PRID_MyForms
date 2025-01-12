@@ -24,8 +24,6 @@ export class NavBarComponent {
     @Input() link: string = '/';
     @Input() hasArrowBack: boolean | undefined;
     @Input() hasMenu: boolean | undefined;
-    @Input() isLogin: boolean | undefined;
-    
 
     constructor(
         private router: Router,
