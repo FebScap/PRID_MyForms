@@ -113,6 +113,8 @@ export class InstanceComponent implements OnDestroy {
     deleteInstance() {
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
             data: {
+                title: 'Delete Attempt',
+                message: 'Are you sure you want to delete this attempt?',
                 dialogType: confirmDialogType.DELETE_INSTANCE,
                 instance: this.instance
             }

@@ -133,6 +133,8 @@ export class ViewFormsComponent implements AfterViewInit {
             case 2:
                 const dialogRef = this.dialog.open(ConfirmDialogComponent, {
                     data: {
+                        title: 'Open Form',
+                        message: 'You have already answered this form. What would you like to do?',
                         dialogType: confirmDialogType.OPEN_FORM,
                         form: form
                     }

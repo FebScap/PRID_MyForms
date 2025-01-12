@@ -73,6 +73,5 @@ export class ConfirmDialogComponent {
 }
 
 export enum confirmDialogType {
-    DELETE_QUESTION, TOGGLE_PUBLIC, DELETE_FORM, OPEN_FORM,
-    DELETE_INSTANCE,
+    DELETE_QUESTION, TOGGLE_PUBLIC, DELETE_FORM, OPEN_FORM, DELETE_INSTANCE,
 }
