@@ -1,5 +1,5 @@
 ﻿<app-nav-bar title="{{ form?.title }}" [hasArrowBack]="true" class="toolbar-actions">
-    <button [disabled]="isReadOnly" routerLink="add-form/{{ form?.id }}" mat-icon-button>
+    <button [disabled]="isReadOnly" (click)="openAddForm(form?.id)" mat-icon-button>
         <mat-icon>edit</mat-icon>
     </button>
     <button mat-icon-button (click)="deleteForm()">

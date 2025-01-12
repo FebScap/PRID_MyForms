@@ -103,8 +103,6 @@ export class AddFormComponent implements OnInit, OnDestroy {
             ownerId: this.currentUser?.id ?? 0,  // Assurez-vous que `ownerId` est valide
             owner: this.currentUser
         };
-
-
         if (this.isNew) {
             this.formService.addForm(formData).subscribe({
                 next: () => {
@@ -115,7 +113,6 @@ export class AddFormComponent implements OnInit, OnDestroy {
                     console.error('Error updating form:', err);
                 }
             });
-
         } else {
             this.formService.update({...formData, id: this.formId}).subscribe({
                 next: () => {

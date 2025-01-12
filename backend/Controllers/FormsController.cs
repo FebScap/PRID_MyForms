@@ -85,29 +85,41 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
 
     [HttpPut]
     public async Task<ActionResult<FormDTO>> Update(FormDTO dto) {
-        var form = await context.Forms.FindAsync(dto.Id);
+        var form = await context.Forms
+            .Include(f => f.Accesses)
+            .Include(f => f.Questions)
+            .FirstOrDefaultAsync(f => f.Id == dto.Id);
 
         if (form == null) return NotFound();
 
-        // Vérifie si l'utilisateur a le droit de modifier le form
-        form.Accesses = await context.Accesses.Where(a => a.FormId == form.Id).ToListAsync();
+        // Vérification des droits d'accès : l'utilisateur doit avoir un accès éditeur
         if (!HasAccessEditor(form, Convert.ToInt32(User.Identity?.Name))) return Forbid();
 
-        // Pour le toggle public
-        if (form.IsPublic != dto.IsPublic) {
-            form.IsPublic = dto.IsPublic;
-
-            // Si le form devient public, on supprime tous les accès lecture
-            if (dto.IsPublic) {
-                var accesses = await context.Accesses.Where(a => a.FormId == form.Id && a.AccessType == AccessType.User)
-                    .ToListAsync();
-                accesses.ForEach(a => {
-                    context.Accesses.Remove(a);
-                });
-            }
+        // Mise à jour des propriétés simples
+        form.Title = dto.Title;
+        form.Description = dto.Description;
+        form.IsPublic = dto.IsPublic;
+    
+        // Gestion des accès si le formulaire devient public
+        if (dto.IsPublic) {
+            var userAccesses = form.Accesses.Where(a => a.AccessType == AccessType.User).ToList();
+            userAccesses.ForEach(a => context.Accesses.Remove(a)); // Supprimer les accès utilisateurs spécifiques
         }
 
+        // Gestion des questions associées
+        form.Questions.Clear(); // On vide la liste des questions existantes pour la remplacer
+        foreach (var questionDto in dto.Questions) {
+            var question = mapper.Map<Question>(questionDto);
+            question.FormId = form.Id; // S'assurer que chaque question est associée au formulaire
+            form.Questions.Add(question);
+        }
+
+        // Gestion des accès (si nécessaires, pour modifications précises)
+        form.Accesses = dto.Accesses.Select(a => mapper.Map<Access>(a)).ToList();
+
+        // Sauvegarde des modifications en base de données
         await context.SaveChangesAsync();
+
         return mapper.Map<FormDTO>(form);
     }
 
