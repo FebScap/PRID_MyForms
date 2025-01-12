@@ -24,6 +24,11 @@
                 <mat-icon>add</mat-icon>
             </button>
         }
+    } @else if (currentPath.endsWith("analyze")) {
+        <button mat-icon-button>
+            <mat-icon>list</mat-icon>
+        </button>
+        
     } @else if (currentPath.startsWith("/view_form")) {
         <button [disabled]="formIsReadOnly" (click)="editForm(form?.id)" mat-icon-button>
             <mat-icon>edit</mat-icon>
@@ -35,7 +40,7 @@
             <mat-icon>share</mat-icon>
         </button>
         @if (coerceBooleanProperty(formIsReadOnly)) {
-            <button mat-icon-button>
+            <button mat-icon-button routerLink="analyze">
                 <mat-icon>query_stats</mat-icon>
             </button>
         }

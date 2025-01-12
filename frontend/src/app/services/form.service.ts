@@ -90,4 +90,10 @@ export class FormService {
             })
         );
     }
+    
+    analyze(formId: number, questionId: number): Observable<any> {
+        return this.http.get<any>(`${this.baseUrl}api/forms/${formId}/${questionId}/analyze`).pipe(
+            map(res => res)
+        );
+    }
 }
