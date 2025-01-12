@@ -1,32 +1,8 @@
 <h2 mat-dialog-title>
-    @if (getConfirmDialogType() == confirmDialogType.DELETE_QUESTION) {
-        Delete Question
-    } @else if (getConfirmDialogType() == confirmDialogType.TOGGLE_PUBLIC) {
-        @if (data.form.isPublic) {
-            Make Form Private
-        } @else {
-            Make Form Public
-        }
-    } @else if (getConfirmDialogType() == confirmDialogType.DELETE_FORM) {
-        Delete Form
-    } @else if (getConfirmDialogType() == confirmDialogType.OPEN_FORM) {
-        Open Form
-    }
+    {{ data.title }}
 </h2>
 <mat-dialog-content>
-    @if (getConfirmDialogType() == confirmDialogType.DELETE_QUESTION) {
-        Are you sure you want to delete this question: {{ data.question.title }} ?
-    } @else if (getConfirmDialogType() == confirmDialogType.TOGGLE_PUBLIC) {
-        @if (data.form.isPublic) {
-            Are you sure you want to make this form private? You will need to share this form again to allow 'Users' access to other users.
-        } @else {
-            Are you sure you want to make this form public? This will delete all existing shared with 'Users' access to this form.
-        }
-    } @else if (getConfirmDialogType() == confirmDialogType.DELETE_FORM) {
-        Are you sure you want to delete this form?
-    } @else if (getConfirmDialogType() == confirmDialogType.OPEN_FORM) {
-        You have already answered this form. What would you like to do?
-    }
+    {{ data.message }}
 </mat-dialog-content>
 <mat-dialog-actions>
     @if (getConfirmDialogType() != confirmDialogType.OPEN_FORM) {
@@ -38,6 +14,8 @@
         <button mat-button cdkFocusInitial (click)="togglePublic()">Yes</button>
     } @else if (getConfirmDialogType() == confirmDialogType.DELETE_FORM) {
         <button mat-button cdkFocusInitial (click)="deleteForm()">Yes</button>
+    } @else if (getConfirmDialogType() == confirmDialogType.DELETE_INSTANCE) {
+        <button mat-button cdkFocusInitial (click)="deleteInstance()">Yes</button>
     } @else if (getConfirmDialogType() == confirmDialogType.OPEN_FORM) {
         <button mat-button (click)="openForm(false)">Read</button>
         <button mat-button (click)="openForm(true)">Respond</button>

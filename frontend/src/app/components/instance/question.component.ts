@@ -100,7 +100,6 @@ export class QuestionComponent {
         answer.questionId = question.id;
         answer.instanceId = this.instance!.id;
         answer.value = value;
-        answer.idx = 0;
 
         if (this.answers?.find(ans => ans.questionId == question.id)) {
             let existingAnswer = this.answers?.find(ans => ans.questionId == question.id);
@@ -121,5 +120,4 @@ export class QuestionComponent {
             });
         }
     }
-
 }

@@ -1,10 +1,10 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import { plainToInstance } from 'class-transformer';
 import {AuthenticationService} from "./authentication.service";
 import {Instance} from "../models/instance";
-import {map} from "rxjs/operators";
+import {catchError, map} from "rxjs/operators";
 import {Answer} from "../models/answer";
 import {Form} from "../models/form";
 
@@ -24,4 +24,21 @@ export class InstanceService {
             map(res => plainToInstance(Answer, res))
         );
     }
+    
+    deleteById(id: number): Observable<boolean> {
+        return this.http.delete<boolean>(`${this.baseUrl}api/Instances/${id}`).pipe(
+            map(res => true),
+            catchError(err => {
+                console.error(err);
+                return of(false);
+            })
+        );
+    }
+    
+    update(instance: Instance): Observable<Instance> {
+        return this.http.put<any>(`${this.baseUrl}api/instances`, instance).pipe(
+            map(res => plainToInstance(Instance, res))
+        );
+    }
+    
 }

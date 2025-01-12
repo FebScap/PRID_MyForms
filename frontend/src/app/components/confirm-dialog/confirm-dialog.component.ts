@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {QuestionService} from "../../services/question.service";
 import {FormService} from "../../services/form.service";
+import {InstanceService} from "../../services/instance.service";
 
 @Component({
     templateUrl: 'confirm-dialog.component.html',
@@ -14,6 +15,7 @@ export class ConfirmDialogComponent {
     constructor(
         private questionService: QuestionService,
         private formService: FormService,
+        private instanceService: InstanceService,
         private dialogRef: MatDialogRef<ConfirmDialogComponent>
     ) {
         this.dialogRef.backdropClick().subscribe(() => {
@@ -51,6 +53,13 @@ export class ConfirmDialogComponent {
             this.dialogRef.close(res);
         });
     }
+    
+    deleteInstance() {
+        let i = this.data.instance;
+        this.instanceService.deleteById(i.id).subscribe(res => {
+            this.dialogRef.close(res);
+        });
+    }
 
     openForm(isNewResponse: boolean) {
         if (isNewResponse) {
@@ -64,5 +73,5 @@ export class ConfirmDialogComponent {
 }
 
 export enum confirmDialogType {
-    DELETE_QUESTION, TOGGLE_PUBLIC, DELETE_FORM, OPEN_FORM,
+    DELETE_QUESTION, TOGGLE_PUBLIC, DELETE_FORM, OPEN_FORM, DELETE_INSTANCE,
 }
