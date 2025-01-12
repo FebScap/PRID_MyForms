@@ -58,19 +58,28 @@ export class AddFormComponent implements OnInit, OnDestroy {
         console.log('AddFormComponent chargé');
 
         // Vérifier si l'URL contient un ID de formulaire
-        this.formId = Number(this.route.snapshot.paramMap.get('id'));
-        this.isNew = isNaN(this.formId); // Si pas d'ID dans l'URL, c'est un nouveau formulaire
+        const formIdParam = this.route.snapshot.paramMap.get('id');
+        this.formId = formIdParam ? Number(formIdParam) : undefined;
 
-        if (!this.isNew) {
+        this.isNew = !this.formId; // Si l'ID est absent ou invalide, on crée un nouveau formulaire
+
+        if (!this.isNew && this.formId !== undefined) {
             this.loadForm(this.formId); // Charger les données du formulaire existant
         }
     }
+
 
     ngOnDestroy() {
         this.sub.unsubscribe();
     }
 
     private loadForm(formId: number): void {
+        if (!formId || isNaN(formId)) {
+            console.error('Invalid form ID:', formId);
+            this.router.navigate(['/']); // Redirection si l'ID est invalide
+            return;
+        }
+
         this.formService.getById(String(formId)).subscribe({
             next: (form: Form) => {
                 this.formGroup.patchValue({
@@ -82,34 +91,37 @@ export class AddFormComponent implements OnInit, OnDestroy {
             },
             error: (err) => {
                 console.error('Error loading form:', err);
-                this.router.navigate(['/']); // Redirige si l'ID du formulaire n'existe pas
+                this.router.navigate(['/']); // Redirection si le formulaire n'existe pas
             }
         });
     }
+
 
     saveForm(): void {
         if (!this.formGroup.valid) return;
 
         const formData = {
             ...this.formGroup.value,
-            ownerId: this.currentUser.id
+            ownerId: this.currentUser?.id ?? 0  // Assurez-vous que `ownerId` est valide
         };
 
+        console.log('Form Data:', formData);
+
         if (this.isNew) {
-            // Création d'un nouveau formulaire
             this.formService.addForm(formData).subscribe({
                 next: () => {
-                    this.router.navigate(['/']); // Redirection après création
+                    console.log('Form created successfully');
+                    this.router.navigate(['/']);
                 },
                 error: (err) => {
                     console.error('Error creating form:', err);
                 }
             });
         } else {
-            // Mise à jour d'un formulaire existant
             this.formService.update({ ...formData, id: this.formId }).subscribe({
                 next: () => {
-                    this.router.navigate(['/']); // Redirection après mise à jour
+                    console.log('Form updated successfully');
+                    this.router.navigate(['/']);
                 },
                 error: (err) => {
                     console.error('Error updating form:', err);
@@ -117,6 +129,7 @@ export class AddFormComponent implements OnInit, OnDestroy {
             });
         }
     }
+
 
     goBack() {
         this.router.navigate(['/']); // Retour à la vue précédente

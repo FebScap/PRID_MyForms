@@ -27,8 +27,10 @@ export class NavBarComponent {
     @Input() isFormValid: BooleanInput | undefined;
     @Input() isQuestionValid: boolean | undefined;
     @Output() saveQuestion = new EventEmitter<void>();
-    
-    
+    @Output() formSave = new EventEmitter<void>();
+
+
+
     readonly dialog = inject(MatDialog);
 
     constructor(
@@ -103,17 +105,10 @@ export class NavBarComponent {
     }
 
     saveForm() {
-        let newForm = this.addFormService.getForm();
-        this.formService.addForm(newForm).subscribe({
-            next: () => {
-                this.router.navigate(['/']);
-            },
-            error: (err) => {
-                console.error('Error saving form:', err);
-            }
-        });
+        this.formSave.emit();  // Émet l'événement pour que le composant parent le capture
     }
-    
+
+
     onSaveClick () {
         this.saveQuestion.emit();
     }

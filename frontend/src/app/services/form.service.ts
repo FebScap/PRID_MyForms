@@ -65,11 +65,12 @@ export class FormService {
         );
     }
 
-    addForm(formData: any): Observable<boolean> {
-        console.log(formData);
-        return this.http.post(`${this.baseUrl}api/forms`, formData).pipe(
+    addForm(formData: Form): Observable<boolean> {
+        console.log('Form service:' ,formData);
+        return this.http.post<Form>(`${this.baseUrl}api/forms`, formData).pipe(
             map(res => true),
             catchError(err => {
+                console.log(err);
                 return of(false);
             })
         );
