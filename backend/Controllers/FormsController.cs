@@ -63,6 +63,25 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
         if (form == null) return NotFound();
         return mapper.Map<FormDTO>(form);
     }
+    
+    [HttpPost]
+    public async Task<ActionResult<FormDTO>> Create(FormDTO dto) {
+        var form = mapper.Map<Form>(dto);
+        form.OwnerId = Convert.ToInt32(User.Identity?.Name);
+        form.Owner = await context.Users.FindAsync(form.OwnerId);
+
+        // Vérifie si l'utilisateur a le droit de créer un form
+        if (!HasAccessEditor(form, form.OwnerId)) return Forbid();
+
+        // Valide le form
+        var validator = new FormValidator(context);
+        ValidationResult results = await validator.ValidateOnCreate(form);
+        if (!results.IsValid) return BadRequest(results.Errors);
+
+        context.Forms.Add(form);
+        await context.SaveChangesAsync();
+        return mapper.Map<FormDTO>(form);
+    }
 
     [HttpPut]
     public async Task<ActionResult<FormDTO>> Update(FormDTO dto) {
@@ -155,33 +174,15 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
         return form.OwnerId == userId || form.Accesses.Any(a => a.UserId == userId) || form.IsPublic;
     }
 
-    [HttpPost]
-    public async Task<ActionResult<FormDTO>> Create(FormDTO dto) {
-        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(dto));
-        Console.WriteLine("debug");
-
-        var form = new Form {
-            Title = dto.Title,
-            Description = dto.Description,
-            IsPublic = dto.IsPublic,
-            OwnerId = dto.OwnerId
-        };
-        ValidationResult result = await new FormValidator(context).ValidateOnCreate(form);
-
-        context.Forms.Add(form);
-        await context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetById), new { id = form.Id }, mapper.Map<FormDTO>(form));
-    }
-
     [HttpGet("{formId:int}/{questionId:int}/analyze")]
     public async Task<ActionResult<List<AnswerDTO>>> Analyze(int formId, int questionId) {
         var question = context.Questions.FirstOrDefault(q => q.Id == questionId);
         if (question == null) return NotFound();
 
-        var instances = context.Instances.Include(i => i.Answers).Where(i => i.Completed.HasValue && i.FormId == formId).ToList();
+        var instances = context.Instances.Include(i => i.Answers).Where(i => i.Completed.HasValue && i.FormId == formId)
+            .ToList();
         if (instances.Count == 0) return NotFound();
-        
+
         List<AnswerDTO> answers = new List<AnswerDTO>();
         foreach (var instance in instances) {
             foreach (var answer in instance.Answers) {
@@ -190,6 +191,7 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
                 }
             }
         }
+
         return answers;
     }
 }

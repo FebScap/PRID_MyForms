@@ -13,11 +13,11 @@ public class FormValidator : AbstractValidator<Form>
             .NotEmpty()
             .MaximumLength(255);
 
-        RuleFor(f => f.Owner)
-            .NotEmpty();
-
         RuleFor(f => f.IsPublic)
-            .NotEmpty();
+            .NotNull();
+
+        RuleFor(f => f.OwnerId)
+            .NotNull();
     }
     
     public async Task<FluentValidation.Results.ValidationResult> ValidateOnCreate(Form form) {

@@ -1,12 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AsyncValidatorFn, AbstractControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormService } from '../../services/form.service';
-import { AuthenticationService } from '../../services/authentication.service';
-import { map } from 'rxjs/operators';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
-import { AddFormService } from "../../services/add-form.service";
-import { Form } from "../../models/form";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators, AsyncValidatorFn, AbstractControl} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {FormService} from '../../services/form.service';
+import {AuthenticationService} from '../../services/authentication.service';
+import {map} from 'rxjs/operators';
+import {Observable, Subscription} from 'rxjs';
+import {Form} from "../../models/form";
 import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
@@ -18,7 +17,7 @@ export class AddFormComponent implements OnInit, OnDestroy {
     public formGroup!: FormGroup;
     public currentUser: any;
     private sub = new Subscription();
-    public isFormValid$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    public isFormValid = false;
     public isNew: boolean = true; // Par défaut, on suppose qu'on ajoute un nouveau formulaire
     private formId?: number; // ID du formulaire en cas d'édition
 
@@ -27,11 +26,9 @@ export class AddFormComponent implements OnInit, OnDestroy {
         private router: Router,
         private formService: FormService,
         private authenticationService: AuthenticationService,
-        private addFormService: AddFormService,
         private snackBar: MatSnackBar,
         private route: ActivatedRoute // Pour récupérer les paramètres de l'URL
     ) {
-        this.addFormService.reset();
         this.currentUser = this.authenticationService.currentUser;
         this.formGroup = this.formBuilder.group({
             title: [
@@ -50,9 +47,8 @@ export class AddFormComponent implements OnInit, OnDestroy {
             }]
         });
 
-        this.sub = this.addFormService.addForm.subscribe();
         this.formGroup.statusChanges.subscribe(status => {
-            this.isFormValid$.next(this.formGroup.valid);
+            this.isFormValid = this.formGroup.valid;
         });
     }
 
@@ -98,16 +94,16 @@ export class AddFormComponent implements OnInit, OnDestroy {
         });
     }
 
-
     saveForm(): void {
         if (!this.formGroup.valid) return;
 
+        console.log(this.formGroup.value);
         const formData = {
             ...this.formGroup.value,
-            ownerId: this.currentUser?.id ?? 0  // Assurez-vous que `ownerId` est valide
+            ownerId: this.currentUser?.id ?? 0,  // Assurez-vous que `ownerId` est valide
+            owner: this.currentUser
         };
 
-        console.log('Form Data:', formData);
 
         if (this.isNew) {
             this.formService.addForm(formData).subscribe({
@@ -116,11 +112,12 @@ export class AddFormComponent implements OnInit, OnDestroy {
                     this.router.navigate(['/']);
                 },
                 error: (err) => {
-                    console.error('Error creating form:', err);
+                    console.error('Error updating form:', err);
                 }
             });
+
         } else {
-            this.formService.update({ ...formData, id: this.formId }).subscribe({
+            this.formService.update({...formData, id: this.formId}).subscribe({
                 next: () => {
                     console.log('Form updated successfully');
                     this.router.navigate(['/']);
@@ -132,27 +129,11 @@ export class AddFormComponent implements OnInit, OnDestroy {
         }
     }
 
-    validateForm() {
-        let newForm = this.addFormService.getForm();
-        this.formService.addForm(newForm).subscribe({
-            next: () => {
-                this.router.navigate(['/']);
-            },
-            error: (err) => {
-                if (this.snackBar) {
-                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
-                } else {
-                    console.error(`There was an error at the server. The update has not been done! Please try again.`);
-                }
-            }
-        });
-    }
-
     private uniqueTitleValidator(): AsyncValidatorFn {
         return (control: AbstractControl): Observable<{ [key: string]: boolean } | null> => {
             const currentOwnerId = this.authenticationService.currentUser?.id.toString();
             return this.formService.isTitleUnique(control.value, currentOwnerId).pipe(
-                map((isUnique: boolean) => (isUnique ? null : { notUnique: true }))
+                map((isUnique: boolean) => (isUnique ? null : {notUnique: true}))
             );
         };
     }
