@@ -145,8 +145,17 @@ export class ViewFormsComponent implements AfterViewInit {
     // Méthode appelée lors d'un changement de filtre
     filterChanged(event: Event): void {
         const filterValue = (event.target as HTMLInputElement).value.toLowerCase().trim();
+
         // @ts-ignore
-        this.filteredForms = this.forms.filter(form => form.title.toLowerCase().includes(filterValue));
+        this.filteredForms = this.forms.filter(form => {
+            return (
+                form.title.toLowerCase().includes(filterValue) ||  // Filtre sur le titre
+                form.description?.toLowerCase().includes(filterValue) ||  // Filtre sur la description (si elle existe)
+                form.owner.firstName.toLowerCase().includes(filterValue) ||  // Filtre sur le prénom du propriétaire
+                form.owner.lastName.toLowerCase().includes(filterValue) ||  // Filtre sur le nom du propriétaire
+                form.owner.email?.toLowerCase().includes(filterValue)  // Filtre sur l'email du propriétaire
+            );
+        });
     }
 
     trackById(index: number, form: Form): number {
