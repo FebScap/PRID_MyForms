@@ -46,10 +46,10 @@
         <button [disabled]="getQuestionX() == questionCount" mat-icon-button>
             <mat-icon (click)="nextQuestion()">keyboard_arrow_right</mat-icon>
         </button>
-        <button mat-icon-button>
+        <button mat-icon-button [disabled]="isInstanceReadOnly" (click)="deleteInstance()">
             <mat-icon>delete</mat-icon>
         </button>
-        <button mat-icon-button [disabled]="!isFormValid">
+        <button mat-icon-button [disabled]="!isFormValid || isInstanceReadOnly">
             <mat-icon>save</mat-icon>
         </button>
     } @else if (currentPath.startsWith("/add-form")) {

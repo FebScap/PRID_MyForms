@@ -27,5 +27,15 @@ namespace prid_2425_f02.Controllers
             
             return mapper.Map<AnswerDTO[]>(answers);
         }
+        
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult<bool>> Delete(int id) {
+            var instance = await context.Instances.FindAsync(id);
+            if (instance == null) return NotFound();
+            
+            context.Instances.Remove(instance);
+            await context.SaveChangesAsync();
+            return true;
+        }
     }
 }

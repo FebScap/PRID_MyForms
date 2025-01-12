@@ -11,6 +11,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {InstanceService} from "../../services/instance.service";
 import {OpenInstanceService} from "../../services/open-instance.service";
 import {AddFormService} from "../../services/add-form.service";
+import {Instance} from "../../models/instance";
 
 @Component({
     selector: 'app-nav-bar',
@@ -21,6 +22,7 @@ export class NavBarComponent {
     @Input() title: string = '<undefined>';
     @Input() formIsReadOnly: BooleanInput = true;
     @Input() form: Form | undefined;
+    @Input() instance: Instance | undefined;
     @Input() snackBar: MatSnackBar | undefined;
     //@ts-ignore
     @Input() questionCount: NumberInput | undefined;
@@ -82,6 +84,27 @@ export class NavBarComponent {
         });
     }
 
+    deleteInstance() {
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            data: {
+                dialogType: confirmDialogType.DELETE_INSTANCE,
+                instance: this.instance
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(res => {
+            if (!res) {
+                if (this.snackBar) {
+                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+                } else {
+                    console.error(`There was an error at the server. The update has not been done! Please try again.`);
+                }
+            } else if (res !== 'cancel') {
+                this.router.navigate(['/']);
+            }
+        });
+    }
+
     previousQuestion() {
         this.openInstanceService.previousQuestion();
     }
@@ -116,5 +139,9 @@ export class NavBarComponent {
     
     onSaveClick () {
         this.saveQuestion.emit();
+    }
+    
+    get isInstanceReadOnly() {
+        return this.instance?.completed;
     }
 }
