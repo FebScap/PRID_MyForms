@@ -59,6 +59,7 @@ export class NavBarComponent {
     }
 
     protected readonly coerceBooleanProperty = coerceBooleanProperty;
+    @Input() isOptionListValid!: boolean;
 
     deleteForm() {
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {

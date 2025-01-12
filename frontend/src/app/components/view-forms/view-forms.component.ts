@@ -1,4 +1,4 @@
-﻿import {Component, inject} from '@angular/core';
+﻿import {AfterViewInit, Component, inject} from '@angular/core';
 import {FormService} from "../../services/form.service";
 import {Form} from "../../models/form";
 import {Instance} from "../../models/instance";
@@ -16,12 +16,14 @@ import {forEach} from "lodash-es";
     templateUrl: './view-forms.component.html',
     styleUrl: './view-forms.component.css'
 })
-export class ViewFormsComponent {
-    forms?: Form[];
+export class ViewFormsComponent implements AfterViewInit {
+    forms?: Form[] = [];
     instances?: Instance[];
     currentUser: User | undefined = new User();
     protected readonly Instance = Instance;
     readonly dialog = inject(MatDialog);
+    filteredForms: Form[] = []; // Liste des formulaires filtrés
+    filter: string = ''; // Valeur du filtre
 
     constructor(
         private formService: FormService,
@@ -31,14 +33,37 @@ export class ViewFormsComponent {
     ) {
         this.currentUser = this.authenticationService.currentUser;
         if (this.currentUser?.role == Role.Admin) {
-            this.formService.getAll().subscribe((res) => this.forms = res);
+            this.formService.getAll().subscribe((res) => {
+                this.forms = res
+                this.filteredForms = [...this.forms];
+            });
         } else if (this.currentUser?.role == Role.Guest) {
-            this.formService.getAllPublic().subscribe((res) => this.forms = res);
-            
+            this.formService.getAllPublic().subscribe((res) => {
+                this.forms = res
+                this.filteredForms = [...this.forms];
+            });
         } else {
-            this.formService.getAllForCurrentUser().subscribe((res) => this.forms = res);
+            this.formService.getAllForCurrentUser().subscribe((res) => {
+                this.forms = res
+                this.filteredForms = [...this.forms];
+            });
         }
+    }
+    
+    ngAfterViewInit(): void {
+        // Charger les formulaires en fonction du rôle de l'utilisateur
+        if (this.currentUser?.role === Role.Admin) {
+            this.formService.getAll().subscribe(res => this.initForms(res));
+        } else if (this.currentUser?.role === Role.Guest) {
+            this.formService.getAllPublic().subscribe(res => this.initForms(res));
+        } else {
+            this.formService.getAllForCurrentUser().subscribe(res => this.initForms(res));
+        }
+    }
 
+    initForms(forms: Form[]): void {
+        this.forms = forms;              // Stocke tous les formulaires
+        this.filteredForms = [...forms]; // Initialise la liste filtrée avec tous les formulaires
     }
 
     /**
@@ -116,4 +141,16 @@ export class ViewFormsComponent {
                 break;
         }
     }
+
+    // Méthode appelée lors d'un changement de filtre
+    filterChanged(event: Event): void {
+        const filterValue = (event.target as HTMLInputElement).value.toLowerCase().trim();
+        // @ts-ignore
+        this.filteredForms = this.forms.filter(form => form.title.toLowerCase().includes(filterValue));
+    }
+
+    trackById(index: number, form: Form): number {
+        return form.id; // Utilise l'ID comme clé unique
+    }
+    
 }

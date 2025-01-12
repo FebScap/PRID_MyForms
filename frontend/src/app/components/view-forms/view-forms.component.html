@@ -1,54 +1,31 @@
-﻿<app-nav-bar title="MyForm" class="toolbar-actions">
+﻿<app-nav-bar title="My Forms" class="toolbar-actions"></app-nav-bar>
 
-</app-nav-bar>
 <div class="body">
-    <div id="list_forms">
-        @for (form of forms; track form.id) {
-            <mat-card class="example-card" appearance="outlined">
-                <mat-card-header class="d-flex justify-content-between mb-1">
-                    <mat-card-title class="fw-bold">{{ form.title }}</mat-card-title>
-                    @if (form.isPublic) {
-                        <mat-icon>public</mat-icon>
-                    } @else {
-                        <mat-icon>public_off</mat-icon>
-                    }
-                </mat-card-header>
-                <mat-card-content class="text-center">
-                    <p class="fst-italic">
-                        @if (form.description) {
-                            {{ form.description }}
-                        } @else {
-                            No description
-                        }
-                    </p>
-                    <p>by <b>{{ form.owner.firstName }} {{ form.owner.lastName }}</b></p>
-                    <div>
-                        @if (getInstancesStatus(form) > 0) {
-                            started:
-                            <b>{{ getLatestInstance(form)?.started!.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</b>
-                            <br>
-                            @if (getInstancesStatus(form) == 2) {
-                                completed:
-                                <b>{{ getLatestInstance(form)?.completed!.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</b>
-                            } @else {
-                                in progress
-                            }
-                        }
-                    </div>
-                </mat-card-content>
-                <mat-card-footer class="d-flex justify-content-center">
-                    <button mat-button (click)="openForm(form)">Open</button>
-                    @if (form.owner.id == currentUser?.id) {
-                        <a mat-button href="/view_form/{{ form.id }}">Manage</a>
-                    } @else {
-                        @for (acc of form.accesses; track acc) {
-                            @if (acc.userId == currentUser?.id && acc.accessType == 1) {
-                                <a mat-button href="/view_form/{{ form.id }}">Manage</a>
-                            }
-                        }
-                    }
-                </mat-card-footer>
-            </mat-card>
-        }
+    <!-- Champ de recherche -->
+    <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Search by Title</mat-label>
+        <input matInput (input)="filterChanged($event)" placeholder="Filter forms">
+    </mat-form-field>
+
+    <!-- Liste des formulaires filtrés -->
+    <div *ngFor="let form of filteredForms; trackBy: trackById" class="form-item">
+        <mat-card class="example-card" appearance="outlined">
+            <mat-card-header class="d-flex justify-content-between mb-1">
+                <mat-card-title class="fw-bold">{{ form.title }}</mat-card-title>
+                <mat-icon *ngIf="form.isPublic">public</mat-icon>
+                <mat-icon *ngIf="!form.isPublic">public_off</mat-icon>
+            </mat-card-header>
+            <mat-card-content class="text-center">
+                <p class="fst-italic">{{ form.description || 'No description' }}</p>
+                <p>by <b>{{ form.owner.firstName }} {{ form.owner.lastName }}</b></p>
+            </mat-card-content>
+            <mat-card-footer class="d-flex justify-content-center">
+                <button mat-button (click)="openForm(form)">Open</button>
+                <a mat-button *ngIf="form.owner.id === currentUser?.id" [routerLink]="['/view_form', form.id]">Manage</a>
+            </mat-card-footer>
+        </mat-card>
     </div>
+
+    <!-- Message si aucun formulaire ne correspond au filtre -->
+    <p *ngIf="filteredForms.length === 0" class="text-center text-muted">No forms match your search.</p>
 </div>
