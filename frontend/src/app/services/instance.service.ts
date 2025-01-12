@@ -35,4 +35,10 @@ export class InstanceService {
         );
     }
     
+    update(instance: Instance): Observable<Instance> {
+        return this.http.put<any>(`${this.baseUrl}api/instances`, instance).pipe(
+            map(res => plainToInstance(Instance, res))
+        );
+    }
+    
 }

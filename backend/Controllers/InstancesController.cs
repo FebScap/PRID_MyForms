@@ -37,5 +37,15 @@ namespace prid_2425_f02.Controllers
             await context.SaveChangesAsync();
             return true;
         }
+        
+        [HttpPut]
+        public async Task<ActionResult<InstanceDTO>> Update(InstanceDTO dto) {
+            var instance = await context.Instances.FindAsync(dto.Id);
+            if (instance == null) return NotFound();
+            
+            mapper.Map(dto, instance);
+            await context.SaveChangesAsync();
+            return mapper.Map<InstanceDTO>(instance);
+        }
     }
 }

@@ -132,7 +132,11 @@ export class NavBarComponent {
                 this.router.navigate(['/']);
             },
             error: (err) => {
-                console.error('Error saving form:', err);
+                if (this.snackBar) {
+                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+                } else {
+                    console.error(`There was an error at the server. The update has not been done! Please try again.`);
+                }
             }
         });
     }
@@ -143,5 +147,23 @@ export class NavBarComponent {
     
     get isInstanceReadOnly() {
         return this.instance?.completed;
+    }
+
+    saveInstance() {
+        let i = this.instance!;
+        i.completed = new Date();
+        Object.assign(this.instance!, i);
+        this.instanceService.update(this.instance!).subscribe({
+            next: () => {
+                this.router.navigate(['/']);
+            },
+            error: (err) => {
+                if (this.snackBar) {
+                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+                } else {
+                    console.error(`There was an error at the server. The update has not been done! Please try again.`);
+                }
+            }
+        });
     }
 }
