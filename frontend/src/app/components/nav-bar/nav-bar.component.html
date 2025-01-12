@@ -25,7 +25,7 @@
             </button>
         }
     } @else if (currentPath.startsWith("/view_form")) {
-        <button [disabled]="formIsReadOnly" mat-icon-button>
+        <button [disabled]="formIsReadOnly" (click)="editForm(form?.id)" mat-icon-button>
             <mat-icon>edit</mat-icon>
         </button>
         <button mat-icon-button (click)="deleteForm()">
@@ -53,7 +53,11 @@
             <mat-icon>save</mat-icon>
         </button>
     } @else if (currentPath.startsWith("/add-form")) {
-        <button mat-icon-button="!isFormValid" (click)="saveForm()">
+        <button mat-icon-button [disabled]="!coerceBooleanProperty(isFormValid)" (click)="saveForm()">
+            <mat-icon>save</mat-icon>
+        </button>
+    } @else if (currentPath.startsWith("/add-edit-question")) {
+        <button mat-icon-button [disabled]="!isQuestionValid" (click)="onSaveClick()">
             <mat-icon>save</mat-icon>
         </button>
     }

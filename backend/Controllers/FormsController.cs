@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
@@ -164,6 +165,7 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
             IsPublic = dto.IsPublic,
             OwnerId = dto.OwnerId 
         };
+        ValidationResult result = await new FormValidator(context).ValidateOnCreate(form);
 
         context.Forms.Add(form);
         await context.SaveChangesAsync();

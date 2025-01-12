@@ -1,14 +1,9 @@
 import {Injectable, Inject} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
-import {catchError, map} from 'rxjs/operators';
-import {BehaviorSubject, Observable, of} from 'rxjs';
-import {plainToInstance} from 'class-transformer';
+import {BehaviorSubject} from 'rxjs';
 import {Form} from "../models/form";
-import {User} from "../models/user";
 import {AuthenticationService} from "./authentication.service";
-import {Instance} from "../models/instance";
-import {FormGroup} from "@angular/forms";
 
 @Injectable({providedIn: 'root'})
 export class AddFormService {

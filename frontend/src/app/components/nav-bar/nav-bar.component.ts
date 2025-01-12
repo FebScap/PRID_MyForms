@@ -1,4 +1,4 @@
-import {Component, inject, Input} from '@angular/core';
+import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
 import {Router} from "@angular/router";
 import {AuthenticationService} from "../../services/authentication.service";
 import {Role} from "../../models/user";
@@ -10,9 +10,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {InstanceService} from "../../services/instance.service";
 import {OpenInstanceService} from "../../services/open-instance.service";
-import {FormGroup} from "@angular/forms";
 import {AddFormService} from "../../services/add-form.service";
-import {QuestionService} from "../../services/question.service";
 
 @Component({
     selector: 'app-nav-bar',
@@ -27,6 +25,8 @@ export class NavBarComponent {
     //@ts-ignore
     @Input() questionCount: NumberInput | undefined;
     @Input() isFormValid: BooleanInput | undefined;
+    @Input() isQuestionValid: boolean | undefined;
+    @Output() saveQuestion = new EventEmitter<void>();
     
     
     readonly dialog = inject(MatDialog);
@@ -59,6 +59,7 @@ export class NavBarComponent {
     }
 
     protected readonly coerceBooleanProperty = coerceBooleanProperty;
+    @Input() isOptionListValid!: boolean;
 
     deleteForm() {
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -96,6 +97,10 @@ export class NavBarComponent {
     public addForm() {
         this.router.navigate(['/add-form']);
     }
+    
+    public editForm(formId: number | undefined) {
+        this.router.navigate(['/add-form', formId]);
+    }
 
     saveForm() {
         let newForm = this.addFormService.getForm();
@@ -107,5 +112,9 @@ export class NavBarComponent {
                 console.error('Error saving form:', err);
             }
         });
+    }
+    
+    onSaveClick () {
+        this.saveQuestion.emit();
     }
 }

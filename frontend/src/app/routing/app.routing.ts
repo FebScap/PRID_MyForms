@@ -8,6 +8,8 @@ import {SignupComponent} from "../components/signup/signup.component";
 import {ViewFormComponent} from "../components/view-form/view-form.component";
 import {AddFormComponent} from "../components/add-form/add-form.component";
 import {InstanceComponent} from "../components/instance/instance.component";
+import {AddEditQuestionComponent} from "../components/add-edit-question/add-edit-question.component";
+import {AddEditOptionListComponent} from "../components/add-edit-option-list/add-edit-option-list.component";
 
 const appRoutes: Routes = [
 
@@ -29,6 +31,11 @@ const appRoutes: Routes = [
     },
     {   path: 'login', component: LoginComponent },
     {   path: 'add-form', component: AddFormComponent },
+    {   path: 'add-form/:id', component: AddFormComponent },
+    {   path: 'add-edit-question', component: AddEditQuestionComponent },
+    {   path: 'add-edit-question/:id', component: AddEditQuestionComponent },
+    {   path: 'add-edit-option-list', component: AddEditOptionListComponent },
+    {   path: 'add-edit-option-list/:id', component: AddEditOptionListComponent },
     {   path: 'signup', component: SignupComponent},
     {   path: '**', component: UnknownComponent },
     {
@@ -36,7 +43,6 @@ const appRoutes: Routes = [
         component: InstanceComponent,
         canActivate: [AuthGuard]
     },
-    {   path: 'add-form', component: AddFormComponent },
 ];
 
 export const AppRoutes = RouterModule.forRoot(appRoutes);

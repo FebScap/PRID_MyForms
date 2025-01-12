@@ -19,4 +19,20 @@ export class OptionListService {
             map(res => plainToInstance(OptionList, res))
         );
     }
+
+    getAll(): Observable<OptionList[]> {
+        return this.http.get<OptionList[]>(`${this.baseUrl}api/Optionlists`);
+    }
+
+    create(optionList: Partial<OptionList>): Observable<OptionList> {
+        return this.http.post<OptionList>(`${this.baseUrl}`, optionList);
+    }
+
+    update(id: number, optionList: Partial<OptionList>): Observable<void> {
+        return this.http.put<void>(`${this.baseUrl}/${id}`, optionList);
+    }
+
+    delete(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    }
 }

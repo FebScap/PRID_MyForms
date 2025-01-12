@@ -19,4 +19,8 @@ public class FormValidator : AbstractValidator<Form>
         RuleFor(f => f.IsPublic)
             .NotEmpty();
     }
+    
+    public async Task<FluentValidation.Results.ValidationResult> ValidateOnCreate(Form form) {
+        return await this.ValidateAsync(form, o => o.IncludeRuleSets("default", "create"));
+    }
 }

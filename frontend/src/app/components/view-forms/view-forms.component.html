@@ -1,9 +1,14 @@
-﻿<app-nav-bar title="MyForm" class="toolbar-actions">
-
-</app-nav-bar>
+﻿<app-nav-bar title="MyForm" class="toolbar-actions"></app-nav-bar>
 <div class="body">
+    <!-- Champ de recherche -->
+    <mat-form-field appearance="outline" class="w-100 mb-4">
+        <mat-label>Search by Title, Description, Owner, or Question Titles</mat-label>
+        <input matInput (input)="filterChanged($event)" placeholder="Filter forms">
+    </mat-form-field>
+
     <div id="list_forms">
-        @for (form of forms; track form.id) {
+        <!-- Boucle sur les formulaires filtrés -->
+        @for (form of filteredForms || forms; track form.id) {
             <mat-card class="example-card" appearance="outlined">
                 <mat-card-header class="d-flex justify-content-between mb-1">
                     <mat-card-title class="fw-bold">{{ form.title }}</mat-card-title>
