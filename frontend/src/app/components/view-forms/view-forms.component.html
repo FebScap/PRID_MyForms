@@ -1,9 +1,9 @@
 ﻿<app-nav-bar title="MyForm" class="toolbar-actions"></app-nav-bar>
 <div class="body">
     <!-- Champ de recherche -->
-    <mat-form-field appearance="outline" class="w-100 mb-4">
+    <mat-form-field [hidden]="!isSearchBarVisible" appearance="outline" class="w-100 mb-4">
         <mat-label>Search by Title, Description, Owner, or Question Titles</mat-label>
-        <input matInput (input)="filterChanged($event)" placeholder="Filter forms">
+        <input matInput (input)="filterChanged($event)" [value]="filter" placeholder="Filter forms">
     </mat-form-field>
 
     <div id="list_forms">

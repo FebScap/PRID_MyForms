@@ -16,7 +16,7 @@
     <span class="spacer"></span>
     <!-- éléments à droite -->
     @if (currentPath == "/") {
-        <button mat-icon-button>
+        <button mat-icon-button (click)="switchSearchBarVisibility()">
             <mat-icon>search</mat-icon>
         </button>
         @if (!isGuest) {

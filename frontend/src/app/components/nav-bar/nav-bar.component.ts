@@ -12,6 +12,7 @@ import {InstanceService} from "../../services/instance.service";
 import {OpenInstanceService} from "../../services/open-instance.service";
 import {AddFormService} from "../../services/add-form.service";
 import {Instance} from "../../models/instance";
+import {SearchService} from "../../services/search.service";
 
 @Component({
     selector: 'app-nav-bar',
@@ -39,7 +40,8 @@ export class NavBarComponent {
         private instanceService: InstanceService,
         private openInstanceService: OpenInstanceService,
         private addFormService: AddFormService,
-        private formService: FormService
+        private formService: FormService,
+        private searchService: SearchService
     ) {
     }
 
@@ -57,6 +59,7 @@ export class NavBarComponent {
 
     logout() {
         this.authenticationService.logout();
+        this.searchService.reset();
         this.router.navigate(['/login']);
     }
 
@@ -165,5 +168,9 @@ export class NavBarComponent {
                 }
             }
         });
+    }
+    
+    switchSearchBarVisibility() {
+        this.searchService.setSearchBarVisibility(!this.searchService.getSearchBarVisibility());
     }
 }
