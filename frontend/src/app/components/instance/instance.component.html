@@ -1,4 +1,4 @@
-﻿<app-nav-bar title="{{ form?.title }}" questionCount="{{ questions.length - 1 }}" class="toolbar-actions"></app-nav-bar>
+﻿<app-nav-bar title="{{ form?.title }}" questionCount="{{ questions.length - 1 }}" [isFormValid]="isFormValid" class="toolbar-actions"></app-nav-bar>
 
 <div class="body mx-1">
     <div class="row">
@@ -15,8 +15,16 @@
             <div class="col-3 fw-medium">in progress</div>
         }
     </div>
-</div>
 
-@for (q of questions; track $index) {
-    <app-question [hidden]="$index != questionX" [question]="q" [instance]="instance" questionCount="{{ questions.length }}" [answer]="answers[$index]"></app-question>
-}
+    <form [formGroup]="answerForm" class="mt-4">
+        @for (q of questions; track q.id) {
+            <app-question [hidden]="$index != questionX"
+                          [question]="q" 
+                          [instance]="instance"
+                          questionCount="{{ questions.length }}" 
+                          [answers]="getAnswers(q.id)"
+                          [answerForm]="getForm()"
+            ></app-question>
+        }
+    </form>
+</div>

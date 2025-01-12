@@ -12,6 +12,9 @@ import {Form} from "../models/form";
 export class OpenInstanceService {
     private questionXSource = new BehaviorSubject<number>(0);
     public questionX$ = this.questionXSource.asObservable();
+    
+    private answersSource = new BehaviorSubject<Answer[]>([]);
+    public answers = this.answersSource.asObservable();
 
     constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private authenticationService: AuthenticationService) { }
 
@@ -29,5 +32,9 @@ export class OpenInstanceService {
 
     reset() {
         this.questionXSource.next(0);
+    }
+
+    changeAnswer(answers: Answer[]) {
+        this.answersSource.next(answers);
     }
 }
