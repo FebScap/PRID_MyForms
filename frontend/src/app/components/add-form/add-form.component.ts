@@ -48,6 +48,7 @@ export class AddFormComponent implements OnInit, OnDestroy {
         });
 
         this.formGroup.statusChanges.subscribe(status => {
+            console.log("addform ");
             this.isFormValid = this.formGroup.valid;
         });
     }

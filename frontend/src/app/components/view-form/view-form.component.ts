@@ -116,13 +116,15 @@ export class ViewFormComponent {
             }
         });
     }
-    openAddEditQuestion(questionId?: number): void {
+    openAddEditQuestion(formId:any, questionId?: number): void {
         if (questionId) {
             // Si un ID de question est fourni, naviguer vers l'édition
-            this.router.navigate(['/add-edit-question', {id: questionId}]);
+            console.log('modif quest')
+            this.router.navigate(['/add-edit-question', formId, questionId]);
         } else {
+            console.log(formId)
             // Si aucun ID n'est fourni, naviguer vers l'ajout d'une nouvelle question
-            this.router.navigate(['/add-edit-question']);
+            this.router.navigate(['/add-edit-question', formId]);
         }
     }
 

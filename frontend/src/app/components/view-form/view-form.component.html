@@ -63,7 +63,7 @@
                     </div>
                 </div>
                 <div class="col-2 mt-auto d-flex justify-content-end">
-                    <button mat-icon-button (click)="openAddEditQuestion(question.id)">
+                    <button mat-icon-button (click)="openAddEditQuestion(form?.id, question.id)">
                         <mat-icon class="me-2">edit</mat-icon>
                     </button>
                     <button mat-icon-button (click)="openDialogDeleteQuestion(question)">
@@ -74,6 +74,6 @@
         </mat-card>
     }
     <div class="w-100 text-center">
-        <button mat-raised-button (click)="openAddEditQuestion()">Add Question</button>
+        <button mat-raised-button (click)="openAddEditQuestion(form?.id)">Add Question</button>
     </div>
 </div>

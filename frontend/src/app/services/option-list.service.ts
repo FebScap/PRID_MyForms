@@ -21,7 +21,7 @@ export class OptionListService {
     }
 
     getAll(): Observable<OptionList[]> {
-        return this.http.get<OptionList[]>(`${this.baseUrl}api/Optionlists`);
+        return this.http.get<OptionList[]>(`${this.baseUrl}api/OptionLists/`);
     }
 
     create(optionList: Partial<OptionList>): Observable<OptionList> {

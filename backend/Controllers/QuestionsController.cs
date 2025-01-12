@@ -131,7 +131,6 @@ namespace prid_2425_f02.Controllers
         public async Task<ActionResult<QuestionDTO>> GetById(int id)
         {
             var question = await context.Questions
-                .Include(q => q.OptionList)
                 .FirstOrDefaultAsync(q => q.Id == id);
 
             if (question == null) return NotFound();
