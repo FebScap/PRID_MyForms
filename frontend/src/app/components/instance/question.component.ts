@@ -5,8 +5,10 @@ import {NumberInput} from "@angular/cdk/coercion";
 import {Answer} from "../../models/answer";
 import {OpenInstanceService} from "../../services/open-instance.service";
 import {OptionListService} from "../../services/option-list.service";
-import {InformationComponent} from "../information/information.component";
 import {OptionList} from "../../models/option-list";
+import {FormControl, FormGroup} from "@angular/forms";
+import {MatCheckboxChange} from "@angular/material/checkbox";
+import {AnswersService} from "../../services/answer.service";
 
 @Component({
     selector: 'app-question',
@@ -16,14 +18,17 @@ export class QuestionComponent {
     protected readonly Type = Type;
     @Input() question: Question | undefined;
     @Input() instance: Instance | undefined;
-    @Input() answer: Answer | undefined;
+    @Input() answers: Answer[] | undefined;
     @Input() questionCount: NumberInput | undefined;
+    @Input() answerForm: FormGroup | undefined;
+
     public optionList: OptionList | undefined;
-    isChecked: boolean = false;
+    public ans: Answer | undefined;
 
     constructor(
         private openInstanceService: OpenInstanceService,
-        private optionListService: OptionListService
+        private optionListService: OptionListService,
+        private answersService: AnswersService
     ) {
     }
 
@@ -35,6 +40,9 @@ export class QuestionComponent {
                 });
             }
         }
+        if (this.question?.type != Type.Check) {
+            this.ans = this.answers?.[0];
+        }
     }
 
     getCountTostring(): string {
@@ -44,14 +52,74 @@ export class QuestionComponent {
     getType(): Type {
         return this.question?.type ?? Type.Short;
     }
-    
-    getOptionListValue(): number {
-        return Number(this.answer?.value) ?? 0;
-    }
-    
-    
 
-    onChange() {
-
+    getQuestionControl(): FormControl {
+        return this.answerForm?.get(this.question!.id.toString()) as FormControl;
     }
+
+    getQuestionGroup(): FormGroup {
+        return this.answerForm?.get(this.question!.id.toString()) as FormGroup;
+    }
+
+    isChecked(optionId: number): boolean {
+        return this.answerForm?.get(this.question!.id.toString())?.get(optionId.toString())?.value;
+    }
+
+    selectOption($event: MatCheckboxChange) {
+        const value = $event.source.value;
+        let answer = new Answer();
+        answer.questionId = this.question!.id;
+        answer.instanceId = this.instance!.id;
+        answer.value = value;
+
+        if ($event.checked) {
+            this.answerForm?.get(this.question!.id.toString())?.get(value)?.setValue(true);
+            this.answersService.postAnswer(answer).subscribe(res => {
+                if (res) {
+                    // Pour la mise à jour dynamique
+                    this.answers?.push(answer);
+                    this.openInstanceService.changeAnswer(this.answers!);
+                }
+            });
+        } else {
+            this.answerForm?.get(this.question!.id.toString())?.get(value)?.setValue(false);
+            let existingAnswer = this.answers?.find(ans => ans.value == value);
+            this.answersService.deleteAnswer(existingAnswer!).subscribe(res => {
+                if (res) {
+                    // Pour la mise à jour dynamique
+                    this.answers?.splice(this.answers?.indexOf(existingAnswer!), 1);
+                    this.openInstanceService.changeAnswer(this.answers!);
+                }
+            });
+        }
+    }
+
+    formChangedEvent(question: Question = this.question!) {
+        let value = this.answerForm?.get(question.id.toString())?.value;
+        let answer = new Answer();
+        answer.questionId = question.id;
+        answer.instanceId = this.instance!.id;
+        answer.value = value;
+        answer.idx = 0;
+
+        if (this.answers?.find(ans => ans.questionId == question.id)) {
+            let existingAnswer = this.answers?.find(ans => ans.questionId == question.id);
+            Object.assign(existingAnswer!, answer);
+            this.answersService.putAnswer(answer).subscribe(res => {
+                if (res) {
+                    // Pour la mise à jour dynamique
+                    this.openInstanceService.changeAnswer(this.answers!);
+                }
+            });
+        } else {
+            this.answersService.postAnswer(answer).subscribe(res => {
+                if (res) {
+                    // Pour la mise à jour dynamique
+                    this.answers?.push(answer);
+                    this.openInstanceService.changeAnswer(this.answers!);
+                }
+            });
+        }
+    }
+
 }
