@@ -38,15 +38,16 @@ export class FormService {
         );
     }
 
-    update(form: Form) {
-        return this.http.put<any>(`${this.baseUrl}api/forms`, form).pipe(
-            map(res => true),
-            catchError(err => {
+    update(form: Form): Observable<boolean> {
+        return this.http.put<Form>(`${this.baseUrl}api/forms`, form).pipe(
+            map(() => true),
+            catchError((err) => {
                 console.error(err);
                 return of(false);
             })
         );
     }
+
 
     deleteById(id: number): Observable<boolean> {
         return this.http.delete<boolean>(`${this.baseUrl}api/forms/${id}`).pipe(

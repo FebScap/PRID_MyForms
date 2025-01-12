@@ -1,23 +1,25 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators, AsyncValidatorFn, AbstractControl} from '@angular/forms';
-import {Router} from '@angular/router';
-import {FormService} from '../../services/form.service';
-import {AuthenticationService} from '../../services/authentication.service';
-import {map} from 'rxjs/operators';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {AddFormService} from "../../services/add-form.service";
-import {Form} from "../../models/form";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, AsyncValidatorFn, AbstractControl } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormService } from '../../services/form.service';
+import { AuthenticationService } from '../../services/authentication.service';
+import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { AddFormService } from "../../services/add-form.service";
+import { Form } from "../../models/form";
 
 @Component({
     selector: 'app-add-form',
     templateUrl: './add-form.component.html',
     styleUrls: ['./add-form.component.css'],
 })
-export class AddFormComponent implements OnDestroy {
+export class AddFormComponent implements OnInit, OnDestroy {
     public formGroup!: FormGroup;
     public currentUser: any;
     private sub = new Subscription();
     public isFormValid$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    public isNew: boolean = true; // Par défaut, on suppose qu'on ajoute un nouveau formulaire
+    private formId?: number; // ID du formulaire en cas d'édition
 
     constructor(
         private formBuilder: FormBuilder,
@@ -25,8 +27,10 @@ export class AddFormComponent implements OnDestroy {
         private formService: FormService,
         private authenticationService: AuthenticationService,
         private addFormService: AddFormService,
+        private route: ActivatedRoute // Pour récupérer les paramètres de l'URL
     ) {
         this.addFormService.reset();
+        this.currentUser = this.authenticationService.currentUser;
         this.formGroup = this.formBuilder.group({
             title: [
                 '',
@@ -39,56 +43,90 @@ export class AddFormComponent implements OnDestroy {
             ],
             isPublic: [false],
             owner: [{
-                value: this.authenticationService.currentUser?.firstName + " " + this.authenticationService.currentUser?.lastName,
+                value: `${this.currentUser?.firstName} ${this.currentUser?.lastName}`,
                 disabled: true
             }]
         });
+
         this.sub = this.addFormService.addForm.subscribe();
-        //pour surveiller les changements d'état de validation
         this.formGroup.statusChanges.subscribe(status => {
             this.isFormValid$.next(this.formGroup.valid);
         });
     }
 
-    get isFormValid() {
-        return this.formGroup.valid;
-    }
-
-    saveForm() {
-        if (this.isFormValid) {
-            const currentUser = this.authenticationService.currentUser;
-
-            const newForm = new Form();
-
-            newForm.title = this.formGroup.get('title')?.value;
-            newForm.description = this.formGroup.get('description')?.value;
-            newForm.isPublic = this.formGroup.get('isPublic')?.value;
-            newForm.ownerId = currentUser!.id;
-            
-            console.log(newForm);
-
-            this.addFormService.setForm(newForm);
-        }
-    }
-
-
-    goBack() {
-        this.router.navigate(['/']); // Retour à la vue précédente
-    }
-
     ngOnInit() {
         console.log('AddFormComponent chargé');
+
+        // Vérifier si l'URL contient un ID de formulaire
+        this.formId = Number(this.route.snapshot.paramMap.get('id'));
+        this.isNew = isNaN(this.formId); // Si pas d'ID dans l'URL, c'est un nouveau formulaire
+
+        if (!this.isNew) {
+            this.loadForm(this.formId); // Charger les données du formulaire existant
+        }
     }
 
     ngOnDestroy() {
         this.sub.unsubscribe();
     }
 
+    private loadForm(formId: number): void {
+        this.formService.getById(String(formId)).subscribe({
+            next: (form: Form) => {
+                this.formGroup.patchValue({
+                    title: form.title,
+                    description: form.description,
+                    isPublic: form.isPublic,
+                    owner: `${form.owner.firstName} ${form.owner.lastName}`
+                });
+            },
+            error: (err) => {
+                console.error('Error loading form:', err);
+                this.router.navigate(['/']); // Redirige si l'ID du formulaire n'existe pas
+            }
+        });
+    }
+
+    saveForm(): void {
+        if (!this.formGroup.valid) return;
+
+        const formData = {
+            ...this.formGroup.value,
+            ownerId: this.currentUser.id
+        };
+
+        if (this.isNew) {
+            // Création d'un nouveau formulaire
+            this.formService.addForm(formData).subscribe({
+                next: () => {
+                    this.router.navigate(['/']); // Redirection après création
+                },
+                error: (err) => {
+                    console.error('Error creating form:', err);
+                }
+            });
+        } else {
+            // Mise à jour d'un formulaire existant
+            this.formService.update({ ...formData, id: this.formId }).subscribe({
+                next: () => {
+                    this.router.navigate(['/']); // Redirection après mise à jour
+                },
+                error: (err) => {
+                    console.error('Error updating form:', err);
+                }
+            });
+        }
+    }
+
+    goBack() {
+        this.router.navigate(['/']); // Retour à la vue précédente
+    }
+
     private uniqueTitleValidator(): AsyncValidatorFn {
         return (control: AbstractControl): Observable<{ [key: string]: boolean } | null> => {
             const currentOwnerId = this.authenticationService.currentUser?.id.toString();
             return this.formService.isTitleUnique(control.value, currentOwnerId).pipe(
-                map((isUnique: boolean) => (isUnique ? null : {notUnique: true}))
+                map((isUnique: boolean) => (isUnique ? null : { notUnique: true }))
             );
         };
     }
