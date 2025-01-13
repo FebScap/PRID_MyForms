@@ -49,7 +49,7 @@ export class OptionListService {
     }
 
     deleteOptionValue(optionListId: number, optionValueId: number): Observable<boolean> {
-        return this.http.delete<void>(`${this.baseUrl}api/Optionlists/${optionListId}/values/${optionValueId}`).pipe(
+        return this.http.delete<void>(`${this.baseUrl}api/OptionLists/${optionListId}/values/${optionValueId}`).pipe(
             map(() => true),
             catchError((err) => {
                 console.error('Error deleting option value:', err);
@@ -57,5 +57,16 @@ export class OptionListService {
             })
         );
     }
+
+    addOptionValue(optionListId: number, optionValue: { label: string, optionListId: number }): Observable<boolean> {
+        return this.http.post<boolean>(`${this.baseUrl}api/OptionLists/${optionListId}/options`, optionValue).pipe(
+            map(() => true),
+            catchError(err => {
+                console.error('Error adding option:', err);
+                return of(false);
+            })
+        );
+    }
+
 
 }

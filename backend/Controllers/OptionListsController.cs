@@ -173,5 +173,20 @@ namespace prid_2425_f02.Controllers
 
             return NoContent();
         }
+        
+        [HttpPost("{id:int}/options")]
+        public async Task<IActionResult> AddOption(int id, OptionValueDTO dto)
+        {
+            var optionList = await context.OptionsLists.FirstOrDefaultAsync(ol => ol.Id == id);
+            if (optionList == null)
+                return NotFound($"Option list with ID {id} not found.");
+
+            var newOptionValue = new OptionValue { Label = dto.Label, OptionListId = id };
+            context.OptionValues.Add(newOptionValue);
+            await context.SaveChangesAsync();
+
+            return Ok(); // Répond avec succès
+        }
+
     }
 }

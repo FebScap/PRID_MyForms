@@ -22,7 +22,7 @@
                     <mat-label>New Value</mat-label>
                     <input matInput formControlName="newOptionValue" placeholder="Enter a new option">
                 </mat-form-field>
-                <button mat-icon-button color="primary" (click)="addOption()" [disabled]="!newOptionValue">
+                <button mat-icon-button color="primary" (click)="addOption()" [disabled]="!optionListForm.get('newOptionValue')?.value?.trim()">
                     <mat-icon>add</mat-icon>
                 </button>
             </div>

@@ -66,10 +66,29 @@ export class AddEditOptionListComponent implements OnInit, OnDestroy {
     }
     
     addOption(): void {
-        if (this.newOptionValue.trim()) {
+        /*if (this.newOptionValue.trim()) {
             this.options.push({ value: this.newOptionValue, selected: false });
             this.newOptionValue = '';
-        }
+        }*/
+        const newOptionValue = this.optionListForm.get('newOptionValue')?.value?.trim();
+        if (!newOptionValue || !this.optionListId) return;
+
+        const newOption = { label: newOptionValue, optionListId: this.optionListId };
+
+        // Ajouter l'option côté client immédiatement pour l'affichage
+        this.options.push({ value: newOptionValue, selected: false });
+
+        // Ajouter l'option côté serveur
+        this.optionListService.addOptionValue(this.optionListId, newOption).subscribe({
+            next: () => {
+                this.snackBar.open('Option added successfully!', 'Close', { duration: 3000 });
+                this.optionListForm.get('newOptionValue')?.reset(); // Réinitialiser le champ de saisie
+            },
+            error: () => {
+                this.snackBar.open('Error adding option.', 'Close', { duration: 3000 });
+            }
+        });
+        
     }
 
     deleteOption(index: number): void {
