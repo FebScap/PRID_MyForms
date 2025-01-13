@@ -20,7 +20,7 @@
             <div class="d-flex gap-2">
                 <mat-form-field class="flex-grow-1" appearance="outline">
                     <mat-label>New Value</mat-label>
-                    <input matInput [(ngModel)]="newOptionValue" placeholder="Enter a new option">
+                    <input matInput formControlName="newOptionValue" placeholder="Enter a new option">
                 </mat-form-field>
                 <button mat-icon-button color="primary" (click)="addOption()" [disabled]="!newOptionValue">
                     <mat-icon>add</mat-icon>

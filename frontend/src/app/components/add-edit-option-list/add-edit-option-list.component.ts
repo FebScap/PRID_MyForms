@@ -32,6 +32,9 @@ export class AddEditOptionListComponent implements OnInit, OnDestroy {
             name: ['', [Validators.required, Validators.minLength(3)]]
         });
 
+        // Ajout du contrôle pour le champ "New Option Value"
+        this.optionListForm.addControl('newOptionValue', this.formBuilder.control(''));
+
         this.optionListId = this.route.snapshot.params['id'];
         this.isNew = !this.optionListId;
 
@@ -52,7 +55,7 @@ export class AddEditOptionListComponent implements OnInit, OnDestroy {
         this.optionListService.getById(id).subscribe({
             next: (optionList) => {
                 this.optionListForm.patchValue({ name: optionList.name });
-                this.options = optionList.values.map((v: any) => ({ value: v.value, selected: false }));
+                this.options = optionList.values.map((v: any) => ({ value: v.label, selected: false }));
             },
             error: (err) => {
                 console.error(err);
