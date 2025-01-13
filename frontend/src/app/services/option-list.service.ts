@@ -1,10 +1,10 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import { plainToInstance } from 'class-transformer';
 import {AuthenticationService} from "./authentication.service";
 import {Instance} from "../models/instance";
-import {map} from "rxjs/operators";
+import {catchError, map} from "rxjs/operators";
 import {Answer} from "../models/answer";
 import {Form} from "../models/form";
 import {OptionList} from "../models/option-list";
@@ -32,8 +32,14 @@ export class OptionListService {
         return this.http.put<void>(`${this.baseUrl}/${id}`, optionList);
     }
 
-    delete(id: number): Observable<void> {
-        return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    delete(id: number): Observable<boolean> {
+        return this.http.delete<void>(`${this.baseUrl}api/OptionLists/${id}`).pipe(
+            map(res => true),
+            catchError(err => {
+                console.error(err);
+                return of(false);
+            })
+        );
     }
 
     getAllForCurrentUser(): Observable<OptionList[]> {

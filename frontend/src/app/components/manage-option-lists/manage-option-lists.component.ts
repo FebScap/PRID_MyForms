@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { OptionListService } from '../../services/option-list.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { OptionList } from '../../models/option-list';
 
 @Component({
@@ -18,7 +20,8 @@ export class ManageOptionListsComponent implements OnInit {
         private optionListService: OptionListService,
         private router: Router,
         private authenticationService: AuthenticationService,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private dialog: MatDialog
     ) {
         this.currentUser = this.authenticationService.currentUser;
     }
@@ -67,7 +70,7 @@ export class ManageOptionListsComponent implements OnInit {
     }
 
     /**
-     * Supprime une liste d'options.
+     * Affiche une boîte de dialogue de confirmation avant de supprimer une liste d'options.
      */
     deleteOptionList(optionList: OptionList): void {
         if (!this.isEditable(optionList)) {
@@ -75,13 +78,26 @@ export class ManageOptionListsComponent implements OnInit {
             return;
         }
 
-        this.optionListService.delete(optionList.id).subscribe({
-            next: () => {
-                this.snackBar.open('Option list deleted successfully!', 'Close', { duration: 3000 });
-                this.loadOptionLists();
-            },
-            error: () => {
-                this.snackBar.open('Error deleting option list.', 'Close', { duration: 3000 });
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            data: {
+                title: 'Delete Option List',
+                message: `Are you sure you want to delete the option list "${optionList.name}"? This action is irreversible.`,
+                confirmText: 'Delete',
+                cancelText: 'Cancel'
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(res => {
+            if (res === 'confirm') {
+                this.optionListService.delete(optionList.id).subscribe({
+                    next: () => {
+                        this.snackBar.open('Option list deleted successfully!', 'Close', { duration: 3000 });
+                        this.loadOptionLists(); // Recharger la liste après suppression
+                    },
+                    error: () => {
+                        this.snackBar.open('Error deleting option list.', 'Close', { duration: 3000 });
+                    }
+                });
             }
         });
     }

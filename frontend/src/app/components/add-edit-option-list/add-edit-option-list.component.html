@@ -1,41 +1,50 @@
-<app-nav-bar title="Add/Edit Option List" class="toolbar-actions"></app-nav-bar>
+<app-nav-bar [title]="isNew ? 'Add Option List' : 'Edit Option List'" [hasArrowBack]="true" class="toolbar-actions">
+    <button mat-icon-button [disabled]="!isOptionListValid" (click)="save()">
+        <mat-icon>save</mat-icon>
+    </button>
+</app-nav-bar>
 
-<div class="container mt-4">
-    <form [formGroup]="optionListForm" class="d-flex flex-column gap-3">
-        <!-- Nom de la liste -->
-        <mat-form-field appearance="outline">
-            <mat-label>Option List Name</mat-label>
-            <input matInput formControlName="name" placeholder="Enter a name for the option list">
-            <mat-error *ngIf="optionListForm.get('name')?.hasError('required')">Name is required</mat-error>
-            <mat-error *ngIf="optionListForm.get('name')?.hasError('minlength')">Minimum length is 3</mat-error>
-        </mat-form-field>
+<div class="position-relative h-100">
+    <mat-card appearance="raised" class="p-4 position-absolute top-50 start-50 translate-middle">
+        <form [formGroup]="optionListForm" class="d-flex flex-column gap-3">
 
-        <!-- Ajouter une nouvelle option -->
-        <div class="d-flex gap-2">
-            <mat-form-field class="flex-grow-1" appearance="outline">
-                <mat-label>New Value</mat-label>
-                <input matInput [(ngModel)]="newOptionValue" placeholder="Enter a new option">
+            <!-- Nom de la liste -->
+            <mat-form-field appearance="outline">
+                <mat-label>Option List Name</mat-label>
+                <input matInput formControlName="name" placeholder="Enter a name for the option list">
+                <mat-error *ngIf="optionListForm.get('name')?.hasError('required')">Name is required</mat-error>
+                <mat-error *ngIf="optionListForm.get('name')?.hasError('minlength')">Minimum length is 3</mat-error>
             </mat-form-field>
-            <button mat-icon-button color="primary" (click)="addOption()" [disabled]="!newOptionValue">
-                <mat-icon>add</mat-icon>
-            </button>
-        </div>
 
-        <!-- Liste des options avec drag & drop 
-        <div cdkDropList (cdkDropListDropped)="drop($event)">
-            <div *ngFor="let option of options; index as i" cdkDrag>
-                <mat-checkbox [(ngModel)]="option.selected">{{ option.value }}</mat-checkbox>
-                <button mat-icon-button color="warn" (click)="deleteOption(i)">
-                    <mat-icon>delete</mat-icon>
+            <!-- Ajouter une nouvelle option -->
+            <div class="d-flex gap-2">
+                <mat-form-field class="flex-grow-1" appearance="outline">
+                    <mat-label>New Value</mat-label>
+                    <input matInput [(ngModel)]="newOptionValue" placeholder="Enter a new option">
+                </mat-form-field>
+                <button mat-icon-button color="primary" (click)="addOption()" [disabled]="!newOptionValue">
+                    <mat-icon>add</mat-icon>
                 </button>
             </div>
-        </div>-->
 
-        <!-- Actions -->
-        <div class="d-flex justify-content-between">
-            <button mat-stroked-button type="button" color="warn" (click)="cancel()">Cancel</button>
-            <button mat-flat-button type="button" color="warn" (click)="deleteSelectedOptions()" [disabled]="!hasSelectedOptions()">Delete Selection</button>
-            <button mat-flat-button type="submit" color="primary" (click)="save()" [disabled]="!isOptionListValid()">Save</button>
-        </div>
-    </form>
+            <!-- Liste des options -->
+            <div cdkDropList (cdkDropListDropped)="drop($event)" class="option-list">
+                <div *ngFor="let option of options; index as i" cdkDrag
+                     class="d-flex align-items-center justify-content-between py-2">
+                    <mat-checkbox [(ngModel)]="option.selected">{{ option.value }}</mat-checkbox>
+                    <button mat-icon-button color="warn" (click)="deleteOption(i)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Actions supplémentaires -->
+            <div class="d-flex justify-content-between">
+                <button mat-stroked-button type="button" color="warn" (click)="cancel()">Cancel</button>
+                <button mat-flat-button type="button" color="warn" (click)="deleteSelectedOptions()"
+                        [disabled]="!hasSelectedOptions()">Delete Selection
+                </button>
+            </div>
+        </form>
+    </mat-card>
 </div>

@@ -93,5 +93,43 @@ namespace prid_2425_f02.Controllers
 
             return NoContent();
         }
+        
+        // DELETE: api/optionlists/{id}
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteOptionList(int id)
+        {
+            // Récupération de la liste d'options par son ID
+            var optionList = await context.OptionsLists
+                .Include(ol => ol.Values) // Inclure les valeurs associées pour suppression en cascade si nécessaire
+                .FirstOrDefaultAsync(ol => ol.Id == id);
+
+            if (optionList == null)
+            {
+                return NotFound(new { message = "Option list not found." });
+            }
+
+            // Vérification des permissions
+            var isSystemList = optionList.OwnerId == null;
+            var isAdmin = User.IsInRole(Role.Admin.ToString());
+
+            if (isSystemList && !isAdmin)
+            {
+                return Forbid("You cannot delete a system option list unless you are an admin.");
+            }
+
+            // Vérification si la liste est référencée par une question
+            var isReferencedByQuestion = await context.Questions.AnyAsync(q => q.OptionList == id);
+            if (isReferencedByQuestion)
+            {
+                return BadRequest(new { message = "This option list is referenced by a question and cannot be deleted." });
+            }
+
+            // Suppression de la liste d'options
+            context.OptionsLists.Remove(optionList);
+            await context.SaveChangesAsync();
+
+            return NoContent(); // Réponse 204 si la suppression a réussi
+        }
+
     }
 }

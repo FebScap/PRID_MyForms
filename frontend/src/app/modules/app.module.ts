@@ -31,6 +31,7 @@ import {AnalyzeComponent} from "../components/analyze/analyze.component";
 import {ViewInstancesComponent} from "../components/view-instances/view-instances.component";
 import {OpenFormDialogComponent} from "../components/open-form-dialog/open-form-dialog.component";
 import {ManageOptionListsComponent} from "../components/manage-option-lists/manage-option-lists.component";
+import {CdkDropList} from "@angular/cdk/drag-drop";
 
 @NgModule({
     declarations: [
@@ -66,6 +67,7 @@ import {ManageOptionListsComponent} from "../components/manage-option-lists/mana
         SharedModule,
         MatRadioGroup,
         MatRadioButton,
+        CdkDropList,
     ],
     providers: [
         {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
