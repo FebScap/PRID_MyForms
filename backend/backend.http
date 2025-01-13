@@ -4,3 +4,42 @@ GET {{BASE_URL}}/api/users/
 Accept: application/json
 
 ###
+
+# OK
+GET {{BASE_URL}}/api/users/ben
+Accept: application/json
+
+###
+
+# KO : not found
+GET {{BASE_URL}}/api/users/xyz
+Accept: application/json
+
+###
+
+POST {{BASE_URL}}/api/users/
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "test",
+  "firstName": "test",
+  "lastName": "test"
+}
+
+###
+
+PUT {{BASE_URL}}/api/users/
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "test",
+  "firstName": "test",
+  "lastName": "test"
+}
+
+###
+
+DELETE {{BASE_URL}}/api/users/test
+Content-Type: application/json

@@ -1,0 +1,49 @@
+<app-nav-bar title="Welcome to MyForm App!" class="toolbar-actions"></app-nav-bar>
+
+<div class="login position-relative h-100">
+    <mat-card appearance="raised" class="p-4 position-absolute top-50 start-50 translate-middle">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="d-flex flex-column">
+            <span class="text-center fs-4">Sign in</span>
+            <hr>
+            <div class="p-2 d-flex flex-column pb-0">
+                <mat-form-field appearance="outline">
+                    <mat-icon matPrefix>person</mat-icon>
+                    <mat-label>Email</mat-label>
+                    <input #pseudo matInput [formControl]="ctlEmail" required appSetFocus>
+                    <mat-error *ngIf="ctlEmail.hasError('required')">Required</mat-error>
+                    <mat-error *ngIf="ctlEmail.hasError('custom')">{{ ctlEmail.errors?.custom }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-icon matPrefix>key</mat-icon>
+                    <mat-label>Password</mat-label>
+                    <input matInput type="password" [formControl]="ctlPassword" required>
+                    <mat-error *ngIf="ctlPassword.hasError('required')">Required</mat-error>
+                    <mat-error *ngIf="ctlPassword.hasError('custom')">{{ ctlPassword.errors?.custom }}</mat-error>
+                </mat-form-field>
+
+                <button [disabled]="loading || !loginForm.valid" mat-stroked-button class="w-100">Login</button>
+            </div>
+        </form>
+        <div class="p-2 d-flex flex-column pt-0">
+            <button (click)="loginAs(Profiles.guest)" mat-stroked-button class="w-100 mt-2">Login as a Guest</button>
+            <a routerLink="/signup" class="mt-3">New here? Click here to sign up!</a>
+        </div>
+
+        <hr>
+
+        <span class="text-danger text-center mb-3">For Debug Purpose</span>
+        <button (click)="loginAs(Profiles.admin)" class="text-danger bg-transparent text-decoration-none text-center border-0">
+            Login as <span class="fw-bold">admin&#64;epfc.eu</span>
+        </button>
+        <button (click)="loginAs(Profiles.ben)" class="text-danger bg-transparent text-decoration-none text-center border-0">
+            Login as <span class="fw-bold">ben&#64;epfc.eu</span>
+        </button>
+        <button (click)="loginAs(Profiles.boris)" class="text-danger bg-transparent text-decoration-none text-center border-0">
+            Login as <span class="fw-bold">boris&#64;epfc.eu</span>
+        </button>
+        <button (click)="loginAs(Profiles.bruno)" class="text-danger bg-transparent text-decoration-none text-center border-0">
+            Login as <span class="fw-bold">bruno&#64;epfc.eu</span>
+        </button>
+    </mat-card>
+</div>

@@ -1,0 +1,46 @@
+@startuml
+
+skinparam defaultFontName Consolas
+
+
+class User {
+}
+
+class Form {
+}
+
+class Question {
+}
+
+class Instance {
+}
+
+class Answer {
+}
+
+class OptionList {
+}
+
+class OptionValue {
+}
+
+class UserFormAccess {
+}
+
+User "1" *-- "0..*" Form
+User "1" *-- "0..*" UserFormAccess
+User "1" *-- "0..*" Instance
+
+User "1" o-- "0..*" OptionList
+
+Form "1" *-- "0..*" Question
+Form "1" *-right- "0..*" UserFormAccess
+Form "1" *-left- "0..*" Instance
+
+Instance "1" *-- "0..*" Answer
+Question "1" *-left- "0..*" Answer
+
+Question "1" *-right- "0..*" OptionList
+OptionList "1" *-- "0..*" OptionValue
+
+@enduml

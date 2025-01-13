@@ -1,0 +1,27 @@
+/* Empêche la superposition par la barre de navigation */
+.toolbar-actions + .position-relative {
+    margin-top: 64px; /* Hauteur de la barre de navigation */
+}
+
+/* Limiter la hauteur maximale du contenu tout en permettant un défilement */
+.position-relative {
+    overflow-y: auto; /* Ajoute un scroll si le contenu dépasse la hauteur */
+    max-height: calc(100vh - 64px); /* Hauteur de l'écran moins la barre de navigation */
+    padding-bottom: 20px; /* Un léger espace pour respirer en bas */
+}
+
+/* Card centrée sans dépasser l'écran */
+mat-card {
+    width: 100%;
+    max-width: 600px; /* Largeur maximale du formulaire */
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.option-list {
+    max-height: 400px; /* Fixe la hauteur de la liste pour éviter un débordement */
+    overflow-y: auto; /* Ajoute un scroll vertical */
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 8px;
+    border-radius: 4px;
+    background-color: #f8f9fa; /* Couleur légère de fond */
+}

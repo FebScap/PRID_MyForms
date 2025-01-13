@@ -1,0 +1,68 @@
+﻿<app-nav-bar title="MyForm" [hasMenu]="true" class="toolbar-actions">
+    <button mat-icon-button (click)="switchSearchBarVisibility()">
+        <mat-icon>search</mat-icon>
+    </button>
+    @if (!isGuest) {
+        <button mat-icon-button routerLink="add-form">
+            <mat-icon>add</mat-icon>
+        </button>
+    }
+</app-nav-bar>
+<div class="body">
+    <!-- Champ de recherche -->
+    <mat-form-field [hidden]="!isSearchBarVisible" appearance="outline" class="w-100 mb-4">
+        <mat-label>Search by Title, Description, Owner, or Question Titles</mat-label>
+        <input matInput (input)="filterChanged($event)" [value]="filter" placeholder="Filter forms">
+    </mat-form-field>
+
+    <div class="row row-cols-md-2 row-cols-xl-3 justify-content-center mx-2">
+        <!-- Boucle sur les formulaires filtrés -->
+        @for (form of filteredForms || forms; track form.id) {
+            <mat-card class="mx-1 mb-2" appearance="outlined">
+                <mat-card-header class="d-flex justify-content-between mb-1">
+                    <mat-card-title class="fw-bold">{{ form.title }}</mat-card-title>
+                    @if (form.isPublic) {
+                        <mat-icon>public</mat-icon>
+                    } @else {
+                        <mat-icon>public_off</mat-icon>
+                    }
+                </mat-card-header>
+                <mat-card-content class="text-center">
+                    <p class="fst-italic">
+                        @if (form.description) {
+                            {{ form.description }}
+                        } @else {
+                            No description
+                        }
+                    </p>
+                    <p>by <b>{{ form.owner.firstName }} {{ form.owner.lastName }}</b></p>
+                    <div>
+                        @if (getInstancesStatus(form) > 0) {
+                            started:
+                            <b>{{ getLatestInstance(form)?.started!.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</b>
+                            <br>
+                            @if (getInstancesStatus(form) == 2) {
+                                completed:
+                                <b>{{ getLatestInstance(form)?.completed!.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</b>
+                            } @else {
+                                in progress
+                            }
+                        }
+                    </div>
+                </mat-card-content>
+                <mat-card-footer class="d-flex justify-content-center">
+                    <button mat-button (click)="openForm(form)">Open</button>
+                    @if (form.owner.id == currentUser?.id) {
+                        <a mat-button href="/view_form/{{ form.id }}">Manage</a>
+                    } @else {
+                        @for (acc of form.accesses; track acc) {
+                            @if (acc.userId == currentUser?.id && acc.accessType == 1) {
+                                <a mat-button href="/view_form/{{ form.id }}">Manage</a>
+                            }
+                        }
+                    }
+                </mat-card-footer>
+            </mat-card>
+        }
+    </div>
+</div>

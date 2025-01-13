@@ -1,0 +1,92 @@
+<div class="d-flex align-items-center flex-column container">
+    <p class="fst-italic fs-5">Question {{ getCountTostring() }}</p>
+
+    <mat-card appearance="outlined" class="w-100">
+        <mat-card-content>
+            <p class="h3 fst-italic">
+                @if (question?.required) {
+                    (*)
+                }
+                {{ question?.title }}
+            </p>
+            <p class="fst-italic">{{ question?.description }}</p>
+
+            @switch (getType()) {
+                @case (Type.Short) {
+                    <mat-form-field class="w-100">
+                        <input matInput [formControl]="getQuestionControl()" (change)="formChangedEvent()"  name="{{ question?.id }}">
+                        <mat-error *ngIf="getQuestionControl()?.hasError('required')">Field is required</mat-error>
+                    </mat-form-field>
+                }
+                
+                @case (Type.Long) {
+                    <mat-form-field class="w-100">
+                        <textarea matInput [formControl]="getQuestionControl()!" (change)="formChangedEvent()"  name="{{ question?.id }}"></textarea>
+                        <mat-error *ngIf="getQuestionControl()?.hasError('required')">Field is required</mat-error>
+                    </mat-form-field>
+                }
+                
+                @case (Type.Date) {
+                    <mat-form-field class="w-100">
+                        <input matInput [formControl]="getQuestionControl()!" (change)="formChangedEvent()"  type="date" name="{{ question?.id }}">
+                        <mat-error *ngIf="getQuestionControl()?.hasError('required')">Field is required</mat-error>
+                        <mat-error *ngIf="getQuestionControl()?.hasError('pattern')">Must be a valid date</mat-error>
+                    </mat-form-field>
+                }
+                
+                @case (Type.Email) {
+                    <mat-form-field class="w-100">
+                        <input matInput [formControl]="getQuestionControl()!" (change)="formChangedEvent()"  type="email" name="{{ question?.id }}">
+                        <mat-error *ngIf="getQuestionControl()?.hasError('required')">Field is required</mat-error>
+                        <mat-error *ngIf="getQuestionControl()?.hasError('pattern')">Must be a valid email</mat-error>
+                    </mat-form-field>
+                }
+                
+                @case (Type.Integer) {
+                    <mat-form-field class="w-100">
+                        <input matInput [formControl]="getQuestionControl()!" (change)="formChangedEvent()" name="{{ question?.id }}">
+                        <mat-error *ngIf="getQuestionControl()?.hasError('required')">Field is required</mat-error>
+                        <mat-error *ngIf="getQuestionControl()?.hasError('pattern')">Must be a valid number</mat-error>
+                    </mat-form-field>
+                }
+                
+                @case (Type.Combo) {
+                    <mat-form-field class="w-100">
+                        <mat-select class="fst-italic" [formControl]="getQuestionControl()!" (selectionChange)="formChangedEvent()" placeholder="(no value)">
+                            <mat-option value="" class="fst-italic">(no value)</mat-option>
+                            <mat-option *ngFor="let option of optionList?.values"
+                                        [value]="option.idx.toString()">{{ option.label }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-error class="text-center" *ngIf="getQuestionControl()?.hasError('required')">Field is required
+                    </mat-error>
+                }
+                
+                @case (Type.Radio) {
+                    <mat-radio-group [formControl]="getQuestionControl()!" (change)="formChangedEvent()" class="w-100 row row-cols-2">
+                        <mat-radio-button *ngFor="let option of optionList?.values" class="col flex-wrap"
+                                          [value]="option.idx.toString()">{{ option.label }}
+                        </mat-radio-button>
+                    </mat-radio-group>
+                    <mat-error class="text-center" *ngIf="getQuestionControl()?.hasError('required')">Field is required
+                    </mat-error>
+                }
+                
+                @case (Type.Check) {
+                    <div [formGroup]="getQuestionGroup()!" class="row row-cols-2">
+                        @for (option of optionList?.values; track option.idx) {
+                            <mat-checkbox value="{{ option.idx }}" [checked]="isChecked(option.idx)"
+                                          [disabled]="instance?.completed" class="col flex-wrap"
+                                          (change)="selectOption($event)">{{ option.label }}
+                            </mat-checkbox>
+                        }
+                        <mat-error class="text-danger mt-1 col-12 text-center"
+                                   *ngIf="getQuestionControl()?.hasError('required')">Field is required
+                        </mat-error>
+                    </div>
+                }
+            }
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -1,0 +1,43 @@
+﻿<app-nav-bar title="{{ form?.title }}" [hasArrowBack]="true" class="toolbar-actions">
+    <button [disabled]="getQuestionX() == 0" mat-icon-button>
+        <mat-icon (click)="previousQuestion()">keyboard_arrow_left</mat-icon>
+    </button>
+    <button [disabled]="getQuestionX() == questions.length - 1" mat-icon-button>
+        <mat-icon (click)="nextQuestion()">keyboard_arrow_right</mat-icon>
+    </button>
+    <button mat-icon-button [disabled]="isInstanceReadOnly" (click)="deleteInstance()">
+        <mat-icon>delete</mat-icon>
+    </button>
+    <button mat-icon-button [disabled]="!isFormValid || isInstanceReadOnly" (click)="saveInstance()">
+        <mat-icon>save</mat-icon>
+    </button>
+</app-nav-bar>
+
+<div class="body mx-1">
+    <div class="row">
+        <div class="col-3">Title:</div>
+        <div class="col-9 fw-bold">{{ form?.title }}</div>
+        <div class="col-3">Description:</div>
+        <div class="col-9 fw-bold">{{ form?.description }}</div>
+        <div class="col-3">Started:</div>
+        <div class="col-9 fw-bold">{{ instance?.started?.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</div>
+        @if (instance?.completed) {
+            <div class="col-3">Completed:</div>
+            <div class="col-9 fw-bold">{{ instance?.completed?.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</div>
+        } @else {
+            <div class="col-3 fw-medium">in progress</div>
+        }
+    </div>
+
+    <form [formGroup]="answerForm" class="mt-4">
+        @for (q of questions; track q.id) {
+            <app-question [hidden]="$index != questionX"
+                          [question]="q" 
+                          [instance]="instance"
+                          questionCount="{{ questions.length }}" 
+                          [answers]="getAnswers(q.id)"
+                          [answerForm]="getForm()"
+            ></app-question>
+        }
+    </form>
+</div>

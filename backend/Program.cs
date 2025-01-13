@@ -2,12 +2,15 @@ using Microsoft.EntityFrameworkCore;
 using prid_2425_f02.Models;
 using AutoMapper;
 using AutoMapper.EquivalencyExpression;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddDbContext<FormContext>(opt => opt.UseSqlite("Data Source=prid-2425-f02.db"));
+builder.Services.AddDbContext<Context>(opt => opt.UseSqlite("Data Source=prid-2425-f02.db"));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -15,10 +18,55 @@ builder.Services.AddSwaggerGen();
 
 // Auto Mapper Configurations
 builder.Services.AddScoped(provider => new MapperConfiguration(cfg => {
-    cfg.AddProfile(new MappingProfile(provider.GetService<FormContext>()!));
+    cfg.AddProfile(new MappingProfile(provider.GetService<Context>()!));
     // see: https://github.com/AutoMapper/AutoMapper.Collection
     cfg.AddCollectionMappers();
 }).CreateMapper());
+
+//------------------------------
+// configure jwt authentication
+//------------------------------
+
+// Notre clé secrète pour les jetons sur le back-end
+var key = Encoding.ASCII.GetBytes("my-super-secret-key my-super-secret-key");
+// On précise qu'on veut travaille avec JWT tant pour l'authentification
+// que pour la vérification de l'authentification
+builder.Services.AddAuthentication(x => {
+        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(x => {
+        // On exige des requêtes sécurisées avec HTTPS
+        x.RequireHttpsMetadata = true;
+        x.SaveToken = true;
+        // On précise comment un jeton reçu doit être validé
+        x.TokenValidationParameters = new TokenValidationParameters {
+            // On vérifie qu'il a bien été signé avec la clé définie ci-dessous
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            // On ne vérifie pas l'identité de l'émetteur du jeton
+            ValidateIssuer = false,
+            // On ne vérifie pas non plus l'identité du destinataire du jeton
+            ValidateAudience = false,
+            // Par contre, on vérifie la validité temporelle du jeton
+            ValidateLifetime = true,
+            // On précise qu'on n'applique aucune tolérance de validité temporelle
+            ClockSkew = TimeSpan.Zero //the default for this setting is 5 minutes
+        };
+        // On peut définir des événements liés à l'utilisation des jetons
+        x.Events = new JwtBearerEvents {
+            // Si l'authentification du jeton est rejetée…
+            OnAuthenticationFailed = context => {
+                // ... parce que le jeton est expiré…
+                if (context.Exception.GetType() == typeof(SecurityTokenExpiredException)) {
+                    // ... on ajoute un header à destination du frontend indiquant cette expiration
+                    context.Response.Headers.Add("Token-Expired", "true");
+                }
+
+                return Task.CompletedTask;
+            }
+        };
+    });
 
 var app = builder.Build();
 
@@ -30,7 +78,7 @@ if (app.Environment.IsDevelopment()) {
 
 // Seed the database
 using var scope = app.Services.CreateScope();
-using var context = scope.ServiceProvider.GetService<FormContext>();
+using var context = scope.ServiceProvider.GetService<Context>();
 if (context?.Database.IsSqlite() == true)
     /*
     La suppression complète de la base de données n'est pas possible si celle-ci est ouverte par un autre programme,
@@ -47,6 +95,10 @@ if (context?.Database.IsSqlite() == true)
 else
     context?.Database.EnsureDeleted();
 context?.Database.EnsureCreated();
+
+// Seed the database
+var seedData = new SeedData(context!);
+seedData.Seed();
 
 app.UseAuthorization();
 

@@ -1,0 +1,31 @@
+<app-nav-bar [title]="'My Option Lists'" [hasArrowBack]="true" class="toolbar-actions"></app-nav-bar>
+
+<div class="body">
+    <div *ngFor="let optionList of optionLists" class="d-flex align-items-center justify-content-between py-2">
+        <span>
+            {{ optionList.name }}
+            <span *ngIf="!optionList.ownerId">(System)</span>
+        </span>
+        <div>
+            <!-- Éditer -->
+            <button mat-icon-button [disabled]="!isEditable(optionList)" (click)="editOptionList(optionList)">
+                <mat-icon>edit</mat-icon>
+            </button>
+
+            <!-- Supprimer -->
+            <button mat-icon-button color="warn" [disabled]="!isEditable(optionList)" (click)="deleteOptionList(optionList)">
+                <mat-icon>delete</mat-icon>
+            </button>
+
+            <!-- Dupliquer -->
+            <button mat-icon-button (click)="duplicateOptionList(optionList)">
+                <mat-icon>content_copy</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- Bouton pour ajouter une liste d'options -->
+    <div class="text-center mt-4">
+        <button mat-raised-button color="primary" (click)="addOptionList()">Add Option List</button>
+    </div>
+</div>

@@ -1,0 +1,79 @@
+<app-nav-bar title="Welcome to MyForm App!" [hasArrowBack]="true" class="toolbar-actions"></app-nav-bar>
+
+<div class="signup position-relative h-100">
+    <mat-card appearance="raised" class="p-4 position-absolute top-50 start-50 translate-middle">
+        <form [formGroup]="frm" (ngSubmit)="signup()" novalidate class="d-flex flex-column">
+            <span class="text-center fs-4">Sign Up</span>
+            <hr>
+            <div class="p-2 d-flex flex-column pb-0">
+
+                <!-- First Name -->
+                <mat-form-field appearance="outline">
+                    <mat-icon matPrefix>person</mat-icon>
+                    <mat-label>First Name</mat-label>
+                    <input matInput [formControl]="ctlFirstName" appSetFocus>
+                    <mat-error *ngIf="frm.hasError('namesIncomplete') && ctlFirstName.dirty">First Name and Last Name must both be empty or both filled</mat-error>
+                    <mat-error *ngIf="ctlFirstName.hasError('minlength')">Minimum length is 3</mat-error>
+                    <mat-error *ngIf="ctlFirstName.hasError('maxlength')">Maximum length is 50</mat-error>
+                    <mat-error *ngIf="ctlFirstName.hasError('trimSpaces')">Cannot start or end with spaces</mat-error>
+                </mat-form-field>
+
+                <!-- Last Name -->
+                <mat-form-field appearance="outline">
+                    <mat-icon matPrefix>person</mat-icon>
+                    <mat-label>Last Name</mat-label>
+                    <input matInput [formControl]="ctlLastName">
+                    <mat-error *ngIf="frm.hasError('namesIncomplete') && ctlLastName.dirty">First Name and Last Name must both be empty or both filled</mat-error>
+                    <mat-error *ngIf="ctlLastName.hasError('minlength')">Minimum length is 3</mat-error>
+                    <mat-error *ngIf="ctlLastName.hasError('maxlength')">Maximum length is 50</mat-error>
+                    <mat-error *ngIf="ctlLastName.hasError('trimSpaces')">Cannot start or end with spaces</mat-error>
+                </mat-form-field>
+
+                <!-- Date of Birth -->
+                <mat-form-field appearance="outline">
+                    <mat-icon matPrefix>event</mat-icon>
+                    <mat-label>Date of Birth</mat-label>
+                    <input matInput [formControl]="ctlDateOfBirth" [matDatepicker]="picker" required>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                    <mat-error *ngIf="ctlDateOfBirth.hasError('required')">Required</mat-error>
+                    <mat-error *ngIf="ctlDateOfBirth.hasError('invalidAge')">Age must be between 18 and 125</mat-error>
+                </mat-form-field>
+
+                <!-- Email -->
+                <mat-form-field appearance="outline">
+                    <mat-icon matPrefix>email</mat-icon>
+                    <mat-label>Email</mat-label>
+                    <input matInput [formControl]="ctlEmail" required>
+                    <mat-error *ngIf="ctlEmail.hasError('required')">Required</mat-error>
+                    <mat-error *ngIf="ctlEmail.hasError('email')">Must be a valid email address</mat-error>
+                    <mat-error *ngIf="ctlEmail.hasError('emailUsed')">Email address is already used</mat-error>
+                </mat-form-field>
+
+                <!-- Password -->
+                <mat-form-field appearance="outline">
+                    <mat-icon matPrefix>key</mat-icon>
+                    <mat-label>Password</mat-label>
+                    <input matInput type="password" [formControl]="ctlPassword" required>
+                    <mat-error *ngIf="ctlPassword.hasError('required')">Required</mat-error>
+                    <mat-error *ngIf="ctlPassword.hasError('minlength')">Minimum length is 3</mat-error>
+                    <mat-error *ngIf="ctlPassword.hasError('maxlength')">Maximum length is 10</mat-error>
+                </mat-form-field>
+
+                <!-- Confirm Password -->
+                <mat-form-field appearance="outline">
+                    <mat-icon matPrefix>key</mat-icon>
+                    <mat-label>Confirm Password</mat-label>
+                    <input matInput type="password" [formControl]="ctlConfirmPassword" required>
+                    <mat-error *ngIf="ctlConfirmPassword.hasError('required')">Required</mat-error>
+                    <mat-error *ngIf="ctlConfirmPassword.hasError('minlength')">Minimum length is 3</mat-error>
+                    <mat-error *ngIf="ctlConfirmPassword.hasError('maxlength')">Maximum length is 10</mat-error>
+                    <mat-error *ngIf="frm.hasError('passwordNotConfirmed') && ctlConfirmPassword.dirty && ctlConfirmPassword.valid">Passwords do not match</mat-error>
+                </mat-form-field>
+
+                <!-- Submit Button -->
+                <button type="submit" [disabled]="frm.invalid" mat-stroked-button class="w-100">Sign Up</button>
+            </div>
+        </form>
+    </mat-card>
+</div>

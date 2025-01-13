@@ -1,0 +1,26 @@
+<app-nav-bar title="{{ form?.title }}" [hasArrowBack]="true" link="/view_form/{{ form?.id }}/analyze"
+             class="toolbar-actions"></app-nav-bar>
+
+<div class="body mt-2 ms-2 me-5">
+    <h2>Submitted Instances</h2>
+
+    <div [formGroup]="formGroup" class="d-flex flex-column w-100 mb-3 ms-3">
+        @for (instance of form?.instances; track instance.id) {
+            <div class="d-flex flex-row justify-content-between">
+                <div>
+                    <div>{{ instance.completed.toString() | date: 'dd/MM/yyyy HH:mm:ss' }}</div>
+                    <div>Answered by <b>{{ instance.user.firstName }} {{ instance.user.lastName }}</b></div>
+                </div>
+                <mat-checkbox value="{{ instance.id }}" (change)="selectOption($event)"></mat-checkbox>
+            </div>
+            <div class="mb-3">
+                <button mat-button (click)="viewInstance(instance.id)">Review</button>
+            </div>
+        }
+    </div>
+    <div class="d-flex w-100 flex-row justify-content-around">
+        <button mat-flat-button [disabled]="true" (click)="deleteSelected()">Delete Selected</button>
+        <button mat-flat-button (click)="deleteAll()">Delete All</button>
+    </div>
+    
+</div>

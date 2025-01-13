@@ -19,8 +19,8 @@ export class AuthenticationService {
         this.currentUser = plainToClass(User, data);
     }
 
-    login(pseudo: string, password: string): Observable<User> {
-        return this.http.post<any>(`${this.baseUrl}api/users/authenticate`, { pseudo, password })
+    login(email: string, password: string): Observable<User> {
+        return this.http.post<any>(`${this.baseUrl}api/users/authenticate`, { email, password })
             .pipe(map(user => {
                 user = plainToClass(User, user);
                 // login successful if there's a jwt token in the response
@@ -39,5 +39,14 @@ export class AuthenticationService {
         sessionStorage.removeItem('currentUser');
         this.currentUser = undefined;
     }
-    
+
+    public isEmailAvailable(email: string): Observable<boolean> {
+        return this.http.get<boolean>(`${this.baseUrl}api/users/available/${email}`);
+    }
+
+    public signup(userData : any): Observable<User> {
+        return this.http.post<User>(`${this.baseUrl}api/users/signup`, userData).pipe(
+            mergeMap(res => this.login(userData.email.valueOf(), userData.password.valueOf())),
+        );
+    }
 }

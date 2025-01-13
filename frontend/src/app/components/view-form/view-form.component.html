@@ -1,0 +1,79 @@
+﻿<app-nav-bar title="{{ form?.title }}" [hasArrowBack]="true" class="toolbar-actions">
+    <button [disabled]="isReadOnly" (click)="openAddForm(form?.id)" mat-icon-button>
+        <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button (click)="deleteForm()">
+        <mat-icon>delete</mat-icon>
+    </button>
+    <button mat-icon-button>
+        <mat-icon>share</mat-icon>
+    </button>
+    @if (isReadOnly) {
+        <button mat-icon-button routerLink="analyze">
+            <mat-icon>query_stats</mat-icon>
+        </button>
+    }
+</app-nav-bar>
+
+<div class="body mx-1">
+    <div class="row">
+        <div class="col-3">Title:</div>
+        <div class="col-9 fw-bold">{{ form?.title }}</div>
+        <div class="col-3">Description:</div>
+        <div class="col-9 fw-bold">{{ form?.description }}</div>
+        <div class="col-3">Owner:</div>
+        <div class="col-9 fw-bold">{{ form?.owner?.firstName }} {{ form?.owner?.lastName }}</div>
+        <div class="col-3">Public:</div>
+        <div class="col-9 fw-bold">
+            <mat-slide-toggle [(ngModel)]="isPublic" (click)="tooglePublic()"/>
+        </div>
+    </div>
+
+    <h2>Questions</h2>
+
+    @for (question of form?.questions; track question.id) {
+        <mat-card class="mb-2 p-4" appearance="outlined">
+            <div class="row ">
+                <mat-card-title class="col-10">{{ question.title }}</mat-card-title>
+                <div class="col-2 d-flex justify-content-end">
+                    @if (question.idX != 1) {
+                        <button mat-icon-button (click)="changeIdX(false, question)">
+                            <mat-icon class="me-2">arrow_upward</mat-icon>
+                        </button>
+                    }
+                    @if (form?.questions && question.idX < form!.questions.length) {
+                        <button mat-icon-button (click)="changeIdX(true, question)">
+                            <mat-icon>arrow_downward</mat-icon>
+                        </button>
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-10">
+                    <p>{{ question.description }}</p>
+                    <div class="row">
+                        <div class="col-3">Type:</div>
+                        <div class="col-9 fw-bold">{{ Type[question.type] }}</div>
+                        <div class="col-3">Required:</div>
+                        <div class="col-9 fw-bold">{{ question.required }}</div>
+                        @if (question.optionList) {
+                            <div class="col-3">Option List:</div>
+                            <div class="col-9 fw-bold">{{ question.optionList }}</div>
+                        }
+                    </div>
+                </div>
+                <div class="col-2 mt-auto d-flex justify-content-end">
+                    <button mat-icon-button (click)="openAddEditQuestion(form?.id, question.id)">
+                        <mat-icon class="me-2">edit</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="openDialogDeleteQuestion(question)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </mat-card>
+    }
+    <div class="w-100 text-center">
+        <button mat-raised-button (click)="openAddEditQuestion(form?.id)">Add Question</button>
+    </div>
+</div>
