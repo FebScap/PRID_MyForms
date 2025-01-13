@@ -30,6 +30,7 @@ import {AddEditOptionListComponent} from "../components/add-edit-option-list/add
 import {AnalyzeComponent} from "../components/analyze/analyze.component";
 import {ViewInstancesComponent} from "../components/view-instances/view-instances.component";
 import {OpenFormDialogComponent} from "../components/open-form-dialog/open-form-dialog.component";
+import {ManageOptionListsComponent} from "../components/manage-option-lists/manage-option-lists.component";
 
 @NgModule({
     declarations: [
@@ -52,7 +53,8 @@ import {OpenFormDialogComponent} from "../components/open-form-dialog/open-form-
         AddEditQuestionComponent,
         AddEditOptionListComponent,
         AnalyzeComponent,
-        ViewInstancesComponent
+        ViewInstancesComponent,
+        ManageOptionListsComponent,
         
     ],
     imports: [

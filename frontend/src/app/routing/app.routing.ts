@@ -12,6 +12,7 @@ import {AddEditQuestionComponent} from "../components/add-edit-question/add-edit
 import {AddEditOptionListComponent} from "../components/add-edit-option-list/add-edit-option-list.component";
 import {AnalyzeComponent} from "../components/analyze/analyze.component";
 import {ViewInstancesComponent} from "../components/view-instances/view-instances.component";
+import {ManageOptionListsComponent} from "../components/manage-option-lists/manage-option-lists.component";
 
 const appRoutes: Routes = [
 
@@ -42,6 +43,7 @@ const appRoutes: Routes = [
         canActivate: [AuthGuard]
     },
     {   path: 'login', component: LoginComponent },
+    {   path: 'manage_option_lists', component: ManageOptionListsComponent },
     {   path: 'add-form', component: AddFormComponent },
     {   path: 'add-form/:id', component: AddFormComponent },
     {   path: 'add-edit-question/:formId', component: AddEditQuestionComponent },

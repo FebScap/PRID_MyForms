@@ -33,6 +33,20 @@ namespace prid_2425_f02.Controllers
             return Ok(mapper.Map<List<OptionListDTO>>(optionLists));
         }
         
+        [HttpGet("user/{userId:int}")]
+        public async Task<ActionResult<IEnumerable<OptionListDTO>>> GetAllByUser(int userId)
+        {
+            var isAdmin = User.IsInRole(Role.Admin.ToString());
+            if (!isAdmin && userId.ToString() != User.Identity?.Name) return Forbid();
+            // Récupérer toutes les listes d'options (système et utilisateur)
+            var optionLists = await context.OptionsLists
+                .Where(ol => ol.OwnerId == userId || ol.OwnerId == null)
+                .ToListAsync();
+            Console.WriteLine(optionLists);
+
+            return Ok(mapper.Map<List<OptionListDTO>>(optionLists));
+        }
+        
         // POST: api/optionlists
         [HttpPost]
         public async Task<IActionResult> CreateOptionList(OptionListDTO dto)

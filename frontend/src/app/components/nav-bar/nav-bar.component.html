@@ -22,6 +22,10 @@
         <mat-icon>home</mat-icon>
         <span>My Forms</span>
     </button>
+    <button mat-menu-item (click)="openManageOptionLists()">
+        <mat-icon>person</mat-icon>
+        <span>My Option Lists</span>
+    </button>
     <button mat-menu-item (click)='logout()'>
         <mat-icon>logout</mat-icon>
         <span>Logout ({{ currentUser?.firstName + " " + currentUser?.lastName }})</span>

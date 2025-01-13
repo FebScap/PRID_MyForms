@@ -35,4 +35,10 @@ export class OptionListService {
     delete(id: number): Observable<void> {
         return this.http.delete<void>(`${this.baseUrl}/${id}`);
     }
+
+    getAllForCurrentUser(): Observable<OptionList[]> {
+        return this.http.get<any[]>(`${this.baseUrl}api/OptionLists/user/${this.authenticationService.currentUser?.id}`).pipe(
+            map(res => plainToInstance(OptionList, res))
+        );
+    }
 }
