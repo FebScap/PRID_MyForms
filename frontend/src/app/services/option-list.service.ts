@@ -29,7 +29,7 @@ export class OptionListService {
     }
 
     update(id: number, optionList: Partial<OptionList>): Observable<void> {
-        return this.http.put<void>(`${this.baseUrl}/${id}`, optionList);
+        return this.http.put<void>(`${this.baseUrl}api/OptionLists/${id}`, optionList);
     }
 
     delete(id: number): Observable<boolean> {

@@ -11,7 +11,7 @@
             <!-- Nom de la liste -->
             <mat-form-field appearance="outline">
                 <mat-label>Option List Name</mat-label>
-                <input matInput formControlName="name" placeholder="Enter a name for the option list">
+                <input matInput formControlName="name">
                 <mat-error *ngIf="optionListForm.get('name')?.hasError('required')">Name is required</mat-error>
                 <mat-error *ngIf="optionListForm.get('name')?.hasError('minlength')">Minimum length is 3</mat-error>
             </mat-form-field>
@@ -31,7 +31,9 @@
             <div cdkDropList (cdkDropListDropped)="drop($event)" class="option-list">
                 <div *ngFor="let option of options; index as i" cdkDrag
                      class="d-flex align-items-center justify-content-between py-2">
-                    <mat-checkbox [(ngModel)]="option.selected">{{ option.value }}</mat-checkbox>
+                    <mat-form-field class="flex-grow-1">
+                        <input matInput [(ngModel)]="option.value" [value]="option.value">
+                    </mat-form-field>
                     <button mat-icon-button color="warn" (click)="deleteOption(i)">
                         <mat-icon>delete</mat-icon>
                     </button>
