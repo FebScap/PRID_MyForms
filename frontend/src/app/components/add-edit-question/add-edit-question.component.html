@@ -1,4 +1,4 @@
-<app-nav-bar [title]="isNew ? 'Add Question' : 'Edit Question'" [hasArrowBack]="true" class="toolbar-actions">
+<app-nav-bar [title]="isNew ? 'Add Question' : 'Edit Question'" [hasArrowBack]="true" [link]="'/view_form/' + questionForm.value.formId" class="toolbar-actions">
     <button mat-icon-button [disabled]="!isQuestionValid" (click)="saveQuestion()">
         <mat-icon>save</mat-icon>
     </button>

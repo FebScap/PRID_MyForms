@@ -19,7 +19,7 @@ export class AddFormComponent implements OnInit, OnDestroy {
     private sub = new Subscription();
     public isFormValid = false;
     public isNew: boolean = true; // Par défaut, on suppose qu'on ajoute un nouveau formulaire
-    private formId?: number; // ID du formulaire en cas d'édition
+    protected formId?: number; // ID du formulaire en cas d'édition
 
     constructor(
         private formBuilder: FormBuilder,
