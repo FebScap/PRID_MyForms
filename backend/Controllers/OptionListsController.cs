@@ -21,29 +21,17 @@ namespace prid_2425_f02.Controllers
         }
         
         // GET: api/optionlists
-        /*[HttpGet]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<OptionListDTO>>> GetAll()
         {
             // Récupérer toutes les listes d'options (système et utilisateur)
             var optionLists = await context.OptionsLists
-                .Include(ol => ol.Options) // Inclut les options si nécessaire              //A FIX
+                .Include(ol => ol.Values) // Inclut les options si nécessaire             
                 .ToListAsync();
+            Console.WriteLine(optionLists);
 
-            // Mapper les données en DTO
-            var mappedOptionLists = optionLists.Select(ol => new OptionListDTO
-            {
-                Id = ol.Id,
-                Name = ol.Name,
-                IsSystem = ol.IsSystem,
-                Options = ol.Options.Select(o => new OptionDTO
-                {
-                    Id = o.Id,
-                    Value = o.Value
-                }).ToList()
-            }).ToList();
-
-            return Ok(mappedOptionLists);
-        }*/
+            return Ok(mapper.Map<List<OptionListDTO>>(optionLists));
+        }
         
         // POST: api/optionlists
         [HttpPost]

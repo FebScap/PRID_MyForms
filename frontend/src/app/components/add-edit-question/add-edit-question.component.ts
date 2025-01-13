@@ -49,9 +49,7 @@ export class AddEditQuestionComponent implements OnInit, OnDestroy {
             formId: [this.route.snapshot.paramMap.get('formId'), Validators.required],
             idx: [null] // Champ pour gérer l'ordre des questions
         });
-
         
-
         this.isNew = !this.questionId; // Si pas d'ID, c'est une nouvelle question
 
         if (!this.isNew && this.questionId !== undefined) {
@@ -59,7 +57,6 @@ export class AddEditQuestionComponent implements OnInit, OnDestroy {
         }
 
         this.questionForm.statusChanges.subscribe(status => {
-            //console.log(this.route.snapshot.paramMap.get('formId'));
             this.isQuestionValid = this.questionForm.valid;
         });
 
@@ -73,7 +70,6 @@ export class AddEditQuestionComponent implements OnInit, OnDestroy {
     private loadQuestion(questionId: number): void {
         this.questionService.getById(questionId).subscribe({
             next: (question) => {
-                console.log(question);
                 this.questionForm.patchValue({
                     title: question.title,
                     description: question.description,
@@ -84,7 +80,7 @@ export class AddEditQuestionComponent implements OnInit, OnDestroy {
                     idx: question.idX
                 });
 
-                this.toggleOptionList(question.type.toString());
+                this.toggleOptionList(this.questionTypes.at(question.type));
             },
             error: (err) => {
                 console.error('Error loading question:', err);
@@ -110,7 +106,7 @@ export class AddEditQuestionComponent implements OnInit, OnDestroy {
         this.toggleOptionList(selectedType);
     }
 
-    private toggleOptionList(type: string): void {
+    private toggleOptionList(type: any): void {
         const optionListControl = this.questionForm.get('optionList');
         if (['radio', 'check', 'combo'].includes(type.toLowerCase())) {
             optionListControl?.enable();
