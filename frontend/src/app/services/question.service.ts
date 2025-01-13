@@ -38,7 +38,6 @@ export class QuestionService {
     
     // Créer une nouvelle question
     create(question: Question): Observable<boolean> {
-        console.log(question);
         return this.http.post<Question>(`${this.baseUrl}api/Questions`, question).pipe(
             map(res => true),
             catchError(err => {

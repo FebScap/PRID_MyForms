@@ -48,13 +48,11 @@ export class AddFormComponent implements OnInit, OnDestroy {
         });
 
         this.formGroup.statusChanges.subscribe(status => {
-            console.log("addform ");
             this.isFormValid = this.formGroup.valid;
         });
     }
 
     ngOnInit() {
-        console.log('AddFormComponent chargé');
 
         // Vérifier si l'URL contient un ID de formulaire
         const formIdParam = this.route.snapshot.paramMap.get('id');
@@ -98,7 +96,6 @@ export class AddFormComponent implements OnInit, OnDestroy {
     saveForm(): void {
         if (!this.formGroup.valid) return;
 
-        console.log(this.formGroup.value);
         const formData = {
             ...this.formGroup.value,
             ownerId: this.currentUser?.id ?? 0,  // Assurez-vous que `ownerId` est valide
@@ -107,7 +104,6 @@ export class AddFormComponent implements OnInit, OnDestroy {
         if (this.isNew) {
             this.formService.addForm(formData).subscribe({
                 next: () => {
-                    console.log('Form created successfully');
                     this.router.navigate(['/']);
                 },
                 error: (err) => {
@@ -117,7 +113,6 @@ export class AddFormComponent implements OnInit, OnDestroy {
         } else {
             this.formService.update({...formData, id: this.formId}).subscribe({
                 next: () => {
-                    console.log('Form updated successfully');
                     this.router.navigate(['/']);
                 },
                 error: (err) => {

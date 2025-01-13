@@ -33,7 +33,6 @@ export class AddEditQuestionComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        console.log('AddEditQuestionComponent chargé');
 
         // Récupération de l'ID depuis l'URL pour savoir s'il s'agit d'une édition ou d'une création
         const questionIdParam = this.route.snapshot.paramMap.get('id');

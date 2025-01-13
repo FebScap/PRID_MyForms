@@ -127,7 +127,6 @@ export class AddEditOptionListComponent implements OnInit, OnDestroy {
             ...this.optionListForm.value,
             values: this.options.map(option => ({ value: option.value }))
         };
-        console.log(optionListData);
 
         if (this.isNew) {
             this.optionListService.create(optionListData).subscribe({
