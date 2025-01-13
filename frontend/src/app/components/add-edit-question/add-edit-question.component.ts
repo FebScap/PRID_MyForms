@@ -126,17 +126,16 @@ export class AddEditQuestionComponent implements OnInit, OnDestroy {
 
         const questionData = {
             ...this.questionForm.value,
+            type: this.questionTypes[this.questionForm.value.type],
             formId: this.questionForm.get('formId')?.value,
             idx: this.questionForm.get('idx')?.value ?? 1 // Gestion d'un index par défaut
         };
-
-        console.log('Question Data:', questionData);
-
+        
         if (this.isNew) {
             this.questionService.create(questionData).subscribe({
                 next: () => {
                     this.snackBar.open('Question created successfully!', 'Close', { duration: 3000 });
-                    this.router.navigate(['/view-form', questionData.formId]);
+                    this.router.navigate(['/view_form', this.questionForm.value.formId]);
                 },
                 error: (err) => {
                     console.error('Error creating question:', err);
@@ -147,7 +146,7 @@ export class AddEditQuestionComponent implements OnInit, OnDestroy {
             this.questionService.update({ ...questionData, id: this.questionId }).subscribe({
                 next: () => {
                     this.snackBar.open('Question updated successfully!', 'Close', { duration: 3000 });
-                    this.router.navigate(['/view-form', questionData.formId]);
+                    this.router.navigate(['/view_form', this.questionForm.value.formId]);
                 },
                 error: (err) => {
                     console.error('Error updating question:', err);
