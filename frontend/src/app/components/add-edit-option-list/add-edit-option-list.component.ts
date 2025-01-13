@@ -64,7 +64,7 @@ export class AddEditOptionListComponent implements OnInit, OnDestroy {
             }
         });
     }
-
+    
     addOption(): void {
         if (this.newOptionValue.trim()) {
             this.options.push({ value: this.newOptionValue, selected: false });
@@ -74,7 +74,24 @@ export class AddEditOptionListComponent implements OnInit, OnDestroy {
 
     deleteOption(index: number): void {
         this.options.splice(index, 1);
+        /*const optionToDelete = this.options[index];
+        const optionListId = this.optionListId; // Assurez-vous que l'ID est défini
+
+        if (optionListId) {
+            this.optionListService.deleteOptionValue(optionListId, optionToDelete.idX).subscribe({
+                next: (success) => {
+                    if (success) {
+                        this.snackBar.open('Option deleted successfully!', 'Close', { duration: 3000 });
+                        this.options.splice(index, 1); // Supprime de l'affichage seulement si la suppression a réussi
+                    }
+                },
+                error: () => {
+                    this.snackBar.open('Error deleting option.', 'Close', { duration: 3000 });
+                }
+            });
+        }*/
     }
+
 
     deleteSelectedOptions(): void {
         this.options = this.options.filter(option => !option.selected);

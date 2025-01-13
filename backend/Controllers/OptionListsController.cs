@@ -152,5 +152,26 @@ namespace prid_2425_f02.Controllers
 
             return NoContent(); // Réponse 204 si la suppression a réussi
         }
+        
+        // DELETE: api/optionlists/{optionListId}/values/{valueId}
+        [HttpDelete("{optionListId:int}/values/{valueId:int}")]
+        public async Task<IActionResult> DeleteOptionValue(int optionListId, int valueId)
+        {
+            var optionList = await context.OptionsLists
+                .Include(ol => ol.Values)
+                .FirstOrDefaultAsync(ol => ol.Id == optionListId);
+
+            if (optionList == null)
+                return NotFound("Option list not found.");
+
+            var valueToDelete = optionList.Values.FirstOrDefault(v => v.Idx == valueId);
+            if (valueToDelete == null)
+                return NotFound("Option value not found.");
+
+            context.OptionValues.Remove(valueToDelete);
+            await context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

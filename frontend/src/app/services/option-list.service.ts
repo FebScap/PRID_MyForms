@@ -47,4 +47,15 @@ export class OptionListService {
             map(res => plainToInstance(OptionList, res))
         );
     }
+
+    deleteOptionValue(optionListId: number, optionValueId: number): Observable<boolean> {
+        return this.http.delete<void>(`${this.baseUrl}api/Optionlists/${optionListId}/values/${optionValueId}`).pipe(
+            map(() => true),
+            catchError((err) => {
+                console.error('Error deleting option value:', err);
+                return of(false);
+            })
+        );
+    }
+
 }
