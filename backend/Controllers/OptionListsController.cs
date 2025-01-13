@@ -27,7 +27,6 @@ namespace prid_2425_f02.Controllers
             var optionLists = await context.OptionsLists
                 .Include(ol => ol.Values) // Inclut les options si nécessaire             
                 .ToListAsync();
-            Console.WriteLine(optionLists);
 
             return Ok(mapper.Map<List<OptionListDTO>>(optionLists));
         }
@@ -40,7 +39,6 @@ namespace prid_2425_f02.Controllers
             var optionLists = await context.OptionsLists
                 .Where(ol => ol.OwnerId == userId || ol.OwnerId == null)
                 .ToListAsync();
-            Console.WriteLine(optionLists);
 
             return Ok(mapper.Map<List<OptionListDTO>>(optionLists));
         }

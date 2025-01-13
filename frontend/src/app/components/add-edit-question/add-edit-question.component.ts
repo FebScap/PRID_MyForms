@@ -90,7 +90,7 @@ export class AddEditQuestionComponent implements OnInit, OnDestroy {
     }
 
     private loadOptionLists(): void {
-        this.optionListService.getAll().subscribe({
+        this.optionListService.getAllForCurrentUser().subscribe({
             next: (optionLists) => {
                 this.optionLists = optionLists;
             },
