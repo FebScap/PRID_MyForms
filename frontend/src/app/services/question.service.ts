@@ -1,13 +1,10 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
 import { catchError, map } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
-import { plainToInstance } from 'class-transformer';
-import {Form} from "../models/form";
-import {User} from "../models/user";
 import {AuthenticationService} from "./authentication.service";
 import {Question} from "../models/question";
+import {Form} from "../models/form";
 
 @Injectable({ providedIn: 'root' })
 export class QuestionService {
@@ -40,12 +37,23 @@ export class QuestionService {
     }
     
     // Créer une nouvelle question
-    create(question: Question): Observable<Question> {
-        return this.http.post<Question>(`${this.baseUrl}api/questions`, question);
+    create(question: Question): Observable<boolean> {
+        return this.http.post<Question>(`${this.baseUrl}api/Questions`, question).pipe(
+            map(res => true),
+            catchError(err => {
+                console.log(err);
+                return of(false);
+            })
+        );
     }
 
     // Mettre à jour une question existante
-    update(question: Question): Observable<void> {
-        return this.http.put<void>(`${this.baseUrl}api/questions`, question);
+    update(question: Question): Observable<boolean> {
+        return this.http.put<void>(`${this.baseUrl}api/Questions`, question).pipe(map(res => true),
+            catchError(err => {
+                console.log(err);
+                return of(false);
+            })
+        );
     }
 }

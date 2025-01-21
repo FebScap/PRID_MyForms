@@ -19,7 +19,7 @@ export class AddFormComponent implements OnInit, OnDestroy {
     private sub = new Subscription();
     public isFormValid = false;
     public isNew: boolean = true; // Par défaut, on suppose qu'on ajoute un nouveau formulaire
-    private formId?: number; // ID du formulaire en cas d'édition
+    protected formId?: number; // ID du formulaire en cas d'édition
 
     constructor(
         private formBuilder: FormBuilder,
@@ -53,7 +53,6 @@ export class AddFormComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        console.log('AddFormComponent chargé');
 
         // Vérifier si l'URL contient un ID de formulaire
         const formIdParam = this.route.snapshot.paramMap.get('id');
@@ -97,29 +96,23 @@ export class AddFormComponent implements OnInit, OnDestroy {
     saveForm(): void {
         if (!this.formGroup.valid) return;
 
-        console.log(this.formGroup.value);
         const formData = {
             ...this.formGroup.value,
             ownerId: this.currentUser?.id ?? 0,  // Assurez-vous que `ownerId` est valide
             owner: this.currentUser
         };
-
-
         if (this.isNew) {
             this.formService.addForm(formData).subscribe({
                 next: () => {
-                    console.log('Form created successfully');
                     this.router.navigate(['/']);
                 },
                 error: (err) => {
                     console.error('Error updating form:', err);
                 }
             });
-
         } else {
             this.formService.update({...formData, id: this.formId}).subscribe({
                 next: () => {
-                    console.log('Form updated successfully');
                     this.router.navigate(['/']);
                 },
                 error: (err) => {

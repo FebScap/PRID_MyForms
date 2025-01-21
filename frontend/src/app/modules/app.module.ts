@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {APP_INITIALIZER, NgModule} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 import {AppRoutes} from '../routing/app.routing';
@@ -29,6 +29,9 @@ import {AddEditQuestionComponent} from "../components/add-edit-question/add-edit
 import {AddEditOptionListComponent} from "../components/add-edit-option-list/add-edit-option-list.component";
 import {AnalyzeComponent} from "../components/analyze/analyze.component";
 import {ViewInstancesComponent} from "../components/view-instances/view-instances.component";
+import {OpenFormDialogComponent} from "../components/open-form-dialog/open-form-dialog.component";
+import {ManageOptionListsComponent} from "../components/manage-option-lists/manage-option-lists.component";
+import {CdkDropList, DragDropModule} from "@angular/cdk/drag-drop";
 
 @NgModule({
     declarations: [
@@ -42,6 +45,7 @@ import {ViewInstancesComponent} from "../components/view-instances/view-instance
         SignupComponent,
         ViewFormComponent,
         ConfirmDialogComponent,
+        OpenFormDialogComponent,
         InformationComponent,
         AddFormComponent,
         InformationComponent,
@@ -50,7 +54,8 @@ import {ViewInstancesComponent} from "../components/view-instances/view-instance
         AddEditQuestionComponent,
         AddEditOptionListComponent,
         AnalyzeComponent,
-        ViewInstancesComponent
+        ViewInstancesComponent,
+        ManageOptionListsComponent,
         
     ],
     imports: [
@@ -62,6 +67,8 @@ import {ViewInstancesComponent} from "../components/view-instances/view-instance
         SharedModule,
         MatRadioGroup,
         MatRadioButton,
+        CdkDropList,
+        DragDropModule
     ],
     providers: [
         {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},

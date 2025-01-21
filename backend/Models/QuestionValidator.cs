@@ -8,9 +8,6 @@ namespace prid_2425_f02.Models
         
         public QuestionValidator(Context context) {
             _context = context;
-            
-            RuleFor(q => q.Id)
-                .NotEmpty();
 
             RuleFor(q => q.IdX)
                 .NotEmpty();

@@ -30,4 +30,8 @@ export class NavBarComponent {
         this.searchService.reset();
         this.router.navigate(['/login']);
     }
+
+    openManageOptionLists() {
+        this.router.navigate(['/manage_option_lists']);
+    }
 }

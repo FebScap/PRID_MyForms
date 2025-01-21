@@ -11,4 +11,5 @@ export class Question {
     type: Type = Type.Short;
     required: boolean = false;
     optionList?: number = 0;
+    formId: number=0;
 }

@@ -7,7 +7,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {QuestionService} from "../../services/question.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {InformationComponent} from "../information/information.component";
-import {ConfirmDialogComponent, confirmDialogType} from "../confirm-dialog/confirm-dialog.component";
+import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
 
 
 @Component({
@@ -20,8 +20,8 @@ export class ViewFormComponent {
     isPublic: boolean | undefined;
     isReadOnly: boolean | undefined;
     readonly dialog = inject(MatDialog);
-
-
+    protected readonly Type = Type;
+    
     constructor(
         private route: ActivatedRoute,
         private formService: FormService,
@@ -76,18 +76,23 @@ export class ViewFormComponent {
         if (this.form) {
             const dialogRef = this.dialog.open(ConfirmDialogComponent, {
                 data: {
-                    dialogType: confirmDialogType.TOGGLE_PUBLIC,
                     title: this.form.isPublic ? 'Make form private' : 'Make form public',
-                    message: this.form.isPublic ? 'Are you sure you want to make this form private? You will need to share this form again to allow \'Users\' access to other users.' : 'Are you sure you want to make this form public? This will delete all existing shared with \'Users\' access to this form.',
-                    form: this.form
+                    message: this.form.isPublic ? 'Are you sure you want to make this form private? You will need to share this form again to allow \'Users\' access to other users.' : 'Are you sure you want to make this form public? This will delete all existing shared with \'Users\' access to this form.'
                 }
             });
 
             dialogRef.afterClosed().subscribe(res => {
-                if (!res) {
-                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+                if (res === 'confirm') {
+                    let f = this.form!;
+                    f.isPublic = !this.form!.isPublic;
+
+                    this.formService.update(f).subscribe(res => {
+                        if (!res) {
+                            this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+                        }
+                        this.refresh();
+                    });
                 }
-                this.refresh();
             });
         }
     }
@@ -96,29 +101,28 @@ export class ViewFormComponent {
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
             data: {
                 title: 'Delete question',
-                message: 'Are you sure you want to delete this question: ' + question.title + ' ?',
-                dialogType: confirmDialogType.DELETE_QUESTION,
-                question: question
+                message: 'Are you sure you want to delete this question: ' + question.title + ' ?'
             }
         });
 
         dialogRef.afterClosed().subscribe(res => {
-            if (!res) {
-                this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+            if (res == 'confirm') {
+                this.questionService.deleteById(question.id).subscribe(res => {
+                    if (!res) {
+                        this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+                    }
+                    this.refresh();
+                });
             }
-            this.refresh();
         });
     }
-
-    protected readonly Type = Type;
-
-    openAddEditQuestion(questionId?: number): void {
+    openAddEditQuestion(formId:any, questionId?: number): void {
         if (questionId) {
             // Si un ID de question est fourni, naviguer vers l'édition
-            this.router.navigate(['/add-edit-question', {id: questionId}]);
+            this.router.navigate(['/add-edit-question', formId, questionId]);
         } else {
             // Si aucun ID n'est fourni, naviguer vers l'ajout d'une nouvelle question
-            this.router.navigate(['/add-edit-question']);
+            this.router.navigate(['/add-edit-question', formId]);
         }
     }
 
@@ -126,22 +130,31 @@ export class ViewFormComponent {
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
             data: {
                 title: 'Delete form',
-                message: 'Are you sure you want to delete this form? This action is irreversible.',
-                dialogType: confirmDialogType.DELETE_FORM,
-                form: this.form
+                message: 'Are you sure you want to delete this form? This action is irreversible.'
             }
         });
 
         dialogRef.afterClosed().subscribe(res => {
-            if (!res) {
-                if (this.snackBar) {
-                    this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
-                } else {
-                    console.error(`There was an error at the server. The update has not been done! Please try again.`);
-                }
-            } else if (res !== 'cancel') {
-                this.router.navigate(['/']);
+            if (res === 'confirm') {
+                this.formService.deleteById(this.form!.id).subscribe(res => {
+                    if (!res) {
+                        if (this.snackBar) {
+                            this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
+                        } else {
+                            console.error(`There was an error at the server. The update has not been done! Please try again.`);
+                        }
+                    } else {
+                        this.router.navigate(['/']);
+                    }
+                });
             }
         });
+    }
+
+    openAddForm(formId: number | undefined) {
+        if (formId) {
+            // Si un ID de question est fourni, naviguer vers l'édition
+            this.router.navigate(['/add-form', {id: formId}]);
+        }
     }
 }

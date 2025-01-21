@@ -1,52 +1,69 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuestionService } from '../../services/question.service';
 import { OptionListService } from '../../services/option-list.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-add-edit-question',
     templateUrl: './add-edit-question.component.html',
     styleUrls: ['./add-edit-question.component.css']
 })
-export class AddEditQuestionComponent implements OnInit {
+export class AddEditQuestionComponent implements OnInit, OnDestroy {
     public questionForm!: FormGroup;
-    public isNew: boolean = true; // Par défaut, on suppose une nouvelle question
+    public isNew: boolean = true; // Par défaut, on suppose qu'on ajoute une nouvelle question
     public questionTypes: string[] = ['Short', 'Long', 'Date', 'Email', 'Integer', 'Check', 'Combo', 'Radio'];
-    public optionLists: any[] = []; // Remplir avec les listes d'options disponibles
+    public optionLists: any[] = []; // Listes d'options disponibles
     public requiresOptionList: boolean = false;
-    public questionId?: number;
+    public questionId?: number; // ID de la question en cas d'édition
+    private sub = new Subscription();
+    public isQuestionValid: boolean = false;
 
     constructor(
         private formBuilder: FormBuilder,
         private router: Router,
         private route: ActivatedRoute,
         private questionService: QuestionService,
-        private optionListService: OptionListService
-    ) {}
+        private optionListService: OptionListService,
+        private snackBar: MatSnackBar
+    ) {
+        
+    }
 
     ngOnInit(): void {
+
+        // Récupération de l'ID depuis l'URL pour savoir s'il s'agit d'une édition ou d'une création
+        const questionIdParam = this.route.snapshot.paramMap.get('id');
+        this.questionId = questionIdParam ? Number(questionIdParam) : undefined;
+
         // Initialisation du formulaire
         this.questionForm = this.formBuilder.group({
             title: ['', [Validators.required, Validators.minLength(3)]],
             description: ['', [Validators.minLength(3)]],
             type: ['', Validators.required],
-            optionList: [{ value: null, disabled: true }], // Désactivé par défaut
+            optionList: [{ value: null, disabled: true }],
             required: [false],
-            formId: [5, ], //RAW input
-            IdX: [1, ] //RAW INPUT
+            formId: [this.route.snapshot.paramMap.get('formId'), Validators.required],
+            idx: [null] // Champ pour gérer l'ordre des questions
         });
+        
+        this.isNew = !this.questionId; // Si pas d'ID, c'est une nouvelle question
 
-        // Récupération des données d'édition si nécessaire
-        const questionId = this.route.snapshot.params['id'];
-        this.isNew = !questionId;
-
-        if (!this.isNew) {
-            this.loadQuestion(questionId);
+        if (!this.isNew && this.questionId !== undefined) {
+            this.loadQuestion(this.questionId);
         }
 
-        // Charger les listes d'options
-        this.loadOptionLists();
+        this.questionForm.statusChanges.subscribe(status => {
+            this.isQuestionValid = this.questionForm.valid;
+        });
+
+        this.loadOptionLists(); // Charger les listes d'options disponibles
+    }
+
+    ngOnDestroy(): void {
+        this.sub.unsubscribe();
     }
 
     private loadQuestion(questionId: number): void {
@@ -55,24 +72,27 @@ export class AddEditQuestionComponent implements OnInit {
                 this.questionForm.patchValue({
                     title: question.title,
                     description: question.description,
-                    type: question.type,
+                    type: this.questionTypes.at(question.type),
                     optionList: question.optionList,
-                    required: question.required
+                    required: question.required,
+                    formId: question.formId,
+                    idx: question.idX
                 });
 
-                // Activer ou désactiver le champ optionList en fonction du type de question
-                this.toggleOptionList(question.type.toString());
+                this.toggleOptionList(this.questionTypes.at(question.type));
             },
             error: (err) => {
                 console.error('Error loading question:', err);
+                this.snackBar.open('Error loading question. Redirecting...', 'Close', { duration: 5000 });
+                this.router.navigate(['/']); // Redirection en cas d'erreur
             }
         });
     }
-    
+
     private loadOptionLists(): void {
-        this.optionListService.getAll().subscribe({
+        this.optionListService.getAllForCurrentUser().subscribe({
             next: (optionLists) => {
-                this.optionLists = optionLists; // Variable contenant les options disponibles
+                this.optionLists = optionLists;
             },
             error: (err) => {
                 console.error('Error loading option lists:', err);
@@ -85,45 +105,57 @@ export class AddEditQuestionComponent implements OnInit {
         this.toggleOptionList(selectedType);
     }
 
-    private toggleOptionList(type: string): void {
+    private toggleOptionList(type: any): void {
         const optionListControl = this.questionForm.get('optionList');
-        if (['radio', 'check', 'combo'].includes(type)) {
+        if (['radio', 'check', 'combo'].includes(type.toLowerCase())) {
             optionListControl?.enable();
+            this.requiresOptionList = true;
         } else {
             optionListControl?.disable();
-            optionListControl?.setValue(null); // Réinitialiser la valeur
+            optionListControl?.setValue(null);
+            this.requiresOptionList = false;
         }
     }
 
-
     saveQuestion(): void {
-        if (this.questionForm.invalid) return;
+        if (!this.questionForm.valid) {
+            this.snackBar.open('Please fill in the required fields correctly.', 'Close', { duration: 3000 });
+            return;
+        }
 
-        const questionData = this.questionForm.value;
-        console.log('Question Data:', questionData); 
+        const questionData = {
+            ...this.questionForm.value,
+            type: this.questionTypes[this.questionForm.value.type],
+            formId: this.questionForm.get('formId')?.value,
+            idx: this.questionForm.get('idx')?.value ?? 1 // Gestion d'un index par défaut
+        };
+        
         if (this.isNew) {
             this.questionService.create(questionData).subscribe({
                 next: () => {
-                    this.router.navigate(['/view-form', { id: questionData.formId }]);
+                    this.snackBar.open('Question created successfully!', 'Close', { duration: 3000 });
+                    this.router.navigate(['/view_form', this.questionForm.value.formId]);
                 },
                 error: (err) => {
                     console.error('Error creating question:', err);
+                    this.snackBar.open('Error creating question.', 'Close', { duration: 3000 });
                 }
             });
         } else {
-            this.questionService.update(questionData).subscribe({
+            this.questionService.update({ ...questionData, id: this.questionId }).subscribe({
                 next: () => {
-                    this.router.navigate(['/view-form', { id: questionData.formId }]);
+                    this.snackBar.open('Question updated successfully!', 'Close', { duration: 3000 });
+                    this.router.navigate(['/view_form', this.questionForm.value.formId]);
                 },
                 error: (err) => {
                     console.error('Error updating question:', err);
+                    this.snackBar.open('Error updating question.', 'Close', { duration: 3000 });
                 }
             });
         }
     }
 
     createOptionList(): void {
-        // Naviguer vers la vue d'ajout d'une liste d'options
         this.router.navigate(['/add-edit-option-list']);
     }
 
@@ -140,6 +172,6 @@ export class AddEditQuestionComponent implements OnInit {
 
     get canEditOptionList(): boolean {
         const selectedOptionList = this.questionForm.get('optionList')?.value;
-        return this.requiresOptionList && selectedOptionList && this.optionLists.find(ol => ol.id === selectedOptionList)?.editable;
+        return this.requiresOptionList && !!selectedOptionList;
     }
 }

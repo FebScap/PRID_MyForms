@@ -63,53 +63,22 @@ namespace prid_2425_f02.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<QuestionDTO>> Create(QuestionDTO dto)
-        {
-            // Afficher les données reçues pour débogage
-            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(dto));
-            Console.WriteLine("Debug: Adding a new question");
+        public async Task<ActionResult<QuestionDTO>> Create(QuestionDTO dto) {
+            var question = mapper.Map<Question>(dto);
+            //question. = Convert.ToInt32(User.Identity?.Name);
+            //question.Owner = await context.Users.FindAsync(form.OwnerId);
 
-            // Récupérer le formulaire auquel appartient la question
-            var form = await context.Forms
-                .Include(f => f.Instances)
-                .FirstOrDefaultAsync(f => f.Id == dto.FormId);
+            // Vérifie si l'utilisateur a le droit de créer un form
+            //if (!HasAccessEditor(form, form.OwnerId)) return Forbid();
 
-            if (form == null)
-            {
-                return NotFound($"Form with ID {dto.FormId} not found.");
-            }
+            // Valide le form
+            var validator = new QuestionValidator(context);
+            ValidationResult results = await validator.ValidateOnCreate(question);
+            if (!results.IsValid) return BadRequest(results.Errors);
 
-            // Vérifier si le formulaire a des instances existantes
-            if (form.Instances.Any())
-            {
-                return BadRequest("Cannot add questions to a form with existing submissions.");
-            }
-
-            // Créer une nouvelle question
-            var question = new Question
-            {
-                Title = dto.Title,
-                Description = dto.Description,
-                Type = dto.Type,
-                Required = dto.Required,
-                IdX = dto.IdX, // Index de la question dans le formulaire
-                FormId = dto.FormId,
-                OptionList = dto.OptionList // Peut être null pour les types qui n'en nécessitent pas
-            };
-
-            // Valider la question avec un validateur
-            ValidationResult result = await new QuestionValidator(context).ValidateOnCreate(question);
-            if (!result.IsValid)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            // Ajouter la question à la base de données
             context.Questions.Add(question);
             await context.SaveChangesAsync();
-
-            // Retourner la réponse avec l'ID de la nouvelle question
-            return CreatedAtAction(nameof(GetById), new { id = question.Id }, mapper.Map<QuestionDTO>(question));
+            return mapper.Map<QuestionDTO>(question);
         }
 
         
@@ -131,7 +100,6 @@ namespace prid_2425_f02.Controllers
         public async Task<ActionResult<QuestionDTO>> GetById(int id)
         {
             var question = await context.Questions
-                .Include(q => q.OptionList)
                 .FirstOrDefaultAsync(q => q.Id == id);
 
             if (question == null) return NotFound();

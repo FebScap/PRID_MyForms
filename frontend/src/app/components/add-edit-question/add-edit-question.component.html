@@ -1,12 +1,12 @@
-<app-nav-bar title="Add/Edit Question" [hasArrowBack]="true" class="toolbar-actions">
-    <button mat-icon-button [disabled]="!questionForm.valid" (click)="saveQuestion()">
+<app-nav-bar [title]="isNew ? 'Add Question' : 'Edit Question'" [hasArrowBack]="true" [link]="'/view_form/' + questionForm.value.formId" class="toolbar-actions">
+    <button mat-icon-button [disabled]="!isQuestionValid" (click)="saveQuestion()">
         <mat-icon>save</mat-icon>
     </button>
 </app-nav-bar>
 
 <div class="position-relative h-100">
     <mat-card appearance="raised" class="p-4 position-absolute top-50 start-50 translate-middle">
-        <form [formGroup]="questionForm" (ngSubmit)="saveQuestion()" class="d-flex flex-column gap-4">
+        <form [formGroup]="questionForm" class="d-flex flex-column gap-4">
 
             <!-- Titre -->
             <mat-form-field appearance="outline">
