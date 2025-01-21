@@ -5,7 +5,7 @@
     <button mat-icon-button (click)="deleteForm()">
         <mat-icon>delete</mat-icon>
     </button>
-    <button mat-icon-button>
+    <button mat-icon-button (click)="openManageShares(form?.id)">
         <mat-icon>share</mat-icon>
     </button>
     @if (isReadOnly) {

@@ -153,8 +153,15 @@ export class ViewFormComponent {
 
     openAddForm(formId: number | undefined) {
         if (formId) {
-            // Si un ID de question est fourni, naviguer vers l'édition
+            // Si un ID de form est fourni, naviguer vers l'édition
             this.router.navigate(['/add-form', {id: formId}]);
+        }
+    }
+
+    openManageShares(formId: number | undefined) {
+        if (formId) {
+            // Si un ID de form est fourni, naviguer vers la gestion des access
+            this.router.navigate(['/manage-shares', {id: formId}]);
         }
     }
 }
