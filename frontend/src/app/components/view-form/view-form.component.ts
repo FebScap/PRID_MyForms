@@ -154,7 +154,7 @@ export class ViewFormComponent {
     openAddForm(formId: number | undefined) {
         if (formId) {
             // Si un ID de form est fourni, naviguer vers l'édition
-            this.router.navigate(['/add-form', {id: formId}]);
+            this.router.navigate(['/add-form', formId]);
         }
     }
 
