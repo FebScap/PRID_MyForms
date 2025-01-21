@@ -24,8 +24,10 @@ export class ManageSharesComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.formId = Number(this.route.snapshot.paramMap.get('id'));
-        this.formTitle = this.route.snapshot.paramMap.get('formTitle') || 'Form';
+        // Récupère le paramètre `formId` depuis l'URL
+        this.route.paramMap.subscribe((params) => {
+            this.formId = Number(params.get('formId'));
+        });
 
         this.loadAccesses();
         this.loadUsers();

@@ -1,7 +1,6 @@
 import {Routes, RouterModule} from '@angular/router';
 import {UnknownComponent} from "../components/unknown/unknown.component";
 import {LoginComponent} from "../components/login/login.component";
-import {Role} from "../models/user";
 import {AuthGuard} from "../services/auth.guard";
 import {ViewFormsComponent} from "../components/view-forms/view-forms.component";
 import {SignupComponent} from "../components/signup/signup.component";
@@ -48,7 +47,7 @@ const appRoutes: Routes = [
     {   path: 'manage_option_lists', component: ManageOptionListsComponent },
     {   path: 'add-form', component: AddFormComponent },
     {   path: 'add-form/:id', component: AddFormComponent },
-    {   path: 'manage-shares/:id', component: ManageSharesComponent },
+    {   path: 'manage-shares/:formId', component: ManageSharesComponent },
     {   path: 'add-edit-question/:formId', component: AddEditQuestionComponent },
     {   path: 'add-edit-question/:formId/:id', component: AddEditQuestionComponent },
     {   path: 'add-edit-option-list', component: AddEditOptionListComponent },

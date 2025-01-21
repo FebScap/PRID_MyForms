@@ -161,7 +161,7 @@ export class ViewFormComponent {
     openManageShares(formId: number | undefined) {
         if (formId) {
             // Si un ID de form est fourni, naviguer vers la gestion des access
-            this.router.navigate(['/manage-shares', {id: formId}]);
+            this.router.navigate(['/manage-shares', formId]);
         }
     }
 }
