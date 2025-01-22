@@ -75,14 +75,20 @@ export class FormService {
         );
     }
 
-    isTitleUnique(title: string, ownerId: string | undefined): Observable<boolean> {
+    isTitleUnique(title: string, ownerId: string | undefined, currentFormId?: number): Observable<boolean> {
         // Vérification si le propriétaire est bien défini
         if (!ownerId) {
             console.error("Owner ID is not provided");
             return of(false);
         }
+
+        const params: any = { title, ownerId };
+        if (currentFormId) {
+            params.currentFormId = currentFormId.toString(); // Ajouter l'ID courant si disponible
+        }
+
         return this.http.get<boolean>(`${this.baseUrl}api/forms/is-title-unique`, {
-            params: { title, ownerId }
+            params
         }).pipe(
             catchError(err => {
                 console.error("Error checking title uniqueness:", err);
@@ -90,7 +96,7 @@ export class FormService {
             })
         );
     }
-    
+
     analyze(formId: number, questionId: number): Observable<any> {
         return this.http.get<any>(`${this.baseUrl}api/forms/${formId}/${questionId}/analyze`).pipe(
             map(res => res)

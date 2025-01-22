@@ -125,9 +125,12 @@ export class AddFormComponent implements OnInit, OnDestroy {
     private uniqueTitleValidator(): AsyncValidatorFn {
         return (control: AbstractControl): Observable<{ [key: string]: boolean } | null> => {
             const currentOwnerId = this.authenticationService.currentUser?.id.toString();
-            return this.formService.isTitleUnique(control.value, currentOwnerId).pipe(
-                map((isUnique: boolean) => (isUnique ? null : {notUnique: true}))
+            const currentFormId = this.formId; // Récupérer l'ID du formulaire en cours d'édition
+
+            return this.formService.isTitleUnique(control.value, currentOwnerId, currentFormId).pipe(
+                map((isUnique: boolean) => (isUnique ? null : { notUnique: true }))
             );
         };
     }
+
 }
