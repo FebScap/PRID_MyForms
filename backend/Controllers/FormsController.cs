@@ -24,6 +24,7 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
                 .Include(f => f.Instances)
                 .Include(f => f.Accesses)
                 .Include(f => f.Questions)
+                .OrderBy(f => f.Title)
                 .ToListAsync()
         );
     }
@@ -40,6 +41,7 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
                 .Include(f => f.Instances)
                 .Include(f => f.Accesses)
                 .Include(f => f.Questions)
+                .OrderBy(f => f.Title)
                 .ToListAsync()
         );
     }
@@ -51,6 +53,7 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
                 .Where(f => f.IsPublic == true)
                 .Include(f => f.Owner)
                 .Include(f => f.Questions)
+                .OrderBy(f => f.Title)
                 .ToListAsync()
         );
     }
