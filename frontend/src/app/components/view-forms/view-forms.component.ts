@@ -159,15 +159,27 @@ export class ViewFormsComponent implements AfterViewInit {
     }
 
     setForms(filterValue: string): void {
+        const lowerCaseFilter = filterValue.toLowerCase();
+
         // @ts-ignore
         this.filteredForms = this.forms.filter(form => {
-            return (
-                form.title.toLowerCase().includes(filterValue) ||  // Filtre sur le titre
-                form.description?.toLowerCase().includes(filterValue) ||  // Filtre sur la description (si elle existe)
-                form.owner.firstName.toLowerCase().includes(filterValue) ||  // Filtre sur le prénom du propriétaire
-                form.owner.lastName.toLowerCase().includes(filterValue) ||  // Filtre sur le nom du propriétaire
-                form.owner.email?.toLowerCase().includes(filterValue)  // Filtre sur l'email du propriétaire
+
+            const matchesFormDetails = (
+                form.title.toLowerCase().includes(lowerCaseFilter) ||
+                form.description?.toLowerCase().includes(lowerCaseFilter) ||
+                form.owner.firstName.toLowerCase().includes(lowerCaseFilter) ||
+                form.owner.lastName.toLowerCase().includes(lowerCaseFilter) ||
+                form.owner.email?.toLowerCase().includes(lowerCaseFilter)
             );
+
+            const matchesQuestions = form.questions?.some((question: any) => {
+                return (
+                    question.title.toLowerCase().includes(lowerCaseFilter) ||
+                    question.description?.toLowerCase().includes(lowerCaseFilter)
+                );
+            });
+
+            return matchesFormDetails || matchesQuestions;
         });
     }
 
