@@ -36,7 +36,7 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
 
         return mapper.Map<List<FormDTO>>(
             await context.Forms
-                .Where(f => f.Accesses.Any(ac => ac.UserId == userId) || f.OwnerId == userId)
+                .Where(f => f.Accesses.Any(ac => ac.UserId == userId) || f.OwnerId == userId || f.IsPublic == true)
                 .Include(f => f.Owner)
                 .Include(f => f.Instances)
                 .Include(f => f.Accesses)
