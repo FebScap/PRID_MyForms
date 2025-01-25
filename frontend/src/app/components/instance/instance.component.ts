@@ -13,6 +13,7 @@ import {OptionListService} from "../../services/option-list.service";
 import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {AuthenticationService} from "../../services/authentication.service";
 
 
 @Component({
@@ -40,6 +41,7 @@ export class InstanceComponent implements OnDestroy {
         private formBuilder: FormBuilder,
         private optionListService: OptionListService,
         public snackBar: MatSnackBar,
+        private authenticationService: AuthenticationService
     ) {
         this.openInstanceService.reset();
         this.questionXSubscription = this.openInstanceService.questionX$.subscribe(x => {
@@ -137,12 +139,14 @@ export class InstanceComponent implements OnDestroy {
     saveInstance() {
         let i = this.instance!;
         i.completed = new Date();
+        i.user = this.authenticationService.currentUser!;
         Object.assign(this.instance!, i);
         this.instanceService.update(this.instance!).subscribe({
             next: () => {
                 this.router.navigate(['/']);
             },
             error: (err) => {
+                console.log(err);
                 if (this.snackBar) {
                     this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
                 } else {
