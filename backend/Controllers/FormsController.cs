@@ -165,7 +165,6 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
             await context.SaveChangesAsync();
             return mapper.Map<InstanceDTO>(instance);
         }
-
         return NotFound();
     }
 

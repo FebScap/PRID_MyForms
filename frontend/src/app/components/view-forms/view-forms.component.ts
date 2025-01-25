@@ -140,7 +140,10 @@ export class ViewFormsComponent implements AfterViewInit {
                     } else if (res == 'read') {
                         this.router.navigate(['/instance', instances[instances.length - 1].id]);
                     } else if (res == 'open') {
-                        this.router.navigate(['/instance', res.id]);
+                        form.instances = [];
+                        this.formService.createInstance(form).subscribe(i => {
+                            this.router.navigate(['/instance', i.id]);
+                        });
                     } else if (res != 'cancel') {
                         this.snackBar.open(`There was an error at the server. Please try again.`, 'Dismiss', {duration: 10000});
                     }
