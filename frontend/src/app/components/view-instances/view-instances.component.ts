@@ -7,6 +7,8 @@ import {Instance} from "../../models/instance";
 import {UserService} from "../../services/user.service";
 import {MatCheckboxChange} from "@angular/material/checkbox";
 import {Answer} from "../../models/answer";
+import {InstanceService} from "../../services/instance.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
     selector: 'app-view-instances',
@@ -17,12 +19,14 @@ export class ViewInstancesComponent {
     form?: Form;
     formGroup: FormGroup = new FormGroup({});
     instances: Instance[] = [];
-    selectedInstances: any[] = [];
+    selectedInstances: number[] = [];
     
     constructor(
         private route: ActivatedRoute,
         private formService: FormService,
-        private router: Router
+        private router: Router,
+        private instanceService: InstanceService,
+        private snackBar: MatSnackBar
     ) {
         
     }
@@ -32,18 +36,24 @@ export class ViewInstancesComponent {
         if (this.id) {
             this.formService.getById(this.id).subscribe((f) => {
                 this.form = f;
+                f.instances.forEach((i) => {
+                    if (i.completed) {
+                        this.instances.push(i);
+                    }
+                });
             });
         }
     }
 
     selectOption($event: MatCheckboxChange) {
-        const instance = $event.source.value;
+        const instance = Number.parseInt($event.source.value);
 
         if ($event.checked) {
            this.selectedInstances.push(instance);
         } else {
             this.selectedInstances = this.selectedInstances.filter(i => i !== instance);
         }
+        console.log(this.selectedInstances);
     }
 
     viewInstance(id: number) {
@@ -51,10 +61,26 @@ export class ViewInstancesComponent {
     }
 
     deleteSelected() {
-        
+        this.instanceService.deleteSelected(this.selectedInstances).subscribe((res) => {
+            if (!res) {
+                this.snackBar.open('An error occurred while deleting instances', 'Close');
+            } else {
+                this.instances = this.instances.filter(i => !this.selectedInstances.includes(i.id));
+                if (this.instances.length === 0) {
+                    this.router.navigate(['/view_form/' + this.form?.id]);
+                }
+            }
+        });
+        this.instances = this.instances.filter(i => !this.selectedInstances.includes(i.id));
     }
 
     deleteAll() {
-        
+        this.instanceService.deleteAll(this.form?.id!).subscribe((res) => {
+            if (!res) {
+                this.snackBar.open('An error occurred while deleting instances', 'Close');
+            } else {
+                this.router.navigate(['/view_form/' + this.form?.id]);
+            }
+        });
     }
 }

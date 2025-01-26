@@ -37,6 +37,28 @@ namespace prid_2425_f02.Controllers
             return true;
         }
         
+        [HttpDelete("delete-all/{formId:int}")]
+        public async Task<ActionResult<bool>> DeleteAll(int formId) {
+            var instances = await context.Instances
+                .Where(i => i.FormId == formId)
+                .ToArrayAsync();
+            
+            context.Instances.RemoveRange(instances);
+            await context.SaveChangesAsync();
+            return true;
+        }
+        
+        [HttpPost("delete-selected")]
+        public async Task<ActionResult<bool>> DeleteSelected(int[] ids) {
+            var instances = await context.Instances
+                .Where(i => ids.Contains(i.Id))
+                .ToArrayAsync();
+            
+            context.Instances.RemoveRange(instances);
+            await context.SaveChangesAsync();
+            return true;
+        }
+        
         [HttpPut]
         public async Task<ActionResult<InstanceDTO>> Update(InstanceDTO dto) {
             var instance = await context.Instances.FindAsync(dto.Id);

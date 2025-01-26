@@ -35,6 +35,26 @@ export class InstanceService {
         );
     }
     
+    deleteAll(formId: number): Observable<boolean> {
+        return this.http.delete<boolean>(`${this.baseUrl}api/instances/delete-all/${formId}`).pipe(
+            map(res => true),
+            catchError(err => {
+                console.error(err);
+                return of(false);
+            })
+        );
+    }
+    
+    deleteSelected(ids: number[]): Observable<boolean> {
+        return this.http.post<boolean>(`${this.baseUrl}api/instances/delete-selected`, ids).pipe(
+            map(res => true),
+            catchError(err => {
+                console.error(err);
+                return of(false);
+            })
+        );
+    }
+    
     update(instance: Instance): Observable<Instance> {
         return this.http.put<any>(`${this.baseUrl}api/instances`, instance).pipe(
             map(res => plainToInstance(Instance, res))

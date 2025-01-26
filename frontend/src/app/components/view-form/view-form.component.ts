@@ -37,7 +37,8 @@ export class ViewFormComponent {
             this.formService.getById(this.id).subscribe((res) => {
                 this.form = res;
                 this.isPublic = res.isPublic;
-                res.instances.length > 0 ? this.isReadOnly = true : this.isReadOnly = false;
+                let completedInstances = res.instances.filter(i => i.completed);
+                completedInstances.length > 0 ? this.isReadOnly = true : this.isReadOnly = false;
 
                 if (this.isReadOnly) {
                     const dialogRef = this.dialog.open(InformationComponent, {
