@@ -1,11 +1,12 @@
 import {Component} from "@angular/core";
 import {Form} from "../../models/form";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {FormService} from "../../services/form.service";
 import {FormGroup} from "@angular/forms";
 import {Instance} from "../../models/instance";
 import {UserService} from "../../services/user.service";
 import {MatCheckboxChange} from "@angular/material/checkbox";
+import {Answer} from "../../models/answer";
 
 @Component({
     selector: 'app-view-instances',
@@ -16,11 +17,12 @@ export class ViewInstancesComponent {
     form?: Form;
     formGroup: FormGroup = new FormGroup({});
     instances: Instance[] = [];
+    selectedInstances: any[] = [];
     
     constructor(
         private route: ActivatedRoute,
         private formService: FormService,
-        private userService: UserService
+        private router: Router
     ) {
         
     }
@@ -35,11 +37,17 @@ export class ViewInstancesComponent {
     }
 
     selectOption($event: MatCheckboxChange) {
-        
+        const instance = $event.source.value;
+
+        if ($event.checked) {
+           this.selectedInstances.push(instance);
+        } else {
+            this.selectedInstances = this.selectedInstances.filter(i => i !== instance);
+        }
     }
 
     viewInstance(id: number) {
-        
+        this.router.navigate([`/instance/${id}`, {link: this.router.url}]);
     }
 
     deleteSelected() {
