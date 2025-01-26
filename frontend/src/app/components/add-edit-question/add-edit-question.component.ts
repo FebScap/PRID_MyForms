@@ -5,6 +5,7 @@ import { QuestionService } from '../../services/question.service';
 import { OptionListService } from '../../services/option-list.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
+import { Type } from '../../models/question';
 
 @Component({
     selector: 'app-add-edit-question',
@@ -14,12 +15,12 @@ import { Subscription } from 'rxjs';
 export class AddEditQuestionComponent implements OnInit, OnDestroy {
     public questionForm!: FormGroup;
     public isNew: boolean = true; // Par défaut, on suppose qu'on ajoute une nouvelle question
-    public questionTypes: string[] = ['Short', 'Long', 'Date', 'Email', 'Integer', 'Check', 'Combo', 'Radio'];
     public optionLists: any[] = []; // Listes d'options disponibles
     public requiresOptionList: boolean = false;
     public questionId?: number; // ID de la question en cas d'édition
     private sub = new Subscription();
     public isQuestionValid: boolean = false;
+    protected readonly Type = Type;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -72,14 +73,14 @@ export class AddEditQuestionComponent implements OnInit, OnDestroy {
                 this.questionForm.patchValue({
                     title: question.title,
                     description: question.description,
-                    type: this.questionTypes.at(question.type),
+                    type: Type[question.type],
                     optionList: question.optionList,
                     required: question.required,
                     formId: question.formId,
                     idx: question.idX
                 });
 
-                this.toggleOptionList(this.questionTypes.at(question.type));
+                this.toggleOptionList(Type[question.type]);
             },
             error: (err) => {
                 console.error('Error loading question:', err);
@@ -122,13 +123,14 @@ export class AddEditQuestionComponent implements OnInit, OnDestroy {
             this.snackBar.open('Please fill in the required fields correctly.', 'Close', { duration: 3000 });
             return;
         }
-
         const questionData = {
             ...this.questionForm.value,
-            type: this.questionTypes[this.questionForm.value.type],
+            type: Type[this.questionForm.value.type],
             formId: this.questionForm.get('formId')?.value,
-            idx: this.questionForm.get('idx')?.value ?? 1 // Gestion d'un index par défaut
+            idx: 1
         };
+        
+        console.log(questionData);
         
         if (this.isNew) {
             this.questionService.create(questionData).subscribe({

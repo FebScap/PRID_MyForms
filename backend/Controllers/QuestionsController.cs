@@ -65,6 +65,11 @@ namespace prid_2425_f02.Controllers
         [HttpPost]
         public async Task<ActionResult<QuestionDTO>> Create(QuestionDTO dto) {
             var question = mapper.Map<Question>(dto);
+            if (!context.Questions.Any(q => q.FormId == question.FormId)) {
+                question.IdX = 1;
+            } else {
+                question.IdX = context.Questions.Where(q => q.FormId == question.FormId).Max(q => q.IdX) + 1;
+            }
             //question. = Convert.ToInt32(User.Identity?.Name);
             //question.Owner = await context.Users.FindAsync(form.OwnerId);
 
