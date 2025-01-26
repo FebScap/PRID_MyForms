@@ -1,5 +1,5 @@
 import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {AuthenticationService} from "../../services/authentication.service";
 import {SearchService} from "../../services/search.service";
 
@@ -17,8 +17,12 @@ export class NavBarComponent {
     constructor(
         private router: Router,
         private authenticationService: AuthenticationService,
-        private searchService: SearchService
+        private searchService: SearchService,
+        private route: ActivatedRoute
     ) {
+        if (this.route.snapshot.paramMap.get('link') !== null) {
+            this.link = this.route.snapshot.paramMap.get('link') ?? '/';
+        }
     }
 
     get currentUser() {
@@ -34,4 +38,9 @@ export class NavBarComponent {
     openManageOptionLists() {
         this.router.navigate(['/manage_option_lists']);
     }
+
+    test() {
+
+    }
+
 }

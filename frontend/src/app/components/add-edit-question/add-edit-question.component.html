@@ -27,8 +27,8 @@
             <mat-form-field appearance="outline">
                 <mat-label>Type</mat-label>
                 <mat-select formControlName="type" (selectionChange)="onTypeChange()">
-                    <mat-option *ngFor="let type of questionTypes" [value]="type.valueOf()">
-                        {{ type }}
+                    <mat-option *ngFor="let type of Type | keyvalue" [value]="type.value">
+                        {{ type.value }}
                     </mat-option>
                 </mat-select>
                 <mat-error *ngIf="questionForm.get('type')?.hasError('required')">Type is required</mat-error>

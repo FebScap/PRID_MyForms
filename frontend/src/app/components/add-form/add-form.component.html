@@ -1,4 +1,4 @@
-<app-nav-bar [title]="isNew ? 'Add Form' : 'Edit Form'" [hasArrowBack]="true" [link]="'/view_form/' + (formId || '')"  class="toolbar-actions">
+<app-nav-bar [title]="isNew ? 'Add Form' : 'Edit Form'" [hasArrowBack]="true" [link]=" isNew ? '/' : '/view_form/' + (formId || '')"  class="toolbar-actions">
     <button mat-icon-button [disabled]="!isFormValid" (click)="saveForm()">
         <mat-icon>save</mat-icon>
     </button>

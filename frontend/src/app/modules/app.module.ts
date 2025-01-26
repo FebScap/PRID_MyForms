@@ -32,6 +32,7 @@ import {ViewInstancesComponent} from "../components/view-instances/view-instance
 import {OpenFormDialogComponent} from "../components/open-form-dialog/open-form-dialog.component";
 import {ManageOptionListsComponent} from "../components/manage-option-lists/manage-option-lists.component";
 import {CdkDropList, DragDropModule} from "@angular/cdk/drag-drop";
+import {ManageSharesComponent} from "../components/manage-shares/manage-shares.component";
 
 @NgModule({
     declarations: [
@@ -56,6 +57,7 @@ import {CdkDropList, DragDropModule} from "@angular/cdk/drag-drop";
         AnalyzeComponent,
         ViewInstancesComponent,
         ManageOptionListsComponent,
+        ManageSharesComponent,
         
     ],
     imports: [

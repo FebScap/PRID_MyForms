@@ -25,7 +25,11 @@ namespace prid_2425_f02.Controllers
         public async Task<ActionResult<bool>> CreateAnswer(AnswerDTO dto)
         {
             var answer = mapper.Map<Answer>(dto);
-            answer.Idx = context.Answers.Max(a => a.Idx) + 1;
+            if (context.Answers.ToArray().Length == 0) {
+                answer.Idx = 1;
+            } else {
+                answer.Idx = context.Answers.Max(a => a.Idx) + 1;
+            }
             context.Answers.Add(answer);
             await context.SaveChangesAsync();
             return true;

@@ -37,7 +37,8 @@ export class ViewFormComponent {
             this.formService.getById(this.id).subscribe((res) => {
                 this.form = res;
                 this.isPublic = res.isPublic;
-                res.instances.length > 0 ? this.isReadOnly = true : this.isReadOnly = false;
+                let completedInstances = res.instances.filter(i => i.completed);
+                completedInstances.length > 0 ? this.isReadOnly = true : this.isReadOnly = false;
 
                 if (this.isReadOnly) {
                     const dialogRef = this.dialog.open(InformationComponent, {
@@ -153,8 +154,15 @@ export class ViewFormComponent {
 
     openAddForm(formId: number | undefined) {
         if (formId) {
-            // Si un ID de question est fourni, naviguer vers l'édition
-            this.router.navigate(['/add-form', {id: formId}]);
+            // Si un ID de form est fourni, naviguer vers l'édition
+            this.router.navigate(['/add-form', formId]);
+        }
+    }
+
+    openManageShares(formId: number | undefined) {
+        if (formId) {
+            // Si un ID de form est fourni, naviguer vers la gestion des access
+            this.router.navigate(['/manage-shares', formId]);
         }
     }
 }

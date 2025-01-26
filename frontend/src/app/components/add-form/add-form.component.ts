@@ -102,18 +102,20 @@ export class AddFormComponent implements OnInit, OnDestroy {
             owner: this.currentUser
         };
         if (this.isNew) {
+            // Création d'un nouveau formulaire
             this.formService.addForm(formData).subscribe({
-                next: () => {
-                    this.router.navigate(['/']);
+                next: (createdForm: Form) => {
+                    this.router.navigate(['/view_form', createdForm.id]); // Navigue vers la vue du formulaire créé
                 },
                 error: (err) => {
-                    console.error('Error updating form:', err);
+                    console.error('Error creating form:', err);
                 }
             });
         } else {
-            this.formService.update({...formData, id: this.formId}).subscribe({
+            // Mise à jour d'un formulaire existant
+            this.formService.update({ ...formData, id: this.formId }).subscribe({
                 next: () => {
-                    this.router.navigate(['/']);
+                    this.router.navigate(['/view_form', this.formId]); // Navigue vers la vue du formulaire mis à jour
                 },
                 error: (err) => {
                     console.error('Error updating form:', err);
@@ -125,9 +127,12 @@ export class AddFormComponent implements OnInit, OnDestroy {
     private uniqueTitleValidator(): AsyncValidatorFn {
         return (control: AbstractControl): Observable<{ [key: string]: boolean } | null> => {
             const currentOwnerId = this.authenticationService.currentUser?.id.toString();
-            return this.formService.isTitleUnique(control.value, currentOwnerId).pipe(
-                map((isUnique: boolean) => (isUnique ? null : {notUnique: true}))
+            const currentFormId = this.formId; // Récupérer l'ID du formulaire en cours d'édition
+
+            return this.formService.isTitleUnique(control.value, currentOwnerId, currentFormId).pipe(
+                map((isUnique: boolean) => (isUnique ? null : { notUnique: true }))
             );
         };
     }
+
 }

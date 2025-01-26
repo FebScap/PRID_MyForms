@@ -1,7 +1,6 @@
 import {Routes, RouterModule} from '@angular/router';
 import {UnknownComponent} from "../components/unknown/unknown.component";
 import {LoginComponent} from "../components/login/login.component";
-import {Role} from "../models/user";
 import {AuthGuard} from "../services/auth.guard";
 import {ViewFormsComponent} from "../components/view-forms/view-forms.component";
 import {SignupComponent} from "../components/signup/signup.component";
@@ -13,6 +12,7 @@ import {AddEditOptionListComponent} from "../components/add-edit-option-list/add
 import {AnalyzeComponent} from "../components/analyze/analyze.component";
 import {ViewInstancesComponent} from "../components/view-instances/view-instances.component";
 import {ManageOptionListsComponent} from "../components/manage-option-lists/manage-option-lists.component";
+import {ManageSharesComponent} from "../components/manage-shares/manage-shares.component";
 
 const appRoutes: Routes = [
 
@@ -42,10 +42,12 @@ const appRoutes: Routes = [
         component: InstanceComponent,
         canActivate: [AuthGuard]
     },
+    {   path: 'manage-shares/:id', component: ManageSharesComponent },
     {   path: 'login', component: LoginComponent },
     {   path: 'manage_option_lists', component: ManageOptionListsComponent },
     {   path: 'add-form', component: AddFormComponent },
     {   path: 'add-form/:id', component: AddFormComponent },
+    {   path: 'manage-shares/:formId', component: ManageSharesComponent },
     {   path: 'add-edit-question/:formId', component: AddEditQuestionComponent },
     {   path: 'add-edit-question/:formId/:id', component: AddEditQuestionComponent },
     {   path: 'add-edit-option-list', component: AddEditOptionListComponent },

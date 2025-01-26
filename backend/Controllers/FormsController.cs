@@ -23,6 +23,8 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
                 .Include(f => f.Owner)
                 .Include(f => f.Instances)
                 .Include(f => f.Accesses)
+                .Include(f => f.Questions)
+                .OrderBy(f => f.Title)
                 .ToListAsync()
         );
     }
@@ -34,10 +36,12 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
 
         return mapper.Map<List<FormDTO>>(
             await context.Forms
-                .Where(f => f.Accesses.Any(ac => ac.UserId == userId) || f.OwnerId == userId)
+                .Where(f => f.Accesses.Any(ac => ac.UserId == userId) || f.OwnerId == userId || f.IsPublic == true)
                 .Include(f => f.Owner)
                 .Include(f => f.Instances)
                 .Include(f => f.Accesses)
+                .Include(f => f.Questions)
+                .OrderBy(f => f.Title)
                 .ToListAsync()
         );
     }
@@ -48,6 +52,8 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
             await context.Forms
                 .Where(f => f.IsPublic == true)
                 .Include(f => f.Owner)
+                .Include(f => f.Questions)
+                .OrderBy(f => f.Title)
                 .ToListAsync()
         );
     }
@@ -63,7 +69,7 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
         if (form == null) return NotFound();
         return mapper.Map<FormDTO>(form);
     }
-    
+
     [HttpPost]
     public async Task<ActionResult<FormDTO>> Create(FormDTO dto) {
         var form = mapper.Map<Form>(dto);
@@ -99,7 +105,7 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
         form.Title = dto.Title;
         form.Description = dto.Description;
         form.IsPublic = dto.IsPublic;
-    
+
         // Gestion des accès si le formulaire devient public
         if (dto.IsPublic) {
             var userAccesses = form.Accesses.Where(a => a.AccessType == AccessType.User).ToList();
@@ -159,23 +165,25 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
             await context.SaveChangesAsync();
             return mapper.Map<InstanceDTO>(instance);
         }
-
         return NotFound();
     }
 
     [AllowAnonymous]
     [HttpGet("is-title-unique")]
-    public async Task<ActionResult<bool>> IsTitleUnique([FromQuery] string title, [FromQuery] int ownerId) {
+    public async Task<ActionResult<bool>> IsTitleUnique([FromQuery] string title, [FromQuery] int ownerId,
+        [FromQuery] int? currentFormId = null) {
         // Vérifie si les paramètres nécessaires sont fournis
         if (string.IsNullOrWhiteSpace(title) || ownerId <= 0) {
             return BadRequest("Title and ownerId are required.");
         }
 
-        // Vérifie si un formulaire avec le même titre existe déjà pour ce propriétaire
-        var isUnique = !await context.Forms.AnyAsync(f => f.Title == title && f.OwnerId == ownerId);
+        // Vérifie si un formulaire avec le même titre existe déjà pour ce propriétaire, en excluant le formulaire courant
+        var isUnique = !await context.Forms.AnyAsync(f =>
+            f.Title == title && f.OwnerId == ownerId && (currentFormId == null || f.Id != currentFormId));
 
         return Ok(isUnique);
     }
+
 
     private bool HasAccessEditor(Form form, int userId) {
         return form.OwnerId == userId ||
