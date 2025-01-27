@@ -40,32 +40,15 @@ export class ManageSharesComponent implements OnInit {
     loadAccesses(): void {
         this.accessService.getAccesses(this.formId).subscribe({
             next: (accesses) => {
-                console.log('Accesses:', accesses);
+                console.log('Accesses:', accesses); // Vérifiez que les données incluent firstName et lastName
                 this.accesses = accesses;
-
-                // Réinitialiser accessesUsers pour éviter des doublons
-                this.accessesUsers = [];
-
-                // Charger les informations des utilisateurs pour chaque accès
-                accesses.forEach((accesse) => {
-                    this.userService.getOne(accesse.userId).subscribe({
-                        next: (user) => {
-                            this.accessesUsers.push({ ...accesse, user }); // Ajoute les données d'accès avec les détails utilisateur
-                            console.log('Accesses Users:', this.accessesUsers);
-                        },
-                        error: () => {
-                            this.snackBar.open(`Error loading user for access ID ${accesse.userId}`, 'Close', { duration: 3000 });
-                        },
-                    });
-                });
             },
             error: () => {
                 this.snackBar.open('Error loading accesses.', 'Close', { duration: 3000 });
             },
         });
     }
-
-
+    
     loadUsers(): void {
         this.accessService.getEligibleUsers(this.formId).subscribe({
             next: (users) => {

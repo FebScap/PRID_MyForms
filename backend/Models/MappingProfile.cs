@@ -24,7 +24,9 @@ public class MappingProfile : Profile
         CreateMap<Instance, InstanceDTO>();
         CreateMap<InstanceDTO, Instance>();
         
-        CreateMap<Access, AccessDTO>();
+        CreateMap<Access, AccessDTO>()
+            .ForMember(dto => dto.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
+            .ForMember(dto => dto.LastName, opt => opt.MapFrom(src => src.User.LastName));
         CreateMap<AccessDTO, Access>();
 
         CreateMap<OptionList, OptionListDTO>();

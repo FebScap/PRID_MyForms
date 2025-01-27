@@ -2,8 +2,8 @@
 
 <div class="body">
     <h2>Users with Access</h2>
-    <div *ngFor="let access of accessesUsers">
-        <span>{{ access.user.firstName + ' ' + access.user.lastName}}</span>
+    <div *ngFor="let access of accesses">
+        <span>{{ access.firstName }} {{ access.lastName }}</span>
         <mat-checkbox
                 [checked]="access.accessType === 'user'"
                 [disabled]="access.accessType === 'editor'"
@@ -12,12 +12,11 @@
         <mat-checkbox
                 [checked]="access.accessType === 'editor'"
                 (change)="
-        access.accessType === 'editor'
-          ? deleteAccess(access.userId)
-          : updateAccess(access.userId, 'editor')
-      "
-        >editor</mat-checkbox
-        >
+            access.accessType === 'editor'
+                ? deleteAccess(access.userId)
+                : updateAccess(access.userId, 'editor')
+        "
+        >editor</mat-checkbox>
     </div>
 
     <h2>Add User Access</h2>

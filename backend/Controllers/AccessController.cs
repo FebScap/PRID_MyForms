@@ -18,15 +18,12 @@ namespace prid_2425_f02.Controllers
         {
             var accesses = await context.Accesses
                 .Where(ufa => ufa.FormId == formId)
-                .Include(ufa => ufa.User) // Inclure les détails de l'utilisateur
+                .Include(ufa => ufa.User) // Inclut les détails utilisateur
                 .ToListAsync();
-
-            // Vérifiez si les utilisateurs associés existent
-            if (accesses.Any(ufa => ufa.User == null))
-                return BadRequest("Some users linked to accesses are missing in the database.");
 
             return Ok(mapper.Map<List<AccessDTO>>(accesses));
         }
+
 
         
         [HttpPost("{formId}/accesses")]
