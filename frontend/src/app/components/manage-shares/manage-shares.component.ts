@@ -12,19 +12,18 @@ import {UserService} from "../../services/user.service";
 export class ManageSharesComponent implements OnInit {
     public formId!: number;
     public accesses: any[] = [];
-    public accessesUsers: any[] = [];
     public users: any[] = [];
-    public usersFull: any[] = [];
     public selectedUser: any;
     public newAccessType: 'user' | 'editor' = 'user';
     public formTitle: string = '';
+    public isUserChecked: boolean = true; // Default to 'user' checkbox checked
+    public isEditorChecked: boolean = false;
 
     constructor(
         private accessService: AccessService,
         private route: ActivatedRoute,
         private router: Router,
         private snackBar: MatSnackBar,
-        private userService: UserService,
     ) {}
 
     ngOnInit(): void {
@@ -40,7 +39,6 @@ export class ManageSharesComponent implements OnInit {
     loadAccesses(): void {
         this.accessService.getAccesses(this.formId).subscribe({
             next: (accesses) => {
-                console.log('Accesses:', accesses); // Vérifiez que les données incluent firstName et lastName
                 this.accesses = accesses;
             },
             error: () => {
@@ -53,7 +51,6 @@ export class ManageSharesComponent implements OnInit {
         this.accessService.getEligibleUsers(this.formId).subscribe({
             next: (users) => {
                 this.users = users;
-                console.log('Users:', users);
             },
             error: () => {
                 this.snackBar.open('Error loading eligible users.', 'Close', { duration: 3000 });
@@ -61,21 +58,30 @@ export class ManageSharesComponent implements OnInit {
         });
     }
 
+    onUserCheckboxChange(isChecked: boolean): void {
+        if (!isChecked) {
+            this.isEditorChecked = false; // Uncheck editor if user is unchecked
+        }
+    }
+
+    onEditorCheckboxChange(isChecked: boolean): void {
+        if (isChecked) {
+            this.isUserChecked = true; // Automatically check user if editor is checked
+        }
+    }
+
     addAccess(): void {
-        if (!this.selectedUser || !this.newAccessType) {
-            this.snackBar.open('Select a user and an access type.', 'Close', { duration: 3000 });
+        if (!this.selectedUser || (!this.isUserChecked && !this.isEditorChecked)) {
+            this.snackBar.open('Select a user and at least one access type.', 'Close', { duration: 3000 });
             return;
         }
 
-        const newAccess = {
-            userId: this.selectedUser.id,
-            accessType: this.newAccessType,
-        };
+        const accessType = this.isEditorChecked ? 1 : 0;
 
-        this.accessService.addAccess(this.formId, newAccess).subscribe({
+        this.accessService.addAccess(1, { userId: this.selectedUser.id, accessType }).subscribe({
             next: () => {
                 this.snackBar.open('Access added successfully.', 'Close', { duration: 3000 });
-                this.loadAccesses();
+                this.loadUsers(); // Refresh available users after adding access
             },
             error: () => {
                 this.snackBar.open('Error adding access.', 'Close', { duration: 3000 });
@@ -83,13 +89,13 @@ export class ManageSharesComponent implements OnInit {
         });
     }
 
-    updateAccess(userId: number, accessType: 'user' | 'editor'): void {
+    updateAccess(userId: number, accessType: 0 | 1): void {
         const updatedAccess = { accessType };
 
         this.accessService.updateAccess(this.formId, userId, updatedAccess).subscribe({
             next: () => {
                 this.snackBar.open('Access updated successfully.', 'Close', { duration: 3000 });
-                this.loadAccesses();
+                this.loadAccesses(); // Recharge les accès pour refléter les modifications
             },
             error: () => {
                 this.snackBar.open('Error updating access.', 'Close', { duration: 3000 });
@@ -101,7 +107,7 @@ export class ManageSharesComponent implements OnInit {
         this.accessService.deleteAccess(this.formId, userId).subscribe({
             next: () => {
                 this.snackBar.open('Access removed successfully.', 'Close', { duration: 3000 });
-                this.loadAccesses();
+                this.loadAccesses(); // Recharge les accès pour refléter les modifications
             },
             error: () => {
                 this.snackBar.open('Error removing access.', 'Close', { duration: 3000 });

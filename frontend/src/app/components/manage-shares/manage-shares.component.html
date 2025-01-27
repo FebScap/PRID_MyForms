@@ -4,19 +4,29 @@
     <h2>Users with Access</h2>
     <div *ngFor="let access of accesses">
         <span>{{ access.firstName }} {{ access.lastName }}</span>
+
+        <!-- Checkbox pour User -->
         <mat-checkbox
-                [checked]="access.accessType === 'user'"
-                [disabled]="access.accessType === 'editor'"
-                (change)="updateAccess(access.userId, 'user')"
-        >user</mat-checkbox>
-        <mat-checkbox
-                [checked]="access.accessType === 'editor'"
+                [checked]="access.accessType === 0 || access.accessType === 1"
+                [disabled]="access.accessType === 1"
                 (change)="
-            access.accessType === 'editor'
+            access.accessType === 1
+                ? null
+                : updateAccess(access.userId, 0)"
+        >
+            user
+        </mat-checkbox>
+
+        <!-- Checkbox pour Editor -->
+        <mat-checkbox
+                [checked]="access.accessType === 1"
+                (change)="
+            access.accessType === 1
                 ? deleteAccess(access.userId)
-                : updateAccess(access.userId, 'editor')
-        "
-        >editor</mat-checkbox>
+                : updateAccess(access.userId, 1)"
+        >
+            editor
+        </mat-checkbox>
     </div>
 
     <h2>Add User Access</h2>
@@ -24,11 +34,32 @@
         <mat-form-field>
             <mat-label>Select a User</mat-label>
             <mat-select [(ngModel)]="selectedUser">
-                <mat-option *ngFor="let user of users" [value]="user">{{ user.firstName + ' ' + user.lastName }}</mat-option>
+                <mat-option *ngFor="let user of users" [value]="user">
+                    {{ user.firstName + ' ' + user.lastName }}
+                </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-checkbox [(ngModel)]="newAccessType" value="user">user</mat-checkbox>
-        <mat-checkbox [(ngModel)]="newAccessType" value="editor">editor</mat-checkbox>
-        <button (click)="addAccess()">Add</button>
+
+        <!-- Checkbox User -->
+        <mat-checkbox
+                [(ngModel)]="isUserChecked"
+                [disabled]="isEditorChecked"
+                (change)="onUserCheckboxChange($event.checked)">
+            user
+        </mat-checkbox>
+
+        <!-- Checkbox Editor -->
+        <mat-checkbox
+                [(ngModel)]="isEditorChecked"
+                (change)="onEditorCheckboxChange($event.checked)">
+            editor
+        </mat-checkbox>
+
+        <button
+                (click)="addAccess()"
+                [disabled]="!selectedUser || (!isUserChecked && !isEditorChecked)">
+            Add
+        </button>
     </div>
+
 </div>
