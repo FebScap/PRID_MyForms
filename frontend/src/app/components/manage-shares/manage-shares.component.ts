@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {AccessService} from "../../services/access.service";
+import {UserService} from "../../services/user.service";
 
 @Component({
     selector: 'app-manage-shares',
@@ -11,7 +12,9 @@ import {AccessService} from "../../services/access.service";
 export class ManageSharesComponent implements OnInit {
     public formId!: number;
     public accesses: any[] = [];
+    public accessesUsers: any[] = [];
     public users: any[] = [];
+    public usersFull: any[] = [];
     public selectedUser: any;
     public newAccessType: 'user' | 'editor' = 'user';
     public formTitle: string = '';
@@ -20,13 +23,14 @@ export class ManageSharesComponent implements OnInit {
         private accessService: AccessService,
         private route: ActivatedRoute,
         private router: Router,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private userService: UserService,
     ) {}
 
     ngOnInit(): void {
         // Récupère le paramètre `formId` depuis l'URL
         this.route.paramMap.subscribe((params) => {
-            this.formId = Number(params.get('formId'));
+            this.formId = Number(this.route.snapshot.paramMap.get('id'));
         });
 
         this.loadAccesses();
@@ -36,7 +40,24 @@ export class ManageSharesComponent implements OnInit {
     loadAccesses(): void {
         this.accessService.getAccesses(this.formId).subscribe({
             next: (accesses) => {
+                console.log('Accesses:', accesses);
                 this.accesses = accesses;
+
+                // Réinitialiser accessesUsers pour éviter des doublons
+                this.accessesUsers = [];
+
+                // Charger les informations des utilisateurs pour chaque accès
+                accesses.forEach((accesse) => {
+                    this.userService.getOne(accesse.userId).subscribe({
+                        next: (user) => {
+                            this.accessesUsers.push({ ...accesse, user }); // Ajoute les données d'accès avec les détails utilisateur
+                            console.log('Accesses Users:', this.accessesUsers);
+                        },
+                        error: () => {
+                            this.snackBar.open(`Error loading user for access ID ${accesse.userId}`, 'Close', { duration: 3000 });
+                        },
+                    });
+                });
             },
             error: () => {
                 this.snackBar.open('Error loading accesses.', 'Close', { duration: 3000 });
@@ -44,12 +65,17 @@ export class ManageSharesComponent implements OnInit {
         });
     }
 
+
     loadUsers(): void {
-        // Replace this with a call to fetch available users from a backend service
-        this.users = [
-            { id: 1, name: 'Boris Verhaegen' },
-            { id: 2, name: 'Xavier Pigeolet' },
-        ];
+        this.accessService.getEligibleUsers(this.formId).subscribe({
+            next: (users) => {
+                this.users = users;
+                console.log('Users:', users);
+            },
+            error: () => {
+                this.snackBar.open('Error loading eligible users.', 'Close', { duration: 3000 });
+            },
+        });
     }
 
     addAccess(): void {

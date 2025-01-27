@@ -15,4 +15,9 @@ export class UserService {
             map(res => plainToInstance(User, res))
         );
     }
+    getOne(id: string): Observable<User> {
+        return this.http.get<any>(`${this.baseUrl}api/users/${id}`).pipe(
+            map(res => plainToInstance(User, res))
+        );
+    }
 }

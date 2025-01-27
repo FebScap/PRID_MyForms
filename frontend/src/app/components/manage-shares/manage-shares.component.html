@@ -1,9 +1,9 @@
 <app-nav-bar [title]="'Share : ' + formTitle" [hasArrowBack]="true"></app-nav-bar>
 
-<div class="container">
+<div class="body">
     <h2>Users with Access</h2>
-    <div *ngFor="let access of accesses">
-        <span>{{ access.user.name }}</span>
+    <div *ngFor="let access of accessesUsers">
+        <span>{{ access.user.firstName + ' ' + access.user.lastName}}</span>
         <mat-checkbox
                 [checked]="access.accessType === 'user'"
                 [disabled]="access.accessType === 'editor'"
@@ -25,7 +25,7 @@
         <mat-form-field>
             <mat-label>Select a User</mat-label>
             <mat-select [(ngModel)]="selectedUser">
-                <mat-option *ngFor="let user of users" [value]="user">{{ user.name }}</mat-option>
+                <mat-option *ngFor="let user of users" [value]="user">{{ user.firstName + ' ' + user.lastName }}</mat-option>
             </mat-select>
         </mat-form-field>
         <mat-checkbox [(ngModel)]="newAccessType" value="user">user</mat-checkbox>

@@ -9,23 +9,28 @@ export class AccessService {
     }
 
     getAccesses(formId: number): Observable<any[]> {
-        return this.http.get<any[]>(`${this.baseUrl}/${formId}/accesses`);
+        return this.http.get<any[]>(`${this.baseUrl}api/Access/${formId}/accesses`);
     }
 
     addAccess(formId: number, access: any): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}/${formId}/accesses`, access);
+        return this.http.post<any>(`${this.baseUrl}api/Access/${formId}/accesses`, access);
     }
 
     updateAccess(formId: number, userId: number, access: any): Observable<void> {
         return this.http.put<void>(
-            `${this.baseUrl}/${formId}/accesses/${userId}`,
+            `${this.baseUrl}api/Access/${formId}/accesses/${userId}`,
             access
         );
     }
 
     deleteAccess(formId: number, userId: number): Observable<void> {
         return this.http.delete<void>(
-            `${this.baseUrl}/${formId}/accesses/${userId}`
+            `${this.baseUrl}api/Access/${formId}/accesses/${userId}`
         );
     }
+
+    getEligibleUsers(formId: number): Observable<any[]> {
+        return this.http.get<any[]>(`${this.baseUrl}api/Access/${formId}/eligible-users`);
+    }
+
 }

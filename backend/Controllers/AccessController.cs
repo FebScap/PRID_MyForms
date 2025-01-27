@@ -18,11 +18,16 @@ namespace prid_2425_f02.Controllers
         {
             var accesses = await context.Accesses
                 .Where(ufa => ufa.FormId == formId)
-                .Include(ufa => ufa.User)
+                .Include(ufa => ufa.User) // Inclure les détails de l'utilisateur
                 .ToListAsync();
+
+            // Vérifiez si les utilisateurs associés existent
+            if (accesses.Any(ufa => ufa.User == null))
+                return BadRequest("Some users linked to accesses are missing in the database.");
 
             return Ok(mapper.Map<List<AccessDTO>>(accesses));
         }
+
         
         [HttpPost("{formId}/accesses")]
         public async Task<IActionResult> AddAccess(int formId, AccessDTO dto)
@@ -67,6 +72,20 @@ namespace prid_2425_f02.Controllers
             await context.SaveChangesAsync();
 
             return NoContent();
+        }
+        
+        [HttpGet("{formId}/eligible-users")]
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetEligibleUsers(int formId)
+        {
+            // Charge tous les utilisateurs sauf les admins et le propriétaire
+            var form = await context.Forms.Include(f => f.Owner).FirstOrDefaultAsync(f => f.Id == formId);
+            if (form == null) return NotFound();
+
+            var eligibleUsers = await context.Users
+                .Where(u => u.Id != form.OwnerId || u.Role == Role.Admin) // Exclut le propriétaire et les admins
+                .ToListAsync();
+
+            return Ok(mapper.Map<List<UserDTO>>(eligibleUsers));
         }
     }
 }
