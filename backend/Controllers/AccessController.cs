@@ -74,15 +74,31 @@ namespace prid_2425_f02.Controllers
         [HttpGet("{formId}/eligible-users")]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetEligibleUsers(int formId)
         {
-            // Charge tous les utilisateurs sauf les admins et le propriétaire
+
+            // Charger le formulaire avec son propriétaire
             var form = await context.Forms.Include(f => f.Owner).FirstOrDefaultAsync(f => f.Id == formId);
-            if (form == null) return NotFound();
-
-            var eligibleUsers = await context.Users
-                .Where(u => u.Id != form.OwnerId || u.Role == Role.Admin) // Exclut le propriétaire et les admins
+            if (form == null)
+            {
+                return NotFound();
+            }
+            
+            // Récupérer les IDs des utilisateurs déjà dans la table Accesses pour ce formulaire
+            var excludedUserIds = await context.Accesses
+                .Where(a => a.FormId == formId)
+                .Select(a => a.UserId)
                 .ToListAsync();
-
+            
+            // Filtrer les utilisateurs éligibles (pas dans Accesses, pas admin, pas propriétaire)
+            var eligibleUsers = await context.Users
+                .Where(u =>
+                    u.Id != form.OwnerId &&               // Exclure le propriétaire
+                    u.Role != Role.Admin &&               // Exclure les admins
+                    u.Role != Role.Guest &&               // Eclure les Guests
+                    !excludedUserIds.Contains(u.Id))      // Exclure ceux déjà dans Accesses
+                .ToListAsync();
+            
             return Ok(mapper.Map<List<UserDTO>>(eligibleUsers));
         }
+
     }
 }
