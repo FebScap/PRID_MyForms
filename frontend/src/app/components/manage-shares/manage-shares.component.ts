@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {AccessService} from "../../services/access.service";
-import {UserService} from "../../services/user.service";
 
 @Component({
     selector: 'app-manage-shares',
@@ -14,7 +13,6 @@ export class ManageSharesComponent implements OnInit {
     public accesses: any[] = [];
     public users: any[] = [];
     public selectedUser: any;
-    public newAccessType: 'user' | 'editor' = 'user';
     public formTitle: string = '';
     public isUserChecked: boolean = true; // Default to 'user' checkbox checked
     public isEditorChecked: boolean = false;
@@ -90,6 +88,8 @@ export class ManageSharesComponent implements OnInit {
             next: () => {
                 this.snackBar.open('Access added successfully.', 'Close', { duration: 3000 });
                 this.loadAccesses(); // Rafraîchir la liste des accès
+                this.loadUsers(); // Rafraîchir la liste des users éligibles
+                this.selectedUser = ''; // Rafraîchir la comboBox
             },
             error: (err) => {
                 console.error('Error adding access:', err);
