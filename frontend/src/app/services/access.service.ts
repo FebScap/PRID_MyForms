@@ -16,11 +16,9 @@ export class AccessService {
         return this.http.post<any>(`${this.baseUrl}api/Access/accesses`, access);
     }
 
-    updateAccess(formId: number, userId: number, access: any): Observable<void> {
-        return this.http.put<void>(
-            `${this.baseUrl}api/Access/${formId}/accesses/${userId}`,
-            access
-        );
+    updateAccess(formId: number, userId: number, accessType: 0 | 1): Observable<void> {
+        const accessUpdate = { accessType }; // Objet à envoyer
+        return this.http.put<void>(`${this.baseUrl}api/Access/${formId}/accesses/${userId}`, accessUpdate);
     }
 
     deleteAccess(formId: number, userId: number): Observable<void> {

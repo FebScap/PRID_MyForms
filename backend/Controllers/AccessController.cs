@@ -67,17 +67,26 @@ namespace prid_2425_f02.Controllers
         }
         
         [HttpPut("{formId}/accesses/{userId}")]
-        public async Task<IActionResult> UpdateAccess(int formId, int userId, AccessDTO dto)
+        public async Task<IActionResult> UpdateAccess(int formId, int userId, [FromBody] AccessUpdateDTO dto)
         {
+            Console.WriteLine($"Updating access: FormId={formId}, UserId={userId}, AccessType={dto.AccessType}");
+
+            // Vérifiez si l'accès existe
             var access = await context.Accesses
-                .FirstOrDefaultAsync(ufa => ufa.FormId == formId && ufa.UserId == userId);
+                .FirstOrDefaultAsync(a => a.FormId == formId && a.UserId == userId);
 
-            if (access == null) return NotFound();
+            if (access == null)
+            {
+                Console.WriteLine("Access not found.");
+                return NotFound("Access not found.");
+            }
 
+            // Mettez à jour le type d'accès
             access.AccessType = dto.AccessType;
 
             await context.SaveChangesAsync();
 
+            Console.WriteLine("Access updated successfully.");
             return NoContent();
         }
         

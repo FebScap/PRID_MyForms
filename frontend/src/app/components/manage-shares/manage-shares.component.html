@@ -10,8 +10,8 @@
                 [checked]="access.accessType === 0 || access.accessType === 1"
                 [disabled]="access.accessType === 1"
                 (change)="
-            access.accessType === 1
-                ? null
+            access.accessType === 0
+                ? deleteAccess(access.userId)
                 : updateAccess(access.userId, 0)"
         >
             user
@@ -22,7 +22,7 @@
                 [checked]="access.accessType === 1"
                 (change)="
             access.accessType === 1
-                ? deleteAccess(access.userId)
+                ? updateAccess(access.userId,0)
                 : updateAccess(access.userId, 1)"
         >
             editor

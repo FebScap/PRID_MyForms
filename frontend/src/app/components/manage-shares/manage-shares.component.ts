@@ -99,14 +99,15 @@ export class ManageSharesComponent implements OnInit {
     }
 
     updateAccess(userId: number, accessType: 0 | 1): void {
-        const updatedAccess = { accessType };
+        const updatedAccess = { accessType }; // Objet minimal pour la mise à jour
 
-        this.accessService.updateAccess(this.formId, userId, updatedAccess).subscribe({
+        this.accessService.updateAccess(this.formId, userId, accessType).subscribe({
             next: () => {
                 this.snackBar.open('Access updated successfully.', 'Close', { duration: 3000 });
-                this.loadAccesses(); // Recharge les accès pour refléter les modifications
+                this.loadAccesses(); // Rafraîchissez la liste des accès
             },
-            error: () => {
+            error: (err) => {
+                console.error('Error updating access:', err);
                 this.snackBar.open('Error updating access.', 'Close', { duration: 3000 });
             },
         });
@@ -116,15 +117,11 @@ export class ManageSharesComponent implements OnInit {
         this.accessService.deleteAccess(this.formId, userId).subscribe({
             next: () => {
                 this.snackBar.open('Access removed successfully.', 'Close', { duration: 3000 });
-                this.loadAccesses(); // Recharge les accès pour refléter les modifications
-            },
+                this.loadAccesses();
+                this.loadUsers();            },
             error: () => {
                 this.snackBar.open('Error removing access.', 'Close', { duration: 3000 });
             },
         });
-    }
-
-    back(): void {
-        this.router.navigate(['/view_form', this.formId]);
     }
 }

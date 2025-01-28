@@ -15,3 +15,8 @@ public class AccessCreateDTO
     public int FormId { get; set; }
     public AccessType AccessType { get; set; }
 }
+
+public class AccessUpdateDTO
+{
+    public AccessType AccessType { get; set; }
+}
