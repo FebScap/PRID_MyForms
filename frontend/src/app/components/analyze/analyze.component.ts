@@ -4,6 +4,11 @@ import {FormService} from "../../services/form.service";
 import {Form} from "../../models/form";
 import {MatSelectChange} from "@angular/material/select";
 import {MatTable} from "@angular/material/table";
+import {QuestionService} from "../../services/question.service";
+import {OptionListService} from "../../services/option-list.service";
+import {Type} from "../../models/question";
+import {OptionList} from "../../models/option-list";
+import {F} from "@angular/cdk/keycodes";
 
 @Component({
     selector: 'app-analyze',
@@ -15,10 +20,13 @@ export class AnalyzeComponent {
     dataSource: any[] = [];
     displayedColumns: string[] = ["answer", "count", "ratio"];
     @ViewChild(MatTable) table!: MatTable<any>;
+    optionList: OptionList | undefined;
+    isOptionList = false;
 
     constructor(
         private route: ActivatedRoute,
         private formService: FormService,
+        private optionListService: OptionListService
     ) {
 
     }
@@ -33,6 +41,17 @@ export class AnalyzeComponent {
     }
 
     changedSelection($event: MatSelectChange) {
+        let question = this.form?.questions.find((q) => q.id === $event.value);
+        if (question?.optionList) {
+            this.isOptionList = true;
+            this.optionListService.getById(question?.optionList!).subscribe((res) => {
+                this.optionList = res;
+            });
+        } else {
+            this.isOptionList = false;
+        }
+        
+        
         this.dataSource = [];
         this.formService.analyze(Number(this.id), $event.value).subscribe((res) => {
             res.forEach((item: any) => {
@@ -54,5 +73,9 @@ export class AnalyzeComponent {
             
             this.table.renderRows();
         });
+    }
+    
+    getValue(idx: number) {
+        return this.optionList?.values.find(value => value.idx == idx)?.label;
     }
 }

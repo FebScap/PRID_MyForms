@@ -20,7 +20,11 @@
         
         <ng-container matColumnDef="answer">
             <th mat-header-cell *matHeaderCellDef> Answer </th>
-            <td mat-cell *matCellDef="let element"> {{element.value == '' ? '(no value)' : element.value }} </td>
+            @if (isOptionList) {
+                <td mat-cell *matCellDef="let element"> {{element.value == '' ? '(no value)' : getValue(element.value) }} </td>
+            } @else {
+                <td mat-cell *matCellDef="let element"> {{element.value == '' ? '(no value)' : element.value }} </td>
+            }
         </ng-container>
 
         <ng-container matColumnDef="count">
