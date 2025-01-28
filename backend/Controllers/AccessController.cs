@@ -23,23 +23,47 @@ namespace prid_2425_f02.Controllers
 
             return Ok(mapper.Map<List<AccessDTO>>(accesses));
         }
-
-
         
-        [HttpPost("{formId}/accesses")]
-        public async Task<IActionResult> AddAccess(int formId, AccessDTO dto)
+        [HttpPost("accesses")]
+        public async Task<IActionResult> AddAccess([FromBody] AccessCreateDTO access)
         {
-            var access = new Access()
-            {
-                FormId = formId,
-                UserId = dto.UserId,
-                AccessType = dto.AccessType
-            };
+            Console.WriteLine($"Adding access: FormId={access.FormId}, UserId={access.UserId}, AccessType={access.AccessType}");
 
-            context.Accesses.Add(access);
+            if (access == null || access.UserId <= 0 || access.FormId <= 0 || !Enum.IsDefined(typeof(AccessType), access.AccessType))
+            {
+                Console.WriteLine("Invalid data received.");
+                return BadRequest("Invalid access data.");
+            }
+
+            // Vérifiez si l'accès existe déjà
+            var existingAccess = await context.Accesses
+                .FirstOrDefaultAsync(a => a.FormId == access.FormId && a.UserId == access.UserId);
+
+            if (existingAccess != null)
+            {
+                Console.WriteLine("Access already exists for this user and form.");
+                return BadRequest("Access already exists for this user and form.");
+            }
+
+            // Ajoutez le nouvel accès
+            var accessEntity = mapper.Map<Access>(access);
+            context.Accesses.Add(accessEntity);
             await context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetAccesses), new { formId }, mapper.Map<AccessDTO>(access));
+            // Incluez les propriétés FirstName et LastName pour la réponse
+            var user = await context.Users.FindAsync(access.UserId);
+
+            var result = new AccessDTO
+            {
+                UserId = access.UserId,
+                FormId = access.FormId,
+                AccessType = access.AccessType,
+                FirstName = user.FirstName,
+                LastName = user.LastName
+            };
+
+            Console.WriteLine("Access added successfully.");
+            return Ok(result);
         }
         
         [HttpPut("{formId}/accesses/{userId}")]

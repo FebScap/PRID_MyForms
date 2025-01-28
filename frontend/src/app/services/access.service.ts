@@ -12,8 +12,8 @@ export class AccessService {
         return this.http.get<any[]>(`${this.baseUrl}api/Access/${formId}/accesses`);
     }
 
-    addAccess(formId: number, access: any): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}api/Access/${formId}/accesses`, access);
+    addAccess(access: { userId: number; formId: number; accessType: number }): Observable<any> {
+        return this.http.post<any>(`${this.baseUrl}api/Access/accesses`, access);
     }
 
     updateAccess(formId: number, userId: number, access: any): Observable<void> {

@@ -78,12 +78,21 @@ export class ManageSharesComponent implements OnInit {
 
         const accessType = this.isEditorChecked ? 1 : 0;
 
-        this.accessService.addAccess(1, { userId: this.selectedUser.id, accessType }).subscribe({
+        const newAccess = {
+            userId: this.selectedUser.id,
+            formId: this.formId, // Assurez-vous que formId est correctement défini
+            accessType
+        };
+
+        console.log('Adding access:', newAccess);
+
+        this.accessService.addAccess(newAccess).subscribe({
             next: () => {
                 this.snackBar.open('Access added successfully.', 'Close', { duration: 3000 });
-                this.loadUsers(); // Refresh available users after adding access
+                this.loadAccesses(); // Rafraîchir la liste des accès
             },
-            error: () => {
+            error: (err) => {
+                console.error('Error adding access:', err);
                 this.snackBar.open('Error adding access.', 'Close', { duration: 3000 });
             },
         });
