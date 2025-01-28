@@ -14,6 +14,7 @@ import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {AuthenticationService} from "../../services/authentication.service";
+import {Role} from "../../models/user";
 
 
 @Component({
@@ -111,6 +112,17 @@ export class InstanceComponent implements OnDestroy {
         }
     }
 
+    ngOnDestroy(): void {
+        this.questionXSubscription.unsubscribe();
+        
+        // Pour les guests, on ne doit pas sauvegarder les réponses
+        if (this.authenticationService.currentUser?.role === Role.Guest) {
+            if (this.instance?.completed == null) {
+                this.instanceService.deleteById(this.instance!.id).subscribe();
+            }
+        }
+    }
+    
     deleteInstance() {
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
             data: {
@@ -158,10 +170,6 @@ export class InstanceComponent implements OnDestroy {
 
     getAnswers(questionId: number): Answer[] {
         return this.answers.filter(ans => ans.questionId == questionId);
-    }
-
-    ngOnDestroy(): void {
-        this.questionXSubscription.unsubscribe();
     }
 
     getForm() {
