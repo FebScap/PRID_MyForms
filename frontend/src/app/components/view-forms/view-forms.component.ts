@@ -185,11 +185,7 @@ export class ViewFormsComponent implements AfterViewInit {
             return matchesFormDetails || matchesQuestions;
         });
     }
-
-    trackById(index: number, form: Form): number {
-        return form.id; // Utilise l'ID comme clé unique
-    }
-    
+       
     get isSearchBarVisible(): boolean {
         return this.searchService.getSearchBarVisibility(); // Récupère la visibilité de la barre de recherche
     }
@@ -205,5 +201,10 @@ export class ViewFormsComponent implements AfterViewInit {
     get isGuest() {
         return this.currentUser && this.currentUser.role === Role.Guest;
     }
+    
+    get isAdmin() {
+        return this.currentUser && this.currentUser.role === Role.Admin;
+    }
+    
 
 }
