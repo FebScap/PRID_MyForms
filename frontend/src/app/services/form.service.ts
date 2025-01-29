@@ -40,6 +40,7 @@ export class FormService {
     }
 
     update(form: Form): Observable<boolean> {
+        console.log(form);
         return this.http.put<Form>(`${this.baseUrl}api/forms`, form).pipe(
             map(() => true),
             catchError((err) => {
@@ -61,7 +62,6 @@ export class FormService {
     }
 
     createInstance(form: Form) {
-        console.log(form);
         return this.http.get<Instance>(`${this.baseUrl}api/forms/new_instance/${form.id}`).pipe(
             map(res => plainToInstance(Instance, res))
         );
