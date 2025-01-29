@@ -8,6 +8,7 @@ import {Form} from "../models/form";
 import {User} from "../models/user";
 import {AuthenticationService} from "./authentication.service";
 import {Instance} from "../models/instance";
+import {F} from "@angular/cdk/keycodes";
 
 @Injectable({providedIn: 'root'})
 export class FormService {
@@ -60,7 +61,8 @@ export class FormService {
     }
 
     createInstance(form: Form) {
-        return this.http.post<Instance>(`${this.baseUrl}api/forms/new_instance`, form).pipe(
+        console.log(form);
+        return this.http.get<Instance>(`${this.baseUrl}api/forms/new_instance/${form.id}`).pipe(
             map(res => plainToInstance(Instance, res))
         );
     }
