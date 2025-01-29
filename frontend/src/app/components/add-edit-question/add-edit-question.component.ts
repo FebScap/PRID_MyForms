@@ -20,7 +20,9 @@ export class AddEditQuestionComponent implements OnInit, OnDestroy {
     public questionId?: number; // ID de la question en cas d'édition
     private sub = new Subscription();
     public isQuestionValid: boolean = false;
-    protected readonly Type = Type;
+    public Type = Type;
+    public questionTypes: string[] = Object.values(Type).filter(value => typeof value === 'string') as string[];
+
 
     constructor(
         private formBuilder: FormBuilder,
