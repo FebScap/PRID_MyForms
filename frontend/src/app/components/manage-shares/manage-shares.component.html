@@ -40,10 +40,10 @@
             </mat-select>
         </mat-form-field>
 
-        <!-- Checkbox User -->
+        <!-- Checkbox User (Désactivée si le form est public) -->
         <mat-checkbox
                 [(ngModel)]="isUserChecked"
-                [disabled]="isEditorChecked"
+                [disabled]="isEditorChecked || isPublicForm"
                 (change)="onUserCheckboxChange($event.checked)">
             user
         </mat-checkbox>
@@ -55,9 +55,10 @@
             editor
         </mat-checkbox>
 
+        <!-- Bouton désactivé si form public et user seul -->
         <button
                 (click)="addAccess()"
-                [disabled]="!selectedUser || (!isUserChecked && !isEditorChecked)">
+                [disabled]="!selectedUser || (!isEditorChecked && (isPublicForm || !isUserChecked))">
             Add
         </button>
     </div>

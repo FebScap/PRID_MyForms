@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {AccessService} from "../../services/access.service";
+import { AccessService } from "../../services/access.service";
+import { FormService } from "../../services/form.service"; // Import du service form
 
 @Component({
     selector: 'app-manage-shares',
@@ -14,11 +15,13 @@ export class ManageSharesComponent implements OnInit {
     public users: any[] = [];
     public selectedUser: any;
     public formTitle: string = '';
-    public isUserChecked: boolean = true; // Default to 'user' checkbox checked
+    public isUserChecked: boolean = true;
     public isEditorChecked: boolean = false;
+    public isPublicForm: boolean = false;
 
     constructor(
         private accessService: AccessService,
+        private formService: FormService, 
         private route: ActivatedRoute,
         private router: Router,
         private snackBar: MatSnackBar,
@@ -28,10 +31,23 @@ export class ManageSharesComponent implements OnInit {
         // Récupère le paramètre `formId` depuis l'URL
         this.route.paramMap.subscribe((params) => {
             this.formId = Number(this.route.snapshot.paramMap.get('id'));
+            this.loadFormDetails(); // Charge les détails du formulaire
         });
 
         this.loadAccesses();
         this.loadUsers();
+    }
+
+    loadFormDetails(): void {
+        this.formService.getById(String(this.formId)).subscribe({
+            next: (form) => {
+                this.formTitle = form.title;
+                this.isPublicForm = form.isPublic; // Stocke si le form est public
+            },
+            error: () => {
+                this.snackBar.open('Error loading form details.', 'Close', { duration: 3000 });
+            },
+        });
     }
 
     loadAccesses(): void {
@@ -44,7 +60,7 @@ export class ManageSharesComponent implements OnInit {
             },
         });
     }
-    
+
     loadUsers(): void {
         this.accessService.getEligibleUsers(this.formId).subscribe({
             next: (users) => {
@@ -78,7 +94,7 @@ export class ManageSharesComponent implements OnInit {
 
         const newAccess = {
             userId: this.selectedUser.id,
-            formId: this.formId, // Assurez-vous que formId est correctement défini
+            formId: this.formId,
             accessType
         };
 
@@ -87,9 +103,9 @@ export class ManageSharesComponent implements OnInit {
         this.accessService.addAccess(newAccess).subscribe({
             next: () => {
                 this.snackBar.open('Access added successfully.', 'Close', { duration: 3000 });
-                this.loadAccesses(); // Rafraîchir la liste des accès
-                this.loadUsers(); // Rafraîchir la liste des users éligibles
-                this.selectedUser = ''; // Rafraîchir la comboBox
+                this.loadAccesses();
+                this.loadUsers();
+                this.selectedUser = ''; // Reset la sélection
             },
             error: (err) => {
                 console.error('Error adding access:', err);
