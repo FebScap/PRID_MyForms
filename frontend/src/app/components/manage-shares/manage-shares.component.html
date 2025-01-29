@@ -8,7 +8,7 @@
         <!-- Checkbox pour User -->
         <mat-checkbox
                 [checked]="access.accessType === 0 || access.accessType === 1"
-                [disabled]="access.accessType === 1"
+                [disabled]="access.accessType === 1 || isPublicForm"
                 (change)="
             access.accessType === 0
                 ? deleteAccess(access.userId)

@@ -67,26 +67,29 @@ namespace prid_2425_f02.Controllers
         }
         
         [HttpPut("{formId}/accesses/{userId}")]
-        public async Task<IActionResult> UpdateAccess(int formId, int userId, [FromBody] AccessUpdateDTO dto)
+        public async Task<IActionResult> UpdateAccess(int formId, int userId, AccessDTO dto)
         {
-            Console.WriteLine($"Updating access: FormId={formId}, UserId={userId}, AccessType={dto.AccessType}");
-
-            // Vérifiez si l'accès existe
             var access = await context.Accesses
-                .FirstOrDefaultAsync(a => a.FormId == formId && a.UserId == userId);
+                .FirstOrDefaultAsync(ufa => ufa.FormId == formId && ufa.UserId == userId);
 
             if (access == null)
+                return NotFound();
+
+            var form = await context.Forms.FindAsync(formId);
+            if (form == null)
+                return NotFound();
+
+            if (form.IsPublic && dto.AccessType == AccessType.User)
             {
-                Console.WriteLine("Access not found.");
-                return NotFound("Access not found.");
+                // Si le form est public et l'accès devient user seul, on supprime l'accès
+                context.Accesses.Remove(access);
+                await context.SaveChangesAsync();
+                return NoContent();
             }
 
-            // Mettez à jour le type d'accès
             access.AccessType = dto.AccessType;
-
             await context.SaveChangesAsync();
 
-            Console.WriteLine("Access updated successfully.");
             return NoContent();
         }
         

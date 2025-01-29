@@ -115,12 +115,16 @@ export class ManageSharesComponent implements OnInit {
     }
 
     updateAccess(userId: number, accessType: 0 | 1): void {
-        const updatedAccess = { accessType }; // Objet minimal pour la mise à jour
-
+        if (this.isPublicForm && accessType === 0) {
+            // Si le formulaire est public et qu'on veut mettre un accès "user" seul, on supprime l'accès
+            this.deleteAccess(userId);
+            return;
+        }
+        
         this.accessService.updateAccess(this.formId, userId, accessType).subscribe({
             next: () => {
                 this.snackBar.open('Access updated successfully.', 'Close', { duration: 3000 });
-                this.loadAccesses(); // Rafraîchissez la liste des accès
+                this.loadAccesses();
             },
             error: (err) => {
                 console.error('Error updating access:', err);
@@ -134,8 +138,10 @@ export class ManageSharesComponent implements OnInit {
             next: () => {
                 this.snackBar.open('Access removed successfully.', 'Close', { duration: 3000 });
                 this.loadAccesses();
-                this.loadUsers();            },
-            error: () => {
+                this.loadUsers();
+            },
+            error: (err) => {
+                console.error('Error removing access:', err);
                 this.snackBar.open('Error removing access.', 'Close', { duration: 3000 });
             },
         });
