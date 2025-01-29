@@ -160,13 +160,13 @@ export class AddEditQuestionComponent implements OnInit, OnDestroy {
     }
 
     createOptionList(): void {
-        this.router.navigate(['/add-edit-option-list']);
+        this.router.navigate(['/add-edit-option-list'], { queryParams: { from: 'add-edit-question', formId: this.questionForm.get('formId')?.value } });
     }
 
     editOptionList(): void {
         const selectedOptionList = this.questionForm.get('optionList')?.value;
         if (selectedOptionList) {
-            this.router.navigate(['/add-edit-option-list', selectedOptionList]);
+            this.router.navigate(['/add-edit-option-list', selectedOptionList], { queryParams: { from: 'add-edit-question', formId: this.questionForm.get('formId')?.value } });
         }
     }
 

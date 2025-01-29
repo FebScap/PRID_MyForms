@@ -1,4 +1,4 @@
-<app-nav-bar [title]="isNew ? 'Add Option List' : 'Edit Option List'" [hasArrowBack]="true" [link]="'/manage_option_lists'" class="toolbar-actions">
+<app-nav-bar [title]="isNew ? 'Add Option List' : 'Edit Option List'" [hasArrowBack]="true" [link]="backLink" class="toolbar-actions">
     <button mat-icon-button [disabled]="!isOptionListValid" (click)="save()">
         <mat-icon>save</mat-icon>
     </button>

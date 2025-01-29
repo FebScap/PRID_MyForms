@@ -18,6 +18,7 @@ export class AddEditOptionListComponent implements OnInit, OnDestroy {
     public optionListId?: number;
     public isOptionListValid = false;
     private sub = new Subscription();
+    public backLink = '/manage_option_lists'; // Par défaut, retour à manage_option_lists
 
     constructor(
         private formBuilder: FormBuilder,
@@ -45,6 +46,14 @@ export class AddEditOptionListComponent implements OnInit, OnDestroy {
         this.sub = this.optionListForm.statusChanges.subscribe(() => {
             this.isOptionListValid = this.optionListForm.valid && this.options.length > 0;
         });
+
+        // Vérifie si l'URL contient "from=add-edit-question"
+        const fromQuestion = this.route.snapshot.queryParamMap.get('from') === 'add-edit-question';
+
+        if (fromQuestion) {
+            const formId = this.route.snapshot.queryParamMap.get('formId');
+            this.backLink = formId ? `/add-edit-question/${formId}` : '/manage_option_lists';
+        }
     }
 
     ngOnDestroy(): void {
