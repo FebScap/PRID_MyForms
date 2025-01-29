@@ -67,9 +67,9 @@ export class ViewFormsComponent implements AfterViewInit {
         this.filter = this.searchService.getSearchString(); // Récupère le filtre de recherche
         if (this.filter !== '')
             this.searchService.setSearchBarVisibility(true); // Affiche la barre de recherche si un filtre est déjà présent
-        else 
+        else
             this.searchService.setSearchBarVisibility(false); // Cache la barre de recherche si aucun filtre n'est présent
-        
+
         this.forms = forms;              // Stocke tous les formulaires
         this.setForms(this.filter);      // Applique le filtre
     }
@@ -147,7 +147,6 @@ export class ViewFormsComponent implements AfterViewInit {
                     } else if (res != 'cancel') {
                         this.snackBar.open(`There was an error at the server. Please try again.`, 'Dismiss', {duration: 10000});
                     }
-
                 });
                 break;
         }
@@ -186,10 +185,6 @@ export class ViewFormsComponent implements AfterViewInit {
         });
     }
 
-    trackById(index: number, form: Form): number {
-        return form.id; // Utilise l'ID comme clé unique
-    }
-    
     get isSearchBarVisible(): boolean {
         return this.searchService.getSearchBarVisibility(); // Récupère la visibilité de la barre de recherche
     }
@@ -205,5 +200,10 @@ export class ViewFormsComponent implements AfterViewInit {
     get isGuest() {
         return this.currentUser && this.currentUser.role === Role.Guest;
     }
+
+    get isAdmin() {
+        return this.currentUser && this.currentUser.role === Role.Admin;
+    }
+
 
 }

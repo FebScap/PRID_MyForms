@@ -146,9 +146,9 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
         return NotFound();
     }
 
-    [HttpPost("new_instance")]
-    public async Task<ActionResult<InstanceDTO>> CreateInstance(FormDTO dto) {
-        var f = await context.Forms.FindAsync(dto.Id);
+    [HttpGet("new_instance/{id}")]
+    public async Task<ActionResult<InstanceDTO>> CreateInstance(int id) {
+        var f = await context.Forms.FindAsync(id);
 
         if (f != null) {
             f.Accesses = await context.Accesses.Where(a => a.FormId == f.Id).ToListAsync();
