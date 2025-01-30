@@ -108,17 +108,23 @@ export class AddEditQuestionComponent implements OnInit, OnDestroy {
         this.toggleOptionList(selectedType);
     }
 
-    private toggleOptionList(type: any): void {
+    private toggleOptionList(type: string): void {
         const optionListControl = this.questionForm.get('optionList');
+
         if (['radio', 'check', 'combo'].includes(type.toLowerCase())) {
             optionListControl?.enable();
+            optionListControl?.setValidators(Validators.required); // Ajoute la validation
             this.requiresOptionList = true;
         } else {
             optionListControl?.disable();
             optionListControl?.setValue(null);
+            optionListControl?.clearValidators(); // Supprime la validation
             this.requiresOptionList = false;
         }
+
+        optionListControl?.updateValueAndValidity(); // Met à jour la validation
     }
+
 
     saveQuestion(): void {
         if (!this.questionForm.valid) {
