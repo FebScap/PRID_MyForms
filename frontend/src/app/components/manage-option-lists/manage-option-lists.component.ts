@@ -15,7 +15,7 @@ import { OptionList } from '../../models/option-list';
 export class ManageOptionListsComponent implements OnInit {
     optionLists: OptionList[] = [];
     currentUser: any;
-
+    usedOptionLists: Map<number, boolean> = new Map(); // Map stockant l'état de chaque OptionList
     constructor(
         private optionListService: OptionListService,
         private router: Router,
@@ -36,11 +36,27 @@ export class ManageOptionListsComponent implements OnInit {
     loadOptionLists(): void {
         this.optionListService.getAllForCurrentUser().subscribe({
             next: (lists) => {
-                // Tri alphabétique par nom
                 this.optionLists = lists.sort((a, b) => a.name.localeCompare(b.name));
+
+                // Vérification individuelle si l'option list est utilisée
+                this.optionLists.forEach(optionList => {
+                    this.updateOptionListUsage(optionList.id);
+                });
             },
             error: () => {
                 this.snackBar.open('Error loading option lists.', 'Close', { duration: 3000 });
+            }
+        });
+    }
+
+    updateOptionListUsage(optionListId: number): void {
+        this.optionListService.isOptionListUsed(optionListId).subscribe({
+            next: (isUsed) => {
+                this.usedOptionLists.set(optionListId, isUsed);
+            },
+            error: () => {
+                console.error(`Error checking if option list ${optionListId} is used.`);
+                this.usedOptionLists.set(optionListId, false); // Sécurité : on suppose qu'elle n'est pas utilisée
             }
         });
     }
@@ -92,7 +108,12 @@ export class ManageOptionListsComponent implements OnInit {
                 this.optionListService.delete(optionList.id).subscribe({
                     next: () => {
                         this.snackBar.open('Option list deleted successfully!', 'Close', { duration: 3000 });
-                        this.loadOptionLists(); // Recharger la liste après suppression
+
+                        // Supprime localement l'option list de l'affichage
+                        this.optionLists = this.optionLists.filter(ol => ol.id !== optionList.id);
+
+                        // Supprime son état dans la map des listes utilisées
+                        this.usedOptionLists.delete(optionList.id);
                     },
                     error: () => {
                         this.snackBar.open('Error deleting option list.', 'Close', { duration: 3000 });
@@ -110,5 +131,13 @@ export class ManageOptionListsComponent implements OnInit {
         const isAdmin = this.currentUser?.role === 'Admin';
 
         return (!isSystemList || isAdmin);
+    }
+
+    isOptionListUsed(optionListId: number): boolean {
+        return this.usedOptionLists.get(optionListId) ?? false;
+    }
+
+    isDeletable(optionList: OptionList): boolean {
+        return !this.isOptionListUsed(optionList.id) && this.isEditable(optionList);
     }
 }

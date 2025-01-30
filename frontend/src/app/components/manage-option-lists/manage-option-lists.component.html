@@ -13,7 +13,10 @@
             </button>
 
             <!-- Supprimer -->
-            <button mat-icon-button color="warn" [disabled]="!isEditable(optionList)" (click)="deleteOptionList(optionList)">
+            <button mat-icon-button
+                    color="warn"
+                    [disabled]="!isDeletable(optionList)"
+                    (click)="deleteOptionList(optionList)">
                 <mat-icon>delete</mat-icon>
             </button>
 

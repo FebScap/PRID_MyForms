@@ -33,7 +33,7 @@ export class OptionListService {
     }
 
     delete(id: number): Observable<boolean> {
-        return this.http.delete<void>(`${this.baseUrl}api/OptionLists/${id}`).pipe(
+        return this.http.delete<boolean>(`${this.baseUrl}api/OptionLists/${id}`).pipe(
             map(res => true),
             catchError(err => {
                 console.error(err);
@@ -67,6 +67,11 @@ export class OptionListService {
             })
         );
     }
+
+    isOptionListUsed(optionListId: number): Observable<boolean> {
+        return this.http.get<boolean>(`${this.baseUrl}api/optionLists/${optionListId}/is-used`);
+    }
+
 
 
 }
