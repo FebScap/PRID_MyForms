@@ -184,11 +184,11 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
 
     private bool HasAccessEditor(Form form, int userId) {
         return form.OwnerId == userId ||
-               form.Accesses.Any(a => a.UserId == userId && a.AccessType == AccessType.Editor);
+               form.Accesses.Any(a => a.UserId == userId && a.AccessType == AccessType.Editor) || User.IsInRole(Role.Admin.ToString());
     }
 
     private bool HasAccessReader(Form form, int userId) {
-        return form.OwnerId == userId || form.Accesses.Any(a => a.UserId == userId) || form.IsPublic;
+        return form.OwnerId == userId || form.Accesses.Any(a => a.UserId == userId) || form.IsPublic || User.IsInRole(Role.Admin.ToString());
     }
 
     [HttpGet("{formId:int}/{questionId:int}/analyze")]
