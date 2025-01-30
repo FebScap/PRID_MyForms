@@ -95,6 +95,8 @@ export class ViewFormComponent {
                         }
                         this.refresh();
                     });
+                } else {
+                    this.refresh();
                 }
             });
         }
