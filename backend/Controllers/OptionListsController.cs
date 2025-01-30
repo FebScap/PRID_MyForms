@@ -190,8 +190,8 @@ namespace prid_2425_f02.Controllers
         public async Task<IActionResult> IsOptionListUsed(int id)
         {
             Console.WriteLine($"Checking if Option List ID {id} is used in any question.");
-
-            bool isUsed = await context.Questions.AnyAsync(q => q.Id == id);
+            
+            bool isUsed = await context.Questions.AnyAsync(q => q.OptionList == id);
 
             Console.WriteLine($"Option List ID {id} is {(isUsed ? "USED" : "NOT USED")}.");
             return Ok(isUsed);

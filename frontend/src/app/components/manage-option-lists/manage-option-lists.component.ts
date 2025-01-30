@@ -134,6 +134,7 @@ export class ManageOptionListsComponent implements OnInit {
     }
 
     isOptionListUsed(optionListId: number): boolean {
+        
         return this.usedOptionLists.get(optionListId) ?? false;
     }
 
