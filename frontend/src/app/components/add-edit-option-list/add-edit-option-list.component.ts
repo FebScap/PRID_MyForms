@@ -125,6 +125,10 @@ export class AddEditOptionListComponent implements OnInit, OnDestroy {
         this.options = this.options.filter(option => !option.selected);
     }
 
+    clearSelection(): void {
+        this.options.forEach(option => option.selected = false);
+    }
+
     hasSelectedOptions(): boolean {
         return this.options.some(option => option.selected);
     }
