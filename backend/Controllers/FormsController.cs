@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using prid_2425_f02.Helpers;
 using prid_2425_f02.Models;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace prid_2425_f02.Controllers;
@@ -105,13 +106,7 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
         form.Title = dto.Title;
         form.Description = dto.Description;
         form.IsPublic = dto.IsPublic;
-
-        // Gestion des accès si le formulaire devient public
-        if (dto.IsPublic) {
-            var userAccesses = form.Accesses.Where(a => a.AccessType == AccessType.User).ToList();
-            userAccesses.ForEach(a => context.Accesses.Remove(a)); // Supprimer les accès utilisateurs spécifiques
-        }
-
+        
         // Gestion des questions associées
         form.Questions.Clear(); // On vide la liste des questions existantes pour la remplacer
         foreach (var questionDto in dto.Questions) {
@@ -119,9 +114,11 @@ public class FormsController(Context context, IMapper mapper) : ControllerBase
             question.FormId = form.Id; // S'assurer que chaque question est associée au formulaire
             form.Questions.Add(question);
         }
-
-        // Gestion des accès (si nécessaires, pour modifications précises)
-        form.Accesses = dto.Accesses.Select(a => mapper.Map<Access>(a)).ToList();
+        
+        // Gestion des accès si le formulaire est public
+        if (dto.IsPublic) {
+            context.Accesses.RemoveRange(form.Accesses.Where(a => a.AccessType == AccessType.User));
+        }
 
         // Sauvegarde des modifications en base de données
         await context.SaveChangesAsync();
