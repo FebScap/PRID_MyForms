@@ -98,8 +98,6 @@ export class ManageSharesComponent implements OnInit {
             accessType
         };
 
-        console.log('Adding access:', newAccess);
-
         this.accessService.addAccess(newAccess).subscribe({
             next: () => {
                 this.snackBar.open('Access added successfully.', 'Close', { duration: 3000 });

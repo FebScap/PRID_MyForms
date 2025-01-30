@@ -41,7 +41,7 @@ export class QuestionService {
         return this.http.post<Question>(`${this.baseUrl}api/Questions`, question).pipe(
             map(res => true),
             catchError(err => {
-                console.log(err);
+                console.error(err);
                 return of(false);
             })
         );
@@ -51,7 +51,7 @@ export class QuestionService {
     update(question: Question): Observable<boolean> {
         return this.http.put<void>(`${this.baseUrl}api/Questions`, question).pipe(map(res => true),
             catchError(err => {
-                console.log(err);
+                console.error(err);
                 return of(false);
             })
         );

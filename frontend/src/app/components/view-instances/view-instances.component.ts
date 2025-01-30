@@ -53,7 +53,6 @@ export class ViewInstancesComponent {
         } else {
             this.selectedInstances = this.selectedInstances.filter(i => i !== instance);
         }
-        console.log(this.selectedInstances);
     }
 
     viewInstance(id: number) {

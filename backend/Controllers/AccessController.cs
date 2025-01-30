@@ -27,11 +27,9 @@ namespace prid_2425_f02.Controllers
         [HttpPost("accesses")]
         public async Task<IActionResult> AddAccess([FromBody] AccessCreateDTO access)
         {
-            Console.WriteLine($"Adding access: FormId={access.FormId}, UserId={access.UserId}, AccessType={access.AccessType}");
 
             if (access == null || access.UserId <= 0 || access.FormId <= 0 || !Enum.IsDefined(typeof(AccessType), access.AccessType))
             {
-                Console.WriteLine("Invalid data received.");
                 return BadRequest("Invalid access data.");
             }
 
@@ -41,7 +39,6 @@ namespace prid_2425_f02.Controllers
 
             if (existingAccess != null)
             {
-                Console.WriteLine("Access already exists for this user and form.");
                 return BadRequest("Access already exists for this user and form.");
             }
 
@@ -62,7 +59,6 @@ namespace prid_2425_f02.Controllers
                 LastName = user.LastName
             };
 
-            Console.WriteLine("Access added successfully.");
             return Ok(result);
         }
         

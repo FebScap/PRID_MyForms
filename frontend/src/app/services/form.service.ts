@@ -40,7 +40,6 @@ export class FormService {
     }
 
     update(form: Form): Observable<boolean> {
-        console.log(form);
         return this.http.put<Form>(`${this.baseUrl}api/forms`, form).pipe(
             map(() => true),
             catchError((err) => {

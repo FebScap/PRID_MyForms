@@ -138,8 +138,6 @@ export class AddEditQuestionComponent implements OnInit, OnDestroy {
             idx: 1
         };
         
-        console.log(questionData);
-        
         if (this.isNew) {
             this.questionService.create(questionData).subscribe({
                 next: () => {

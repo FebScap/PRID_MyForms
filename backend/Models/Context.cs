@@ -6,7 +6,6 @@ public class Context(DbContextOptions<Context> options) : DbContext(options)
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
         base.OnConfiguring(optionsBuilder);
         optionsBuilder
-            //.LogTo(Console.WriteLine, LogLevel.Information)
             .EnableSensitiveDataLogging();
     }
     

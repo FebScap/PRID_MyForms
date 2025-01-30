@@ -158,7 +158,6 @@ export class InstanceComponent implements OnDestroy {
                 this.router.navigate(['/']);
             },
             error: (err) => {
-                console.log(err);
                 if (this.snackBar) {
                     this.snackBar.open(`There was an error at the server. The update has not been done! Please try again.`, 'Dismiss', {duration: 10000});
                 } else {
