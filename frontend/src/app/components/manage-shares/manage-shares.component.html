@@ -3,10 +3,10 @@
 <div class="body">
     <h2>Users with Access</h2>
     <div *ngFor="let access of accesses">
-        <span>{{ access.firstName }} {{ access.lastName }}</span>
+        <span class="me-1">{{ access.firstName }} {{ access.lastName }}</span>
 
         <!-- Checkbox pour User -->
-        <mat-checkbox
+        <mat-checkbox class="me-1"
                 [checked]="access.accessType === 0 || access.accessType === 1"
                 [disabled]="access.accessType === 1 || isPublicForm"
                 (change)="
@@ -31,7 +31,7 @@
 
     <h2>Add User Access</h2>
     <div>
-        <mat-form-field>
+        <mat-form-field class="me-1">
             <mat-label>Select a User</mat-label>
             <mat-select [(ngModel)]="selectedUser">
                 <mat-option *ngFor="let user of users" [value]="user">
@@ -41,7 +41,7 @@
         </mat-form-field>
 
         <!-- Checkbox User (Désactivée si le form est public) -->
-        <mat-checkbox
+        <mat-checkbox class="me-1"
                 [(ngModel)]="isUserChecked"
                 [disabled]="isEditorChecked || isPublicForm"
                 (change)="onUserCheckboxChange($event.checked)">
@@ -49,14 +49,14 @@
         </mat-checkbox>
 
         <!-- Checkbox Editor -->
-        <mat-checkbox
+        <mat-checkbox class="me-1"
                 [(ngModel)]="isEditorChecked"
                 (change)="onEditorCheckboxChange($event.checked)">
             editor
         </mat-checkbox>
 
         <!-- Bouton désactivé si form public et user seul -->
-        <button
+        <button mat-flat-button class="w-100"
                 (click)="addAccess()"
                 [disabled]="!selectedUser || (!isEditorChecked && (isPublicForm || !isUserChecked))">
             Add
